@@ -62,6 +62,7 @@ jobs:
           mkdir -p preview-dist
           cp index.html preview-dist/
           cp -R css assets preview-dist/
+          cp -R home-garden preview-dist/
       - name: Deploy preview only
         run: npx --yes wrangler@4 pages deploy preview-dist --project-name wedocalc --branch work/home-visual-v1 --commit-hash "$GITHUB_SHA"
       - name: Record preview
