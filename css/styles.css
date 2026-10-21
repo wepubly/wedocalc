@@ -191,3 +191,19 @@ html[data-theme="dark"] .guide-image span{color:#fff}
   #guides .guide-image img,
   #guides .guide-column .guide-image img{height:110px!important}
 }
+
+
+/* Metricpedia approved Google-style hero branding (preview only). */
+.header-inner{justify-content:space-between}
+.header nav{margin-right:auto}
+.metricpedia-brand{width:min(100%,370px);margin:0 auto 15px;display:flex;flex-direction:column;align-items:stretch;gap:3px;user-select:none}
+.metricpedia-wordmark{font-family:Arial,Helvetica,sans-serif;font-size:clamp(45px,5.6vw,66px);line-height:1.05;font-weight:800;letter-spacing:-3.1px;color:#031f51;text-align:center}
+.metricpedia-ruler{position:relative;overflow:hidden;background:#0870f6;border-radius:6px;height:42px;padding:0 12px 3px;display:flex;align-items:flex-end;box-shadow:inset 0 1px 0 #ffffff2e}
+.ruler-ticks{position:absolute;left:13px;right:13px;top:0;height:21px;background:repeating-linear-gradient(to right,#fff 0 1.5px,transparent 1.5px 8px);mask-image:linear-gradient(to bottom,#000 0%,#000 45%,transparent 46%)}
+.ruler-numbers{position:relative;display:flex;width:100%;justify-content:space-between;color:#fff;font-size:16px;font-weight:700;line-height:1.2}
+.hero{padding-top:24px}
+.hero h1{font-size:clamp(30px,3.5vw,44px)}
+.metricpedia-footer-logo{display:inline-block;color:#031f51;font-size:30px;font-weight:800;letter-spacing:-1.5px;line-height:1.2}
+html[data-theme="dark"] .metricpedia-wordmark,html[data-theme="dark"] .metricpedia-footer-logo{color:#edf4ff}
+html[data-theme="dark"] .hero h1 span{color:#5b91ff}
+@media(max-width:720px){.metricpedia-brand{width:min(100%,290px);margin-bottom:18px}.metricpedia-wordmark{font-size:50px;letter-spacing:-2.6px}.metricpedia-ruler{height:37px}.ruler-numbers{font-size:14px}.hero{padding-top:25px}.header nav{margin-right:0}.metricpedia-footer-logo{font-size:26px}}
