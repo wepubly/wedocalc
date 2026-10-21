@@ -98,8 +98,8 @@ html[data-theme="dark"] .paint-page .paint-hero{
 
 
 /* Exact Project Collections layout reused from Home & Garden, full content width. */
-.paint-collections-wrap{width:95%;max-width:1370px;margin:0 auto 32px}
-.paint-collections-wrap .collections-panel{margin:0}
+.paint-collections-wrap{width:92%;max-width:1330px;margin:0 auto 32px}
+.paint-collections-wrap .collections-panel{width:100%;margin:0}
 .paint-collections-wrap .block-heading{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:13px}
 .paint-collections-wrap .block-heading h2{font-size:25px;line-height:1.2;letter-spacing:-.6px}
 .paint-collections-wrap .block-heading p{font-size:14px;line-height:1.4;margin-top:3px;color:#7182a0}
