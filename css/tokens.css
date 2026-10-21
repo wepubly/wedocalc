@@ -1,0 +1,59 @@
+/* Metricpedia design tokens: edit the values here to change the site globally.
+   All new pages MUST load this stylesheet after page-specific CSS. */
+:root {
+  --mp-page-bg:#F1F7FF;
+  --mp-header-bg:#FFFFFF;
+  --mp-footer-bg:#E4EDFA;
+  --mp-card-bg:#FFFFFF;
+  --mp-surface:#E9F2FF;
+  --mp-border:#E3EAF4;
+  --mp-text:#09142C;
+  --mp-muted:#657793;
+  --mp-accent:#0053FF;
+  --mp-accent-hover:#0046D8;
+  --mp-header-text:#031F51;
+}
+html[data-theme="dark"] {
+  --mp-page-bg:#0E1116;
+  --mp-header-bg:#0E1116;
+  --mp-footer-bg:#1B202A;
+  --mp-card-bg:#1B202A;
+  --mp-surface:#202B3D;
+  --mp-border:#303846;
+  --mp-text:#F1F4FA;
+  --mp-muted:#A8B5CB;
+  --mp-accent:#0053FF;
+  --mp-accent-hover:#226CFF;
+  --mp-header-text:#EDF4FF;
+}
+/* Tokens take precedence over legacy standalone page styles. */
+html body,html body.category-page,html body.paint-page {background:var(--mp-page-bg);color:var(--mp-text)}
+html body .header,html body.category-page .header,html body.paint-page .header{background:var(--mp-header-bg);border-color:var(--mp-border)}
+html body footer,html body.category-page footer,html body.paint-page footer{background:var(--mp-footer-bg);border-color:var(--mp-border)}
+html body .card,html body.category-page .card,html body.paint-page .card{background:var(--mp-card-bg);border-color:var(--mp-border)}
+html body .collections-panel{background:var(--mp-surface)}
+html body .primary,html body .calculator .outline,html body .paint-action,html body .calc-card .open-btn{
+  background:var(--mp-accent);border-color:var(--mp-accent);color:#FFF
+}
+html body .primary:hover,html body .calculator .outline:hover,html body .paint-action:hover,html body .calc-card .open-btn:hover{
+  background:var(--mp-accent-hover);border-color:var(--mp-accent-hover);color:#FFF
+}
+/* Exactly the same header structure in all pages. Home intentionally has no compact wordmark. */
+.metricpedia-shared-header .header-inner{max-width:1330px;width:92%;margin:0 auto;display:flex;align-items:center;gap:28px}
+.metricpedia-shared-header nav{display:flex;align-items:center;gap:24px;margin-right:auto}
+.metricpedia-shared-header nav a,.metricpedia-shared-header nav span{
+  color:var(--mp-text);font-size:13px;text-decoration:none;font-weight:500
+}
+.metricpedia-shared-header .header-actions{display:flex;gap:17px;align-items:center;margin:0 0 0 auto}
+.metricpedia-shared-header .header-search{font-size:25px;color:var(--mp-text);text-decoration:none}
+.metricpedia-shared-header .compact-brand{width:auto;flex:none;display:inline-flex;text-decoration:none}
+.metricpedia-shared-header .compact-brand strong{font-size:25px;line-height:1.1;color:var(--mp-header-text);letter-spacing:-1.3px}
+.metricpedia-shared-header .primary{display:inline-block;white-space:nowrap;text-decoration:none;font-size:12px}
+.metricpedia-shared-header .theme-toggle{cursor:pointer}
+@media(max-width:720px){
+ .metricpedia-shared-header .header-inner{flex-wrap:wrap;gap:12px;padding:9px 0}
+ .metricpedia-shared-header nav{order:3;width:100%;justify-content:center;gap:18px;margin:0}
+ .metricpedia-shared-header .header-actions{margin-left:auto;gap:9px}
+ .metricpedia-shared-header .compact-brand strong{font-size:21px}
+ .metricpedia-shared-header .primary{padding:8px;font-size:11px}
+}
