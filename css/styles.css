@@ -58,3 +58,31 @@ html[data-theme="dark"] .theme-toggle{color:#e2e8f2}
 html[data-theme="dark"] .theme-toggle:hover{background:#283344}
 html[data-theme="dark"] .category img,html[data-theme="dark"] .calculator img{border-radius:7px}
 @media(max-width:720px){.header-actions{gap:8px}.theme-toggle{width:22px;height:22px}}
+
+/* Footer spacing and social presentation adapted from Ublong's approved footer. */
+footer{padding:38px 0 22px;margin-top:24px}
+.footer-inner{grid-template-columns:1.5fr repeat(4,minmax(0,1fr));gap:40px}
+.footer-logo{width:210px;height:52px}
+.identity .footer-logo .logo{width:109.7%;left:-5.14%;top:-171.5%}
+.identity p{font-size:14px;line-height:1.6;margin:12px 0 20px}
+.socials{gap:10px;flex-wrap:wrap;margin:0}
+.socials .social-button{width:38px;height:38px;display:grid;place-items:center;border:1px solid #e3e7ee;border-radius:50%;color:#25334c;background:#fff;transition:transform .15s ease,border-color .15s ease,color .15s ease}
+.socials .social-button svg{width:18px;height:18px}
+.socials .social-button:hover,.socials .social-button:focus-visible{transform:translateY(-1px);border-color:#0053ff;color:#0053ff}
+.footer-column{padding-top:0}
+.footer-column h3{margin:0 0 13px;font-size:16px;line-height:1.3;font-weight:600}
+.footer-column .footer-link{font-size:14px;line-height:1.5;margin:0 0 8px;text-align:left;color:#6e7a98;transition:color .15s ease}
+.footer-column .footer-link:last-child{margin-bottom:0}
+.footer-column .footer-link:hover,.footer-column .footer-link:focus-visible{color:#0053ff}
+.footer-bottom{grid-column:1/-1;margin-top:0;padding-top:18px;border-top:1px solid #e3e7ee;display:flex;align-items:center;justify-content:space-between;gap:20px}
+.footer-bottom>small{font-size:13px;line-height:1.5}
+.footer-bottom .signature{position:static;font-size:12px;text-align:right}
+.footer-bottom .signature strong{font-size:14px}
+html[data-theme="dark"] .socials .social-button{background:#0E1116;color:#e2e8f2;border-color:#39445a}
+html[data-theme="dark"] .socials .social-button:hover,html[data-theme="dark"] .socials .social-button:focus-visible{border-color:#82aaff;color:#82aaff}
+html[data-theme="dark"] .footer-column .footer-link:hover,html[data-theme="dark"] .footer-column .footer-link:focus-visible{color:#82aaff}
+html[data-theme="dark"] .footer-bottom{border-color:#39445a}
+@media(max-width:1050px){.footer-inner{grid-template-columns:repeat(2,minmax(0,1fr));gap:28px}.identity{grid-column:1/-1}}
+@media(max-width:720px){footer{padding:30px 0 22px}.footer-inner{gap:26px}.footer-bottom{align-items:flex-start;flex-direction:column}.footer-bottom .signature{text-align:left;padding-bottom:0}.footer-logo{width:190px;height:47.1px}}
+@media(max-width:420px){.footer-inner{grid-template-columns:1fr}}
+@media(prefers-reduced-motion:reduce){.socials .social-button{transition:none}.socials .social-button:hover{transform:none}}
