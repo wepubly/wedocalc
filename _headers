@@ -1,0 +1,7 @@
+# Paint Calculator: always revalidate HTML and calculation scripts during validation.
+/paint-calculator/
+  Cache-Control: no-store, max-age=0
+/paint-calculator/*
+  Cache-Control: no-store, max-age=0
+/assets/results-sharing.js
+  Cache-Control: no-store, max-age=0
