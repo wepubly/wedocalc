@@ -63,7 +63,8 @@ jobs:
           cp index.html preview-dist/
           cp -R css assets preview-dist/
           cp _headers preview-dist/
-          cp -R home-garden paint-calculators paint-calculator preview-dist/
+          cp -R home-garden paint-calculators paint-calculator print preview-dist/
+          test -f preview-dist/print/paint-calculator/index.html
           node --check paint-calculator/calculator.js
           node --check assets/results-sharing.js
           grep -q 'mp-share' preview-dist/paint-calculator/index.html
