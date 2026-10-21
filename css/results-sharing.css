@@ -1,0 +1,36 @@
+/* Universal Metricpedia Results sharing and print/Save as PDF.
+   Load after individual calculator CSS, before global tokens if desired. */
+.mp-share{margin-top:18px;padding-top:15px;border-top:1px solid var(--mp-border,#e3eaf4)}
+.mp-share-title{font-size:12px;font-weight:700;margin-bottom:10px}
+.mp-share-buttons{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.mp-share-buttons button{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:7px;padding:12px 3px;min-height:66px;border:1px solid var(--mp-border,#e3eaf4);border-radius:8px;background:var(--mp-card-bg,#fff);font-size:11px;font-weight:600;color:var(--mp-text,#102348);cursor:pointer}
+.mp-share-buttons button:hover,.mp-share-buttons button:focus-visible{border-color:var(--mp-accent,#0053ff);color:var(--mp-accent,#0053ff)}
+.mp-share-buttons button span{font-size:23px;line-height:1;color:var(--mp-accent,#0053ff)}
+.mp-share-status{font-size:11px;line-height:1.4;min-height:1.4em;margin-top:9px;color:var(--mp-muted,#64748b)}
+#mp-print-report{display:none}
+@page{size:letter;margin:.58in .65in}
+@media print{
+ html,body{margin:0!important;padding:0!important;background:#fff!important;color:#102348!important}
+ body>*:not(#mp-print-report){display:none!important}
+ #mp-print-report{display:block!important;position:static!important;padding:0!important;background:#fff!important;color:#102348!important;font:11pt/1.45 Arial,Helvetica,sans-serif!important;max-width:100%!important}
+ #mp-print-report *{box-sizing:border-box;print-color-adjust:exact;-webkit-print-color-adjust:exact}
+ #mp-print-report .mp-print-head{display:flex;align-items:center;justify-content:space-between;padding-bottom:14pt;border-bottom:1px solid #dce5f0}
+ #mp-print-report .mp-print-brand{font-size:25pt;font-weight:800;letter-spacing:-1pt;color:#061f4e}
+ #mp-print-report .mp-print-ruler{width:123pt;height:4pt;border-radius:3px;margin:3pt 0 4pt;background:#0053ff}
+ #mp-print-report .mp-print-head small{color:#667c98;font-size:8pt}
+ #mp-print-report .mp-print-icon{font-size:28pt;color:#0053ff}
+ #mp-print-report .mp-print-heading{margin:22pt 0 13pt}
+ #mp-print-report h1{font-size:19pt;line-height:1.15;margin:0 0 6pt;color:#102348}
+ #mp-print-report .mp-print-heading p{font-size:9pt;color:#687c96;margin:2pt 0}
+ #mp-print-report .mp-print-highlight{background:#f1f7ff!important;padding:15pt 17pt;border-radius:6px;margin:12pt 0 20pt;break-inside:avoid}
+ #mp-print-report .mp-print-highlight div{font-size:10pt;color:#5d7392}
+ #mp-print-report .mp-print-highlight strong{display:block;font-size:25pt;line-height:1.25;color:#0053ff;margin-top:3pt}
+ #mp-print-report h2{font-size:12pt;margin:0 0 7pt;color:#102348}
+ #mp-print-report table{border-collapse:collapse;width:100%}
+ #mp-print-report tr{border-bottom:1px solid #e5ecf5;break-inside:avoid}
+ #mp-print-report th,#mp-print-report td{padding:8pt 0;font-size:9.5pt}
+ #mp-print-report th{text-align:left;color:#697c96;font-weight:400;width:57%}
+ #mp-print-report td{text-align:right;font-weight:600;color:#102348}
+ #mp-print-report .mp-print-note{font-size:8.5pt;line-height:1.5;color:#687c96;margin-top:22pt}
+ #mp-print-report .mp-print-foot{display:flex;justify-content:space-between;gap:15pt;border-top:1px solid #dce5f0;padding-top:12pt;margin-top:20pt;font-size:8pt;color:#0053ff;overflow-wrap:anywhere}
+}
