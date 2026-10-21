@@ -1,0 +1,73 @@
+/* Metricpedia Paint Calculators hub — responsive visual pilot */
+.paint-page{background:#fff;color:#09142c}
+.paint-page .header{background:#fff}
+.paint-hero{min-height:310px;margin:0;background:linear-gradient(90deg,#eef4fc 0%,#eef4fce8 41%,#eef4fc29 75%),url("../assets/images/guide-3.jpg") right center/48% auto no-repeat,#eff4fa}
+.paint-hero-inner{width:92%;max-width:1370px;margin:auto;padding:30px 0 35px}
+.paint-crumbs{display:flex;align-items:center;flex-wrap:wrap;gap:15px;font-size:12px;color:#5b6b83}
+.paint-crumbs a{color:inherit;text-decoration:none}
+.paint-hero h1{font-size:clamp(38px,4.2vw,64px);line-height:1.13;letter-spacing:-2px;margin:24px 0 3px;color:#09142c}
+.paint-tagline{font-size:21px;color:#14233c!important}
+.paint-explainer{margin-top:13px;max-width:540px;font-size:16px;line-height:1.45;color:#273853!important}
+.paint-benefits{display:flex;align-items:center;gap:35px;margin-top:25px;flex-wrap:wrap}
+.paint-benefits>div{display:flex;gap:11px;align-items:center}
+.paint-benefits>div>span{font-size:26px;color:#0661ee}
+.paint-benefits b{display:block;font-size:13px}
+.paint-benefits small{display:block;color:#62718b;margin-top:4px;font-size:12px}
+.paint-content{width:95%;max-width:1370px;margin:0 auto;display:grid;grid-template-columns:205px minmax(0,1fr) 224px;gap:24px;padding:32px 0 40px}
+.paint-sidebar{border-right:1px solid #e8edf4;padding-right:15px}
+.paint-sidebar h2,.paint-guides h2{font-size:17px;letter-spacing:-.25px;margin-bottom:16px}
+.side-item{display:flex;align-items:center;gap:13px;min-height:40px;padding:9px;border-radius:8px;color:#51617d;font-size:12px}
+.side-item span{font-size:19px;width:23px;text-align:center}
+.side-item b{font-weight:500;flex:1}
+.side-item em{font-style:normal;font-size:21px}
+.side-item.active{background:#e8f2ff;color:#0053ff}
+.subnav{border-left:1px solid #d5e5fc;margin-left:19px;padding-left:12px;display:flex;flex-direction:column;gap:0}
+.subnav div{padding:8px 10px;color:#51617d;font-size:12px}
+.subnav .selected{background:#e8f2ff;color:#0053ff;border-radius:7px}
+.paint-list{min-width:0}
+.paint-list-heading{display:flex;align-items:center;justify-content:space-between;gap:15px;margin-bottom:20px}
+.paint-list-heading h2{font-size:24px;line-height:1.2;letter-spacing:-.5px}
+.paint-list-heading p{color:#697a95;font-size:14px;margin-top:3px}
+.paint-list-heading label{border:1px solid #e0e8f3;border-radius:9px;padding:10px 12px;color:#61738d;font-size:12px;white-space:nowrap}
+.paint-list-heading select{border:0;background:transparent;color:#23334e;outline:0;font-size:12px;max-width:110px}
+.paint-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:17px}
+.paint-card{display:flex;min-width:0;flex-direction:column;overflow:hidden;min-height:276px}
+.paint-photo{height:127px;background:#dfe7f0;overflow:hidden}
+.paint-photo img{width:100%;height:100%;object-fit:cover;display:block}
+.paint-photo-1 img{object-position:70% 50%;transform:scale(1.12)}
+.paint-photo-2 img{object-position:20% 55%;transform:scale(1.18)}
+.paint-photo-3 img{filter:saturate(.5) brightness(1.16)}
+.paint-photo-4 img{object-position:85% 45%;filter:saturate(.95)}
+.paint-photo-5 img{object-position:55% 30%;transform:scale(1.12)}
+.paint-card-text{padding:11px 12px 12px;flex:1;display:flex;flex-direction:column;align-items:stretch}
+.paint-card h3{font-size:14px;line-height:1.3}
+.paint-card p{font-size:13px;line-height:1.35;margin:5px 0 12px;min-height:3.9em}
+.paint-action{margin-top:auto;border-radius:7px;background:#0053ff;color:#fff;display:block;text-align:center;padding:10px 8px;font-size:12px;font-weight:600}
+.more-heading{font-size:17px;margin:24px 0 11px}
+.paint-more{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:9px}
+.more-card{display:flex;align-items:center;gap:8px;padding:12px 9px;border:1px solid #e3eaf4;border-radius:9px;background:#fff;min-height:64px}
+.more-card span{font-size:23px;color:#1462f2}
+.more-card b{font-size:11px;line-height:1.3;flex:1;font-weight:500}
+.more-card i{font-size:20px;font-style:normal;color:#075aff}
+.paint-guides{border-left:1px solid #e7edf5;padding-left:20px;min-width:0}
+.paint-guides h2{font-size:16px}
+.paint-guide{display:flex;gap:11px;padding:0 0 15px;margin-bottom:15px;border-bottom:1px solid #e9eef5}
+.paint-guide img{width:75px;height:79px;border-radius:7px;object-fit:cover;flex:none}
+.paint-guide h3{font-size:13px;line-height:1.35}
+.paint-guide p{font-size:12px;line-height:1.4;margin-top:5px}
+.paint-guides-action{display:block;text-align:center;border-radius:8px;background:#e8f2ff;color:#075aff;padding:12px 8px;font-size:12px;font-weight:600}
+.paint-page .paint-card,.paint-page .more-card{transition:transform .17s ease,border-color .17s ease,box-shadow .17s ease}
+.paint-page .paint-card:hover,.paint-page .more-card:hover{border-color:#075aff;transform:translateY(-3px);box-shadow:0 7px 18px #0b56bd16}
+html[data-theme="dark"] .paint-page{background:#0e1116;color:#eff4fa}
+html[data-theme="dark"] .paint-hero{background:linear-gradient(90deg,#121c2c 0%,#121c2cf0 42%,#121c2c65 78%),url("../assets/images/guide-3.jpg") right center/48% auto no-repeat,#121c2c}
+html[data-theme="dark"] .paint-hero h1,html[data-theme="dark"] .paint-tagline,html[data-theme="dark"] .paint-explainer{color:#eff4fa!important}
+html[data-theme="dark"] .paint-crumbs,html[data-theme="dark"] .paint-benefits small{color:#b8c8dc}
+html[data-theme="dark"] .paint-card,html[data-theme="dark"] .more-card{background:#1b202a;border-color:#334158}
+html[data-theme="dark"] .side-item.active,html[data-theme="dark"] .subnav .selected,html[data-theme="dark"] .paint-guides-action{background:#223653}
+html[data-theme="dark"] .paint-list-heading label{border-color:#38445b}
+html[data-theme="dark"] .paint-list-heading select{color:#e3ecff}
+html[data-theme="dark"] .paint-sidebar,html[data-theme="dark"] .paint-guides{border-color:#303846}
+@media(max-width:1130px){.paint-content{grid-template-columns:175px minmax(0,1fr);gap:18px}.paint-guides{grid-column:2;border-left:0;border-top:1px solid #e7edf5;padding:20px 0 0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.paint-guides h2,.paint-guides-action{grid-column:1/-1}.paint-guide{margin:0}.paint-grid{gap:11px}.paint-hero{background-size:57% auto}}
+@media(max-width:780px){.paint-hero{min-height:330px;background:linear-gradient(90deg,#eef4fced 0%,#eef4fcda 65%,#eef4fc89 100%),url("../assets/images/guide-3.jpg") right center/cover no-repeat}.paint-hero-inner{padding:21px 0}.paint-benefits{gap:12px}.paint-benefits>div{min-width:135px}.paint-benefits small{font-size:11px}.paint-content{display:block}.paint-sidebar{border-right:0;padding:0 0 18px;margin-bottom:20px;border-bottom:1px solid #e7edf5}.paint-sidebar .side-item{display:none}.paint-sidebar h2{margin-bottom:6px}.paint-sidebar .subnav{display:flex;flex-wrap:wrap;flex-direction:row;gap:8px;border:0;margin:0;padding:0}.paint-sidebar .subnav div{border:1px solid #dfe9f6;border-radius:18px;padding:8px}.paint-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.paint-guides{display:block;margin-top:25px}.paint-guide{margin-bottom:13px}.paint-more{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:460px){.paint-hero h1{font-size:35px;letter-spacing:-1px}.paint-tagline{font-size:17px}.paint-explainer{font-size:13px}.paint-benefits>div{min-width:115px}.paint-grid{gap:9px}.paint-photo{height:105px}.paint-card-text{padding:9px}.paint-card h3{font-size:13px}.paint-card p{font-size:11.5px}.paint-list-heading{align-items:flex-start;flex-wrap:wrap}.paint-list-heading h2{font-size:22px}}
+@media(prefers-reduced-motion:reduce){.paint-card,.more-card{transition:none}}
