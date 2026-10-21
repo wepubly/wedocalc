@@ -42,7 +42,7 @@ jobs:
         run: |
           mkdir -p public-dist
           cp index.html public-dist/
-          cp -R css assets home-garden paint-calculators public-dist/
+          cp -R css assets home-garden paint-calculators paint-calculator public-dist/
           grep -qi 'noindex, nofollow' public-dist/index.html || { echo 'Public visual prototype must remain noindex'; exit 1; }
       - name: Publish Metricpedia public preview
         run: npx --yes wrangler@4 pages deploy public-dist --project-name wedocalc --branch main --commit-hash "$GITHUB_SHA"
