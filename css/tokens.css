@@ -39,6 +39,7 @@ html body .primary:hover,html body .calculator .outline:hover,html body .paint-a
   background:var(--mp-accent-hover);border-color:var(--mp-accent-hover);color:#FFF
 }
 /* Exactly the same header structure in all pages. Home intentionally has no compact wordmark. */
+.metricpedia-shared-header{height:63px}
 .metricpedia-shared-header .header-inner{max-width:1330px;width:92%;margin:0 auto;display:flex;align-items:center;gap:28px}
 .metricpedia-shared-header nav{display:flex;align-items:center;gap:24px;margin-right:auto}
 .metricpedia-shared-header nav a,.metricpedia-shared-header nav span{
@@ -51,6 +52,7 @@ html body .primary:hover,html body .calculator .outline:hover,html body .paint-a
 .metricpedia-shared-header .primary{display:inline-block;white-space:nowrap;text-decoration:none;font-size:12px}
 .metricpedia-shared-header .theme-toggle{cursor:pointer}
 @media(max-width:720px){
+ .metricpedia-shared-header{height:auto;min-height:57px}
  .metricpedia-shared-header .header-inner{flex-wrap:wrap;gap:12px;padding:9px 0}
  .metricpedia-shared-header nav{order:3;width:100%;justify-content:center;gap:18px;margin:0}
  .metricpedia-shared-header .header-actions{margin-left:auto;gap:9px}
