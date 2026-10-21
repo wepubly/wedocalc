@@ -144,3 +144,34 @@ html[data-theme="dark"] .footer-bottom{border-color:#39445a}
 html[data-theme="light"] body{background:#F1F7FF}
 html[data-theme="light"] .header,html[data-theme="light"] .hero{background:#F1F7FF}
 html[data-theme="light"] footer{background:#E4EDFA}
+
+/* Approved Home visual test: compact 6x4 category hub. */
+.categories-grid{grid-template-columns:repeat(6,minmax(0,1fr));gap:10px}
+.categories-grid .category{min-height:73px;align-items:center;padding:12px 10px;gap:10px}
+.categories-grid .category h3{margin:0;font-size:14px;line-height:1.2}
+.categories-grid .category small{margin-top:4px;font-size:11px;line-height:1.2}
+.categories-grid .category>img{width:40px;height:40px;object-fit:contain}
+.category-symbol{display:grid;place-items:center;flex:none;width:40px;height:40px;border-radius:50%;font-size:21px;color:#1857a3}
+.categories-grid .category .arrow{top:50%;transform:translateY(-50%);right:9px}
+.categories-grid .category>div{min-width:0;flex:1}
+.calculator .outline{background:#0053ff;color:#fff;border:1px solid #0053ff;border-radius:7px;font-size:12px;box-shadow:0 2px 5px #0053ff19}
+.calculator .outline:hover{background:#0046d8;border-color:#0046d8}
+html[data-theme="dark"] .calculator .outline{background:#0053ff;color:#fff;border-color:#0053ff}
+html[data-theme="dark"] .calculator .outline:hover{background:#226cff}
+.guide-image span{background:#0053ff;color:#fff;font-weight:600;box-shadow:0 2px 6px #0002}
+.guide-image span:is(:not([class])){background:#0053ff}
+.guide-image span{background:#0053ff}
+.guide-image span:nth-child(2){color:#fff}
+.guide-image:has(span) span{background:#0053ff}
+.guide-image:has(span) span{color:#fff}
+/* Badges by editorial type; assigned from the existing article labels. */
+.guide:has(.guide-image span[data-kind="quick-tips"]) .guide-image span{background:#ffad0a}
+.guide:has(.guide-image span[data-kind="guide"]) .guide-image span{background:#0053ff}
+.guide:has(.guide-image span[data-kind="inspiration"]) .guide-image span{background:#0c9a38}
+.guide:has(.guide-image span[data-kind="buying-guide"]) .guide-image span{background:#7829d7}
+.guide:has(.guide-image span[data-kind="education"]) .guide-image span{background:#008c93}
+.guide:has(.guide-image span[data-kind="travel-tips"]) .guide-image span{background:#d65016}
+html[data-theme="dark"] .guide-image span{color:#fff}
+@media(max-width:1050px){.categories-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:720px){.categories-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.categories-grid .category{min-height:72px;padding:10px;gap:7px}.categories-grid .category .arrow{display:none}.categories-grid .category h3{font-size:12px}.category-symbol,.categories-grid .category>img{width:34px;height:34px;font-size:18px}}
+@media(max-width:420px){.categories-grid .category small{font-size:10px}}
