@@ -109,3 +109,10 @@ html[data-theme="dark"] .paint-collections-wrap .collections-panel{background:#1
  .paint-collections-wrap .block-heading{align-items:flex-start;flex-wrap:wrap;gap:8px}
  .paint-collections-wrap .block-heading h2{font-size:22px}
 }
+
+/* Dark-only sidebar contrast: brighten inactive category and submenu labels. */
+html[data-theme="dark"] .paint-page .paint-sidebar .side-item:not(.active),
+html[data-theme="dark"] .paint-page .paint-sidebar .side-item:not(.active) b,
+html[data-theme="dark"] .paint-page .paint-sidebar .side-item:not(.active) span,
+html[data-theme="dark"] .paint-page .paint-sidebar .side-item:not(.active) em,
+html[data-theme="dark"] .paint-page .paint-sidebar .subnav div:not(.selected){color:#cbd5e1}
