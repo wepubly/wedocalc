@@ -139,3 +139,8 @@ html[data-theme="dark"] .footer-bottom{border-color:#39445a}
  .category,.calculator,.guide{transition:none}
  .content .category:hover,.content .calculator:hover,.content .guide:hover{transform:none}
 }
+
+/* Solid light surfaces, with a slightly deeper footer. */
+html[data-theme="light"] body{background:#F1F7FF}
+html[data-theme="light"] .header,html[data-theme="light"] .hero{background:#F1F7FF}
+html[data-theme="light"] footer{background:#E4EDFA}
