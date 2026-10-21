@@ -236,3 +236,6 @@ html[data-theme="dark"] .hero h1 span{color:#5b91ff}
  .metricpedia-wordmark{font-size:clamp(32px,8.9vw,50px);letter-spacing:-2.6px}
  .metricpedia-ruler{height:42px}
 }
+
+/* Slightly more breathing room between Metricpedia logo and hero headline. */
+.hero .metricpedia-brand{margin-bottom:25px}
