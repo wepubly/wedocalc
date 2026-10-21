@@ -239,3 +239,11 @@ html[data-theme="dark"] .hero h1 span{color:#5b91ff}
 
 /* Slightly more breathing room between Metricpedia logo and hero headline. */
 .hero .metricpedia-brand{margin-bottom:25px}
+
+/* Home hero wordmark: modest size reduction, preserving centered ruler alignment. */
+.hero .metricpedia-wordmark{font-size:clamp(42px,5vw,58px)}
+.hero .metricpedia-ruler{height:37px}
+@media(max-width:720px){
+ .hero .metricpedia-wordmark{font-size:clamp(30px,8.2vw,44px)}
+ .hero .metricpedia-ruler{height:37px}
+}
