@@ -1,0 +1,50 @@
+name: Metricpedia public preview (production domain)
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: metricpedia-public-preview
+  cancel-in-progress: true
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      CLOUDFLARE_ACCOUNT_ID: b81896777d206a2239625d9cf2e8a40b
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Verify existing Cloudflare Pages target
+        shell: bash
+        run: |
+          node --input-type=module <<'NODE'
+          const token = process.env.CLOUDFLARE_API_TOKEN;
+          const account = process.env.CLOUDFLARE_ACCOUNT_ID;
+          if (!token || !account) throw new Error('Missing Cloudflare token or account ID');
+          const res = await fetch('https://api.cloudflare.com/client/v4/accounts/' + account + '/pages/projects/wedocalc', {
+            headers: { Authorization: 'Bearer ' + token }
+          });
+          const data = await res.json();
+          if (!res.ok || !data.success || data.result?.name !== 'wedocalc' ||
+              data.result?.production_branch !== 'main' ||
+              data.result?.subdomain !== 'wedocalc.pages.dev') {
+            throw new Error('Cloudflare Pages target mismatch; not deploying');
+          }
+          console.log('Verified existing Pages project, production branch main.');
+          NODE
+      - name: Prepare site
+        run: |
+          mkdir -p public-dist
+          cp index.html public-dist/
+          cp -R css assets public-dist/
+          grep -qi 'noindex, nofollow' public-dist/index.html || { echo 'Public visual prototype must remain noindex'; exit 1; }
+      - name: Publish Metricpedia public preview
+        run: npx --yes wrangler@4 pages deploy public-dist --project-name wedocalc --branch main --commit-hash "$GITHUB_SHA"
+      - name: Report
+        run: echo 'Published visual-only Metricpedia prototype to existing Pages production project, retaining noindex.' >> "$GITHUB_STEP_SUMMARY"

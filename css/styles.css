@@ -1,0 +1,241 @@
+/* Shared visual foundation */
+*{box-sizing:border-box}body{margin:0;color:#090e26;background:#fff;font-family:Arial,Helvetica,sans-serif;font-size:13px}button,input{font:inherit}button{border:0;background:none;color:inherit;padding:0;cursor:default}button:focus-visible,input:focus-visible{outline:2px solid #0055ff;outline-offset:3px}p,h1,h2,h3{margin:0}p,small{color:#6e7a98}h3{font-size:12px;line-height:1.2;font-weight:600}.logo{object-fit:contain;display:block;mix-blend-mode:multiply}.primary{background:#0053ff;color:white;border-radius:10px;padding:9px 16px;box-shadow:inset 0 0 0 1px #1970ff}.card{border:1px solid #e8edf5;border-radius:7px;background:white;box-shadow:0 1px 2px #13244903}.content{max-width:1320px;margin:auto}section{margin-bottom:13px}.section-heading{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px}.section-heading h2{font-size:22px;line-height:1.1;letter-spacing:-.6px}.section-heading p{font-size:13px;margin-top:3px}.text-link{color:#0053ff;font-size:12px;white-space:nowrap}.arrow{color:#7b89a5;font-size:20px}
+/* Header */
+.header{height:44px;border-bottom:1px solid #e0e8f5}.header-inner{max-width:1220px;height:100%;margin:auto;display:flex;align-items:center;gap:23px}.header .logo{width:162px;height:33px}nav{display:flex;gap:29px;align-items:center}nav button{font-size:13px}.header-actions{margin-left:auto;display:flex;gap:22px;align-items:center}.header-actions .primary{font-size:12px}.search-icon{font-size:28px;line-height:1}
+/* Hero */
+.hero{text-align:center;padding:33px 16px 15px;margin-bottom:0;background:linear-gradient(#f1f7ff 0%,#fff 95%)}h1{font-size:44px;letter-spacing:-1.6px;line-height:1.15;font-weight:750}h1 span{color:#0756ff}.hero>p{color:#121b3e;font-size:18px;margin-top:1px}.search-box{max-width:677px;margin:17px auto 15px;border:1px solid #e0e9f9;border-radius:18px;background:#fff;display:flex;align-items:center;padding:5px 6px 5px 17px;box-shadow:0 6px 22px #2262d406;height:54px}.search-box>span{font-size:31px;color:#35476e;margin-right:17px}.search-box input{border:0;min-width:0;flex:1;background:transparent;font-size:14px;outline:none;color:#71809f}.search-box input::placeholder{color:#71809f;opacity:1}.search-box button{height:42px;width:106px;font-size:14px}.benefits{display:flex;justify-content:center;gap:40px;align-items:center}.benefits>span{display:flex;align-items:center;gap:14px;color:#657492;font-size:13px}.benefits b{font-size:27px;line-height:28px}.yellow{color:#ffad20}.blue{color:#1295ff}.pink{color:#f34391}.teal{color:#00b7bc}
+/* Categories */
+.categories-grid,.calculators-grid{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:7px}.category{position:relative;display:flex;gap:11px;padding:12px 9px 12px 13px;min-height:100px}.category img{flex:none;width:49px;height:49px}.category h3{margin-top:3px;font-size:12px;letter-spacing:-.25px;white-space:nowrap}.category small{display:block;font-size:10px;margin-top:5px}.category p{font-size:10px;line-height:1.45;margin-top:10px;letter-spacing:-.15px}.category .arrow{position:absolute;right:14px;top:11px}.category h3{padding-right:6px}
+/* Popular calculators */
+.calculator{display:flex;gap:11px;padding:12px 11px;min-height:107px}.calculator img{object-fit:contain;flex:none}.calculator h3{font-size:11px;letter-spacing:-.25px;white-space:nowrap}.calculator p{font-size:10.5px;line-height:1.4;margin:5px 0 8px}.outline{border:1px solid #e1e7f1;border-radius:7px;font-size:11px;padding:6px 11px;white-space:nowrap;color:#344468}
+/* Editorial guides */
+.guides-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:12px}.guide-column{display:flex;flex-direction:column;gap:12px}.guide{overflow:hidden}.guide-image{position:relative;margin:2px 2px 0}.guide-image img{display:block;width:100%;height:81px;object-fit:cover;border-radius:5px}.guide-image span{position:absolute;left:9px;bottom:5px;background:#fff;border-radius:15px;font-size:10px;padding:6px 12px;box-shadow:0 1px 3px #0001}.guide-copy{padding:5px 11px 5px}.guide h3{font-size:13px;line-height:1.1;letter-spacing:-.25px}.guide p{font-size:13px;line-height:1.1;margin-top:4px}.guide-column:nth-child(2) .guide:first-child .guide-image img{height:94px}.guide-column:nth-child(3) .guide:first-child .guide-image img{height:106px}.guide-column:nth-child(4) .guide:first-child .guide-image img{height:85px}.guide-column:nth-child(5) .guide:first-child .guide-image img{height:77px}.guide-column:nth-child(3) .guide:last-child .guide-image img{height:61px}.guide-column:nth-child(2) .guide:last-child .guide-image img{height:65px}.guide-column:nth-child(4) .guide:last-child .guide-image img{height:66px}
+/* Footer */
+footer{border-top:1px solid #e8edf5;margin-top:10px;padding:4px 0 5px}.footer-inner{max-width:1320px;margin:auto;display:grid;grid-template-columns:1.45fr 1fr 1.03fr 1.17fr .9fr;position:relative;gap:25px}.identity .logo{width:137px;height:28px}.identity p{font-size:10.5px;line-height:1.15}.socials{display:flex;gap:17px;color:#4b5775;margin:5px 0}.socials button{font-size:16px}.identity small{font-size:10px}.footer-column{padding-top:6px}.footer-column h3{font-size:11px;font-weight:500;margin-bottom:3px}.footer-column button{display:block;color:#71809e;font-size:10.5px;line-height:1.1}.signature{position:absolute;bottom:0;right:0;font-size:10px;color:#74819d}.signature strong{color:#10172d;font-size:12px;margin-left:10px}.signature span{color:#0053ff}
+/* Responsive adaptations preserve the desktop hierarchy. */
+@media(min-width:1400px){.hero{padding-bottom:17px}.content{padding-top:0}}
+@media(max-width:1360px){.content,.footer-inner{margin-left:4.4%;margin-right:4.4%}.header-inner{margin:0 6%}.category{padding-left:8px;gap:6px}.category img{width:40px;height:40px}.category h3{white-space:normal}.calculator{gap:6px;padding:11px 7px}.calculator img{width:42px}.calculator h3{white-space:normal}.outline{padding:6px}.category .arrow{right:6px}}
+@media(max-width:1050px){.categories-grid,.calculators-grid{grid-template-columns:repeat(3,minmax(0,1fr))}.guides-grid{grid-template-columns:repeat(5,minmax(0,1fr));gap:8px}.guide-copy{padding:6px}.guide p{font-size:11px}.category h3,.calculator h3{font-size:12px}.category p,.calculator p{font-size:11px}.footer-inner{gap:15px}.signature{position:static;grid-column:1/-1;text-align:right}}
+@media(max-width:720px){.header{height:auto;min-height:57px}.header-inner{margin:0 4%;min-height:57px;flex-wrap:wrap;gap:10px;padding:8px 0}.header .logo{width:140px;height:auto}nav{order:3;width:100%;justify-content:center;gap:25px;padding:6px 0}.header-actions{gap:12px}.header-actions .primary{font-size:11px;padding:9px}.hero{padding:28px 16px 23px}h1{font-size:34px;letter-spacing:-1px}.hero>p{font-size:15px;line-height:1.45;margin-top:10px}.search-box{margin-top:20px}.search-box input{font-size:12px}.search-box>span{margin-right:8px}.search-box button{width:76px}.benefits{display:grid;grid-template-columns:1fr 1fr;gap:12px;max-width:370px;margin:auto}.benefits>span{gap:8px;font-size:11px}.benefits b{font-size:23px}.content,.footer-inner{margin:0 4%}section{margin-bottom:22px}.section-heading{align-items:flex-start;gap:10px;margin-bottom:10px}.section-heading h2{font-size:21px}.section-heading p{font-size:12px;line-height:1.4}.text-link{font-size:10px;padding-top:4px}.categories-grid,.calculators-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.category{padding:10px;gap:8px}.category h3{padding-right:5px}.category small{font-size:9px}.category p{font-size:10px}.category .arrow{display:none}.category img{width:35px;height:35px}.calculator{padding:12px 8px;gap:7px}.calculator img{width:35px;height:40px}.calculator h3{font-size:11px}.calculator p{font-size:10px}.outline{font-size:10px}.guides-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.guide-column{display:contents}.guide{order:0}.guide-image img{height:85px!important}.guide p{font-size:12px;line-height:1.3}.guide h3{font-size:13px}.guide-copy{padding:8px}.guide-image span{font-size:9px;padding:5px 8px}.footer-inner{grid-template-columns:repeat(2,minmax(0,1fr));gap:20px}.identity{grid-column:1/-1}.footer-column h3{font-size:13px}.footer-column button{font-size:12px;line-height:1.6}.signature{font-size:9px;padding-bottom:10px}}
+
+/* Keep the approved page gutters at every desktop width. */
+@media(min-width:721px){.content,.footer-inner{width:91.2%;margin-left:auto;margin-right:auto}}
+
+/* Official header logo: retain original PNG bytes and fit its transparent canvas. */
+.header-logo{display:block;position:relative;overflow:hidden;flex:none;width:162px;height:33px}
+.header .header-logo .logo{position:absolute;width:90.24%;height:auto;max-width:none;left:4.72%;top:-171.5%;mix-blend-mode:normal}
+@media(max-width:720px){.header-logo{width:140px;height:28.52px}}
+
+/* Footer: individual, accessible visual links; destinations will be added later. */
+.socials{align-items:center;gap:13px}
+.social-button{display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:4px}
+.social-button:focus-visible,.footer-link:focus-visible{outline:2px solid #0053ff;outline-offset:3px}
+.footer-logo{display:block;position:relative;overflow:hidden;width:137px;height:28px}
+.identity .footer-logo .logo{position:absolute;width:90.24%;height:auto;max-width:none;left:4.72%;top:-171.5%;mix-blend-mode:normal}
+.theme-toggle{display:inline-flex;align-items:center;justify-content:center;width:25px;height:25px;border-radius:50%;color:#344468}
+.theme-toggle:hover{background:#edf2fa}
+/* Dark palette. Layout and typography retain the light version's dimensions. */
+html[data-theme="dark"]{color-scheme:dark}
+html[data-theme="dark"] body{background:#0E1116;color:#f1f4fa}
+html[data-theme="dark"] .header{background:#0E1116;border-color:#303846}
+html[data-theme="dark"] .hero{background:linear-gradient(#151e2c 0%,#0E1116 95%)}
+html[data-theme="dark"] .hero>p{color:#d4ddeb}
+html[data-theme="dark"] h1 span{color:#5b91ff}
+html[data-theme="dark"] p,html[data-theme="dark"] small,html[data-theme="dark"] .benefits>span{color:#a8b5cb}
+html[data-theme="dark"] .card{background:#1B202A;border-color:#303846;box-shadow:0 1px 2px #0002}
+html[data-theme="dark"] .search-box{background:#1B202A;border-color:#354257}
+html[data-theme="dark"] .search-box input,html[data-theme="dark"] .search-box>span{color:#e0e7f2}
+html[data-theme="dark"] .search-box input::placeholder{color:#a8b5cb}
+html[data-theme="dark"] .outline{border-color:#435069;color:#d4ddeb}
+html[data-theme="dark"] .text-link{color:#82aaff}
+html[data-theme="dark"] .arrow{color:#b0bfd5}
+html[data-theme="dark"] .guide-image span{color:#10172d}
+html[data-theme="dark"] footer{background:#1B202A;border-color:#303846}
+html[data-theme="dark"] .footer-column button,html[data-theme="dark"] .signature{color:#a8b5cb}
+html[data-theme="dark"] .socials,html[data-theme="dark"] .signature strong{color:#e2e8f2}
+html[data-theme="dark"] .signature span{color:#82aaff}
+html[data-theme="dark"] .theme-toggle{color:#e2e8f2}
+html[data-theme="dark"] .theme-toggle:hover{background:#283344}
+html[data-theme="dark"] .category img,html[data-theme="dark"] .calculator img{border-radius:7px}
+@media(max-width:720px){.header-actions{gap:8px}.theme-toggle{width:22px;height:22px}}
+
+/* Footer spacing and social presentation adapted from Ublong's approved footer. */
+footer{padding:38px 0 22px;margin-top:24px}
+.footer-inner{grid-template-columns:1.5fr repeat(4,minmax(0,1fr));gap:40px}
+.footer-logo{width:210px;height:52px}
+.identity .footer-logo .logo{width:109.7%;left:-5.14%;top:-171.5%}
+.identity p{font-size:14px;line-height:1.6;margin:12px 0 20px}
+.socials{gap:10px;flex-wrap:wrap;margin:0}
+.socials .social-button{width:38px;height:38px;display:grid;place-items:center;border:1px solid #e3e7ee;border-radius:50%;color:#25334c;background:#fff;transition:transform .15s ease,border-color .15s ease,color .15s ease}
+.socials .social-button svg{width:18px;height:18px}
+.socials .social-button:hover,.socials .social-button:focus-visible{transform:translateY(-1px);border-color:#0053ff;color:#0053ff}
+.footer-column{padding-top:0}
+.footer-column h3{margin:0 0 13px;font-size:16px;line-height:1.3;font-weight:600}
+.footer-column .footer-link{font-size:14px;line-height:1.5;margin:0 0 8px;text-align:left;color:#6e7a98;transition:color .15s ease}
+.footer-column .footer-link:last-child{margin-bottom:0}
+.footer-column .footer-link:hover,.footer-column .footer-link:focus-visible{color:#0053ff}
+.footer-bottom{grid-column:1/-1;margin-top:0;padding-top:18px;border-top:1px solid #e3e7ee;display:flex;align-items:center;justify-content:space-between;gap:20px}
+.footer-bottom>small{font-size:13px;line-height:1.5}
+.footer-bottom .signature{position:static;font-size:12px;text-align:right}
+.footer-bottom .signature strong{font-size:14px}
+html[data-theme="dark"] .socials .social-button{background:#0E1116;color:#e2e8f2;border-color:#39445a}
+html[data-theme="dark"] .socials .social-button:hover,html[data-theme="dark"] .socials .social-button:focus-visible{border-color:#82aaff;color:#82aaff}
+html[data-theme="dark"] .footer-column .footer-link:hover,html[data-theme="dark"] .footer-column .footer-link:focus-visible{color:#82aaff}
+html[data-theme="dark"] .footer-bottom{border-color:#39445a}
+@media(max-width:1050px){.footer-inner{grid-template-columns:repeat(2,minmax(0,1fr));gap:28px}.identity{grid-column:1/-1}}
+@media(max-width:720px){footer{padding:30px 0 22px}.footer-inner{gap:26px}.footer-bottom{align-items:flex-start;flex-direction:column}.footer-bottom .signature{text-align:left;padding-bottom:0}.footer-logo{width:190px;height:47.1px}}
+@media(max-width:420px){.footer-inner{grid-template-columns:1fr}}
+@media(prefers-reduced-motion:reduce){.socials .social-button{transition:none}.socials .social-button:hover{transform:none}}
+
+/* Readable section typography and consistent card hover in both themes. */
+.content .section-heading{margin-bottom:14px;gap:20px}
+.content .section-heading h2{font-size:28px;line-height:1.2;letter-spacing:-.6px}
+.content .section-heading p{font-size:16px;line-height:1.5;margin-top:5px}
+.content .section-heading .text-link{font-size:14px}
+.content section{margin-bottom:28px}
+.category,.calculator,.guide{transition:transform .18s ease,border-color .18s ease,box-shadow .18s ease}
+.category{padding:16px 12px;gap:10px}
+.category h3{font-size:15px;line-height:1.35;white-space:normal;letter-spacing:-.2px;padding-right:9px}
+.category small{font-size:12px;line-height:1.5;margin-top:5px}
+.category p{font-size:14px;line-height:1.5;margin-top:10px;letter-spacing:normal}
+.category .arrow{right:8px;top:16px}
+.category img{width:40px;height:40px}
+.calculator{padding:16px 12px;gap:10px}
+.calculator img{width:42px;height:45px}
+.calculator h3{font-size:15px;line-height:1.35;white-space:normal;letter-spacing:-.2px}
+.calculator p{font-size:14px;line-height:1.5;margin:8px 0 12px}
+.calculator .outline{font-size:12px;line-height:1.4;white-space:normal;padding:7px 9px}
+.calculator>div{min-width:0;display:flex;flex-direction:column;align-items:flex-start}
+.calculator .outline{margin-top:auto}
+.guide-copy{padding:12px}
+.guide h3{font-size:16px;line-height:1.35;letter-spacing:-.2px}
+.guide p{font-size:14px;line-height:1.5;margin-top:7px}
+.guide-image span{font-size:11px}
+@media(hover:hover) and (pointer:fine){
+ .content .category:hover,.content .calculator:hover,.content .guide:hover{border-color:#0053ff;transform:translateY(-4px);box-shadow:0 8px 20px #0053ff16}
+ html[data-theme="dark"] .content .category:hover,html[data-theme="dark"] .content .calculator:hover,html[data-theme="dark"] .content .guide:hover{border-color:#82aaff;box-shadow:0 8px 20px #0004}
+}
+@media(max-width:1360px) and (min-width:1051px){
+ .category,.calculator{flex-direction:column;gap:10px}
+ .category>div{width:100%}
+ .calculator>div{flex:1}
+}
+@media(max-width:1050px) and (min-width:721px){.guides-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}.guide-column{display:contents}}
+@media(max-width:720px){
+ .content .section-heading h2{font-size:24px}
+ .content .section-heading p{font-size:15px}
+ .content .section-heading{flex-wrap:wrap;gap:8px}
+ .content .section-heading .text-link{font-size:13px}
+ .category,.calculator{flex-direction:column;padding:14px;gap:10px}
+ .category h3,.calculator h3{font-size:15px}
+ .category small{font-size:12px}
+ .category p,.calculator p{font-size:14px}
+ .calculator>div{flex:1}
+ .calculator .outline{font-size:12px}
+ .guide h3{font-size:16px}
+ .guide p{font-size:14px}
+}
+@media(prefers-reduced-motion:reduce){
+ .category,.calculator,.guide{transition:none}
+ .content .category:hover,.content .calculator:hover,.content .guide:hover{transform:none}
+}
+
+/* Solid light surfaces, with a slightly deeper footer. */
+html[data-theme="light"] body{background:#F1F7FF}
+html[data-theme="light"] .header,html[data-theme="light"] .hero{background:#F1F7FF}
+html[data-theme="light"] footer{background:#E4EDFA}
+
+/* Approved Home visual test: compact 6x4 category hub. */
+.categories-grid{grid-template-columns:repeat(6,minmax(0,1fr));gap:10px}
+.categories-grid .category{min-height:73px;align-items:center;padding:12px 10px;gap:10px}
+.categories-grid .category h3{margin:0;font-size:14px;line-height:1.2}
+.categories-grid .category small{margin-top:4px;font-size:11px;line-height:1.2}
+.categories-grid .category>img{width:40px;height:40px;object-fit:contain}
+.category-symbol{display:grid;place-items:center;flex:none;width:40px;height:40px;border-radius:50%;font-size:21px;color:#1857a3}
+.categories-grid .category .arrow{top:50%;transform:translateY(-50%);right:9px}
+.categories-grid .category>div{min-width:0;flex:1}
+.calculator .outline{background:#0053ff;color:#fff;border:1px solid #0053ff;border-radius:7px;font-size:12px;box-shadow:0 2px 5px #0053ff19}
+.calculator .outline:hover{background:#0046d8;border-color:#0046d8}
+html[data-theme="dark"] .calculator .outline{background:#0053ff;color:#fff;border-color:#0053ff}
+html[data-theme="dark"] .calculator .outline:hover{background:#226cff}
+.guide-image span{background:#0053ff;color:#fff;font-weight:600;box-shadow:0 2px 6px #0002}
+.guide-image span:is(:not([class])){background:#0053ff}
+.guide-image span{background:#0053ff}
+.guide-image span:nth-child(2){color:#fff}
+.guide-image:has(span) span{background:#0053ff}
+.guide-image:has(span) span{color:#fff}
+/* Badges by editorial type; assigned from the existing article labels. */
+.guide:has(.guide-image span[data-kind="quick-tips"]) .guide-image span{background:#ffad0a}
+.guide:has(.guide-image span[data-kind="guide"]) .guide-image span{background:#0053ff}
+.guide:has(.guide-image span[data-kind="inspiration"]) .guide-image span{background:#0c9a38}
+.guide:has(.guide-image span[data-kind="buying-guide"]) .guide-image span{background:#7829d7}
+.guide:has(.guide-image span[data-kind="education"]) .guide-image span{background:#008c93}
+.guide:has(.guide-image span[data-kind="travel-tips"]) .guide-image span{background:#d65016}
+html[data-theme="dark"] .guide-image span{color:#fff}
+@media(max-width:1050px){.categories-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:720px){.categories-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.categories-grid .category{min-height:72px;padding:10px;gap:7px}.categories-grid .category .arrow{display:none}.categories-grid .category h3{font-size:12px}.category-symbol,.categories-grid .category>img{width:34px;height:34px;font-size:18px}}
+@media(max-width:420px){.categories-grid .category small{font-size:10px}}
+
+
+/* Uniform editorial cards: consistent image height and maximum 3-line excerpts. */
+#guides .guides-grid{align-items:stretch}
+#guides .guide-column{display:contents}
+#guides .guide{height:100%;display:flex;flex-direction:column;min-width:0}
+#guides .guide-image{flex:none}
+#guides .guide-image img,
+#guides .guide-column .guide-image img{height:125px!important;object-fit:cover}
+#guides .guide-copy{flex:1;display:flex;flex-direction:column;min-height:0}
+#guides .guide h3{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;line-clamp:2;overflow:hidden;min-height:calc(1.35em * 2)}
+#guides .guide p{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:3;line-clamp:3;overflow:hidden;min-height:calc(1.5em * 3);max-height:calc(1.5em * 3)}
+@media(max-width:720px){
+  #guides .guide-image img,
+  #guides .guide-column .guide-image img{height:110px!important}
+}
+
+
+/* Metricpedia approved Google-style hero branding (preview only). */
+.header-inner{justify-content:space-between}
+.header nav{margin-right:auto}
+.metricpedia-brand{width:min(100%,370px);margin:0 auto 15px;display:flex;flex-direction:column;align-items:stretch;gap:3px;user-select:none}
+.metricpedia-wordmark{font-family:Arial,Helvetica,sans-serif;font-size:clamp(45px,5.6vw,66px);line-height:1.05;font-weight:800;letter-spacing:-3.1px;color:#031f51;text-align:center}
+.metricpedia-ruler{position:relative;overflow:hidden;background:#0870f6;border-radius:6px;height:42px;padding:0 12px 3px;display:flex;align-items:flex-end;box-shadow:inset 0 1px 0 #ffffff2e}
+.ruler-ticks{position:absolute;left:13px;right:13px;top:0;height:21px;background:repeating-linear-gradient(to right,#fff 0 1.5px,transparent 1.5px 8px);mask-image:linear-gradient(to bottom,#000 0%,#000 45%,transparent 46%)}
+.ruler-numbers{position:relative;display:flex;width:100%;justify-content:space-between;color:#fff;font-size:16px;font-weight:700;line-height:1.2}
+.hero{padding-top:24px}
+.hero h1{font-size:clamp(30px,3.5vw,44px)}
+.metricpedia-footer-logo{display:inline-block;color:#031f51;font-size:30px;font-weight:800;letter-spacing:-1.5px;line-height:1.2}
+html[data-theme="dark"] .metricpedia-wordmark,html[data-theme="dark"] .metricpedia-footer-logo{color:#edf4ff}
+html[data-theme="dark"] .hero h1 span{color:#5b91ff}
+@media(max-width:720px){.metricpedia-brand{width:min(100%,290px);margin-bottom:18px}.metricpedia-wordmark{font-size:50px;letter-spacing:-2.6px}.metricpedia-ruler{height:37px}.ruler-numbers{font-size:14px}.hero{padding-top:25px}.header nav{margin-right:0}.metricpedia-footer-logo{font-size:26px}}
+
+
+/* Metricpedia approved alignment: the ruler spans exactly from the M to the final a. */
+.metricpedia-brand{
+  width:max-content;
+  max-width:calc(100% - 16px);
+  align-items:stretch;
+}
+.metricpedia-wordmark{
+  width:100%;
+  white-space:nowrap;
+}
+.metricpedia-ruler{
+  box-sizing:border-box;
+  width:100%;
+  flex:none;
+  height:42px;
+}
+.ruler-ticks{
+  background-image:
+    repeating-linear-gradient(to right,#fff 0 1.5px,transparent 1.5px 100%);
+  background-size:2% 100%;
+  background-repeat:repeat-x;
+}
+@media(max-width:720px){
+ .metricpedia-brand{width:max-content;max-width:calc(100% - 16px)}
+ .metricpedia-wordmark{font-size:clamp(32px,8.9vw,50px);letter-spacing:-2.6px}
+ .metricpedia-ruler{height:42px}
+}
+
+/* Slightly more breathing room between Metricpedia logo and hero headline. */
+.hero .metricpedia-brand{margin-bottom:25px}
