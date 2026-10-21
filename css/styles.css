@@ -25,3 +25,36 @@ footer{border-top:1px solid #e8edf5;margin-top:10px;padding:4px 0 5px}.footer-in
 .header-logo{display:block;position:relative;overflow:hidden;flex:none;width:162px;height:33px}
 .header .header-logo .logo{position:absolute;width:90.24%;height:auto;max-width:none;left:4.72%;top:-171.5%;mix-blend-mode:normal}
 @media(max-width:720px){.header-logo{width:140px;height:28.52px}}
+
+/* Footer: individual, accessible visual links; destinations will be added later. */
+.socials{align-items:center;gap:13px}
+.social-button{display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:4px}
+.social-button:focus-visible,.footer-link:focus-visible{outline:2px solid #0053ff;outline-offset:3px}
+.footer-logo{display:block;position:relative;overflow:hidden;width:137px;height:28px}
+.identity .footer-logo .logo{position:absolute;width:90.24%;height:auto;max-width:none;left:4.72%;top:-171.5%;mix-blend-mode:normal}
+.theme-toggle{display:inline-flex;align-items:center;justify-content:center;width:25px;height:25px;border-radius:50%;color:#344468}
+.theme-toggle:hover{background:#edf2fa}
+/* Dark palette. Layout and typography retain the light version's dimensions. */
+html[data-theme="dark"]{color-scheme:dark}
+html[data-theme="dark"] body{background:#0E1116;color:#f1f4fa}
+html[data-theme="dark"] .header{background:#0E1116;border-color:#303846}
+html[data-theme="dark"] .hero{background:linear-gradient(#151e2c 0%,#0E1116 95%)}
+html[data-theme="dark"] .hero>p{color:#d4ddeb}
+html[data-theme="dark"] h1 span{color:#5b91ff}
+html[data-theme="dark"] p,html[data-theme="dark"] small,html[data-theme="dark"] .benefits>span{color:#a8b5cb}
+html[data-theme="dark"] .card{background:#1B202A;border-color:#303846;box-shadow:0 1px 2px #0002}
+html[data-theme="dark"] .search-box{background:#1B202A;border-color:#354257}
+html[data-theme="dark"] .search-box input,html[data-theme="dark"] .search-box>span{color:#e0e7f2}
+html[data-theme="dark"] .search-box input::placeholder{color:#a8b5cb}
+html[data-theme="dark"] .outline{border-color:#435069;color:#d4ddeb}
+html[data-theme="dark"] .text-link{color:#82aaff}
+html[data-theme="dark"] .arrow{color:#b0bfd5}
+html[data-theme="dark"] .guide-image span{color:#10172d}
+html[data-theme="dark"] footer{background:#1B202A;border-color:#303846}
+html[data-theme="dark"] .footer-column button,html[data-theme="dark"] .signature{color:#a8b5cb}
+html[data-theme="dark"] .socials,html[data-theme="dark"] .signature strong{color:#e2e8f2}
+html[data-theme="dark"] .signature span{color:#82aaff}
+html[data-theme="dark"] .theme-toggle{color:#e2e8f2}
+html[data-theme="dark"] .theme-toggle:hover{background:#283344}
+html[data-theme="dark"] .category img,html[data-theme="dark"] .calculator img{border-radius:7px}
+@media(max-width:720px){.header-actions{gap:8px}.theme-toggle{width:22px;height:22px}}
