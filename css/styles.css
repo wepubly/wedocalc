@@ -86,3 +86,56 @@ html[data-theme="dark"] .footer-bottom{border-color:#39445a}
 @media(max-width:720px){footer{padding:30px 0 22px}.footer-inner{gap:26px}.footer-bottom{align-items:flex-start;flex-direction:column}.footer-bottom .signature{text-align:left;padding-bottom:0}.footer-logo{width:190px;height:47.1px}}
 @media(max-width:420px){.footer-inner{grid-template-columns:1fr}}
 @media(prefers-reduced-motion:reduce){.socials .social-button{transition:none}.socials .social-button:hover{transform:none}}
+
+/* Readable section typography and consistent card hover in both themes. */
+.content .section-heading{margin-bottom:14px;gap:20px}
+.content .section-heading h2{font-size:28px;line-height:1.2;letter-spacing:-.6px}
+.content .section-heading p{font-size:16px;line-height:1.5;margin-top:5px}
+.content .section-heading .text-link{font-size:14px}
+.content section{margin-bottom:28px}
+.category,.calculator,.guide{transition:transform .18s ease,border-color .18s ease,box-shadow .18s ease}
+.category{padding:16px 12px;gap:10px}
+.category h3{font-size:15px;line-height:1.35;white-space:normal;letter-spacing:-.2px;padding-right:9px}
+.category small{font-size:12px;line-height:1.5;margin-top:5px}
+.category p{font-size:14px;line-height:1.5;margin-top:10px;letter-spacing:normal}
+.category .arrow{right:8px;top:16px}
+.category img{width:40px;height:40px}
+.calculator{padding:16px 12px;gap:10px}
+.calculator img{width:42px;height:45px}
+.calculator h3{font-size:15px;line-height:1.35;white-space:normal;letter-spacing:-.2px}
+.calculator p{font-size:14px;line-height:1.5;margin:8px 0 12px}
+.calculator .outline{font-size:12px;line-height:1.4;white-space:normal;padding:7px 9px}
+.calculator>div{min-width:0;display:flex;flex-direction:column;align-items:flex-start}
+.calculator .outline{margin-top:auto}
+.guide-copy{padding:12px}
+.guide h3{font-size:16px;line-height:1.35;letter-spacing:-.2px}
+.guide p{font-size:14px;line-height:1.5;margin-top:7px}
+.guide-image span{font-size:11px}
+@media(hover:hover) and (pointer:fine){
+ .content .category:hover,.content .calculator:hover,.content .guide:hover{border-color:#0053ff;transform:translateY(-4px);box-shadow:0 8px 20px #0053ff16}
+ html[data-theme="dark"] .content .category:hover,html[data-theme="dark"] .content .calculator:hover,html[data-theme="dark"] .content .guide:hover{border-color:#82aaff;box-shadow:0 8px 20px #0004}
+}
+@media(max-width:1360px) and (min-width:1051px){
+ .category,.calculator{flex-direction:column;gap:10px}
+ .category>div{width:100%}
+ .calculator>div{flex:1}
+}
+@media(max-width:1050px) and (min-width:721px){.guides-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}.guide-column{display:contents}}
+@media(max-width:720px){
+ .content .section-heading h2{font-size:24px}
+ .content .section-heading p{font-size:15px}
+ .content .section-heading{flex-wrap:wrap;gap:8px}
+ .content .section-heading .text-link{font-size:13px}
+ .category,.calculator{flex-direction:column;padding:14px;gap:10px}
+ .category h3,.calculator h3{font-size:15px}
+ .category small{font-size:12px}
+ .category p,.calculator p{font-size:14px}
+ .calculator>div{flex:1}
+ .calculator .outline{font-size:12px}
+ .guide h3{font-size:16px}
+ .guide p{font-size:14px}
+}
+@media(prefers-reduced-motion:reduce){
+ .category,.calculator,.guide{transition:none}
+ .content .category:hover,.content .calculator:hover,.content .guide:hover{transform:none}
+}
