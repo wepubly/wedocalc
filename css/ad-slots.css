@@ -12,3 +12,9 @@ html[data-theme="dark"] .mp-ad-placeholder{background:#19283b!important;border-c
 html[data-theme="dark"] .mp-ad-brand{color:#bdcde2!important}
 html[data-theme="dark"] .mp-ad-label{color:#adbed6!important}
 html[data-theme="dark"] .mp-ad-id{color:#91a5c0!important}
+
+/* Category template: reserve existing card positions, never introduce banner rows. */
+.category-page #featured .mp-ad-category-featured{min-height:134px;padding:7px}
+.category-page #ideas .mp-ad-category-guides{min-height:235px;padding:7px;overflow:hidden}
+.category-page #featured .mp-ad-category-featured .mp-ad-inner,
+.category-page #ideas .mp-ad-category-guides .mp-ad-inner{height:100%}
