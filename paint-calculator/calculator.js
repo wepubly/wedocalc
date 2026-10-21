@@ -146,7 +146,13 @@
  tabs.forEach(tab=>tab.addEventListener('click',()=>setMode(tab.dataset.mode)));
  root.querySelectorAll('[data-area-mode]').forEach(button=>button.addEventListener('click',()=>setAreaMode(button.dataset.areaMode)));
  root.querySelectorAll('[data-calc-action]').forEach(button=>button.addEventListener('click',()=>{if(calculate())root.querySelector('.calc-results').scrollIntoView({block:'nearest',behavior:'smooth'});}));
- root.querySelectorAll('.calc-mode input,.calc-mode select').forEach(el=>el.addEventListener(el.tagName==='SELECT'?'change':'input',calculate));
+ root.querySelectorAll('.calc-mode input,.calc-mode select').forEach(el=>el.addEventListener(el.tagName==='SELECT'?'change':'input',()=>{
+  if(mode==='cost' && el===panel().querySelector('.calc-fields label:first-child select')){
+   const unit=el.value==='liters'?'liter':'gallon';
+   panel().querySelector('.calc-fields label:nth-child(2)').childNodes[0].textContent='Price per '+unit+' ';
+  }
+  calculate();
+ }));
  restore();setAreaMode(areaMode);setMode(mode);
  if(window.MetricpediaSharing) window.MetricpediaSharing.mount({
   container:root.querySelector('#mp-share'),
