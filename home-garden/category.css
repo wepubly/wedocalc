@@ -90,3 +90,11 @@ html[data-theme="dark"] .footer-wordmark,html[data-theme="dark"] .foot-bottom st
 @media(max-width:720px){.category-page .header{height:auto}.category-page .header-inner{padding:12px 0;flex-wrap:wrap;gap:15px}.compact-brand{width:150px}.compact-brand strong{font-size:22px}.category-page nav{order:3;width:100%;justify-content:center;gap:18px}.category-page .header-actions{margin-left:auto;gap:10px}.category-page .header-actions .primary{font-size:11px;padding:8px}.category-hero,.hero-overlay{min-height:295px}.hero-container{padding:19px 0}.hero-title{margin:19px 0 10px;gap:12px}.hero-title h1{font-size:34px}.garden-bubble{width:46px;height:46px;font-size:41px;line-height:40px}.hero-container>p{font-size:14px}.category-content{padding-top:22px}.category-content .block-heading{align-items:flex-start;flex-wrap:wrap;gap:8px}.category-content .block-heading h2{font-size:22px}.featured-grid,.articles-grid,.collections-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.topics-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.calc-card{flex-direction:column;min-height:170px}.calc-detail h3{font-size:13px}.view-link{font-size:11px}.collections-panel{padding:13px}.collection{align-items:flex-start;flex-direction:column}.collection img{width:100%;height:80px}.collection .chevron{display:none}.story-image{height:100px}.foot-layout{grid-template-columns:repeat(2,minmax(0,1fr));gap:24px}.foot-brand{grid-column:1/-1}.foot-bottom{flex-direction:column;align-items:flex-start}}
 @media(max-width:400px){.category-page .header-actions .primary{display:none}.calc-card{padding:10px}.topic-pill{padding:8px;font-size:11px}.articles-grid{gap:8px}.story-body{padding:8px}.story-body h3{font-size:12px}}
 @media(prefers-reduced-motion:reduce){.category-page .card{transition:none}}
+
+/* Shared footer: approved global appearance. */
+.category-page footer{margin-top:28px;background:#e4edfa}
+html[data-theme="dark"] .category-page footer{background:#1b202a}
+/* Home & Garden featured calculator actions. */
+.category-page .calc-card .open-btn{background:#0053ff;border-color:#0053ff;color:#fff;font-weight:500;box-shadow:0 2px 5px #0053ff19}
+.category-page .calc-card .open-btn:hover{background:#0046d8;border-color:#0046d8}
+html[data-theme="dark"] .category-page .calc-card .open-btn{background:#0053ff;border-color:#0053ff;color:#fff}
