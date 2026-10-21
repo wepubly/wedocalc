@@ -1,29 +1,38 @@
-# Metricpedia — controlled domain migration
+# Metricpedia — safe rebrand & infrastructure checklist
 
-Status: PREPARATION ONLY. No production deployment or DNS changes authorized.
+## Confirmed status
+- Cloudflare Registrar: `metricpedia.com` purchased.
+- Cloudflare Pages > `wedocalc` > Custom domains: `metricpedia.com` shown **Active** in the user's screenshot (SSL enabled).
+- The user opened https://metricpedia.com and confirmed it serves the existing **Coming Soon** production page.
+- Existing custom domains `wedocalc.com` and `www.wedocalc.com` remain active; do not delete them.
+- GitHub repository currently named `wepubly/wedocalc`.
+- Migration preparation branch: `work/metricpedia-migration` (no production merge).
+- Approved visual preview branch: `work/home-visual-v1`.
+- Preview: https://work-home-visual-v1.wedocalc.pages.dev/
+- The visual prototype has a `noindex, nofollow` meta tag and nonfunctional controls.
 
-## Confirmed existing assets
-- GitHub repository: `wepubly/wedocalc`
-- Source branch approved for visual preview: `work/home-visual-v1`
-- Migration preparation branch: `work/metricpedia-migration`
-- Existing Cloudflare Pages project: `wedocalc`
-- Production branch configured in existing GitHub Actions workflow: `main`
-- Existing preview: https://work-home-visual-v1.wedocalc.pages.dev/
-- Target domain purchased at Cloudflare Registrar: `metricpedia.com`
-- UI is currently a nonfunctional visual prototype and its HTML explicitly says `noindex, nofollow`.
+## Rename the GitHub repository (one manual action)
+1. Open https://github.com/wepubly/wedocalc/settings
+2. Under **General > Repository name**, replace `wedocalc` with `metricpedia`.
+3. Click **Rename**. GitHub commonly redirects old repository links, but CI/scripts should be inspected for hard-coded paths after rename.
+4. Verify the repository now opens at https://github.com/wepubly/metricpedia and that the branches `main`, `work/home-visual-v1`, and `work/metricpedia-migration` remain intact.
 
-## Migration sequence
-1. Preserve `work/home-visual-v1` and existing preview.
-2. Inspect Cloudflare Dashboard > Workers & Pages > `wedocalc` > Custom domains.
-3. When the user explicitly authorizes a public launch, attach `metricpedia.com` (and optionally `www.metricpedia.com`) to the correct Pages project using the Cloudflare UI. Verify DNS/SSL. Do NOT attach the domain to the visual placeholder until approval.
-4. Promote approved implementation to `main` only after real production content has been verified and deployment settings intentionally reviewed.
-5. Update metadata/canonical/OG/sitemap/robots settings to the approved domain as part of launch; do not retain prototype `noindex` on public production.
-6. Decide separately whether to rename the GitHub repository and/or create a new Cloudflare Pages project. Neither is required for the domain to serve the existing Pages deployment.
-7. Update any scripts, secrets names, and Pages project assumptions if a repository or Pages project is renamed. The current workflow explicitly requires Cloudflare Pages project `wedocalc` with production branch `main` and subdomain `wedocalc.pages.dev`.
-8. Set a preferred canonical domain and 301 redirects only after go-live and DNS validation.
+## Important: do NOT rename the Cloudflare Pages project yet
+The current GitHub Actions preview workflow is configured to find project `wedocalc` and enforce:
+- project subdomain `wedocalc.pages.dev`
+- production branch `main`
+- preview branch `work/home-visual-v1`
+- deployment target `wrangler pages deploy ... --project-name wedocalc`
 
-## Safety boundaries
-- Never request a Cloudflare token value in chat.
-- Do not merge into `main` automatically.
-- Do not change production DNS/routing during preview preparation.
-- Keep original preview accessible throughout transition.
+This **remains valid after a GitHub repository rename**, provided the GitHub Actions secret `CLOUDFLARE_API_TOKEN` stays available. Renaming/moving the Pages project or changing deployment assumptions without coordinated workflow updates could interrupt deployment. The public domain is already metricpedia.com, so changing internal infrastructure names is unnecessary.
+
+## Follow-up checks after renaming
+- Confirm the existing preview GitHub Actions workflow still succeeds on the renamed repository.
+- Confirm main still shows **Coming Soon** at metricpedia.com.
+- Confirm preview still shows the approved Home.
+- Update branding in any future production code as part of launch; the migration branch already uses Metricpedia in page title, footer, and theme storage key.
+- Before public release, review actual calculator behavior, canonical domain, OG metadata, sitemap, robots, structured data, privacy pages, and whether to redirect older domains.
+- Do not merge visual prototype into main until explicitly authorized.
+
+## Safety
+Do not publish to production, change DNS, delete old domains, request token values in chat, or modify `main` during this preparation.
