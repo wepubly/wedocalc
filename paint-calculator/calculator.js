@@ -157,6 +157,7 @@
  if(window.MetricpediaSharing) window.MetricpediaSharing.mount({
   container:root.querySelector('#mp-share'),
   getReport:()=>report,
-  getLink:stateUrl
+  getLink:stateUrl,
+  printPreviewUrl:'../print/paint-calculator/'
  });
 })();
