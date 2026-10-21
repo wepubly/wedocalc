@@ -18,3 +18,7 @@ html[data-theme="dark"] .mp-ad-id{color:#91a5c0!important}
 .category-page #ideas .mp-ad-category-guides{min-height:235px;padding:7px;overflow:hidden}
 .category-page #featured .mp-ad-category-featured .mp-ad-inner,
 .category-page #ideas .mp-ad-category-guides .mp-ad-inner{height:100%}
+
+/* Subcategory hub: third calculator card is a fixed-size advertising placeholder. */
+.paint-page .paint-grid .mp-ad-subcategory{min-height:276px;padding:8px;flex-direction:column}
+.paint-page .paint-grid .mp-ad-subcategory .mp-ad-inner{height:100%}
