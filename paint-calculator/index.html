@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="en-US" data-theme="light">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>Paint Calculator | Metricpedia — Visual Preview</title>
+<meta name="description" content="Free paint calculator for paint needed, coverage and cost.">
+<link rel="stylesheet" href="../css/styles.css">
+<link rel="stylesheet" href="../home-garden/category.css">
+<link rel="stylesheet" href="calculator.css">
+<link rel="stylesheet" href="../css/tokens.css">
+</head>
+<body class="category-page calculator-page">
+<div id="shared-header" data-variant="inner"></div>
+<main>
+<section class="calc-hero">
+<div class="calc-hero-inner">
+<div class="calc-crumb"><a href="../">Home</a><span>›</span><a href="../#categories">Calculators</a><span>›</span><a href="../home-garden/">Home &amp; Garden</a><span>›</span><a href="../paint-calculators/">Paint Calculators</a><span>›</span><strong>Paint Calculator</strong></div>
+<h1>Paint Calculator</h1>
+<h2>Estimate paint, coverage and costs for your next project.</h2>
+<p>Use our free paint calculator to find out how much paint to buy, how much area your paint will cover, and your estimated painting budget.</p>
+<div class="calc-benefits"><div><span>▦</span><b>Accurate estimates<small>Plan with confidence</small></b></div><div><span>◷</span><b>Easy to use<small>Three simple modes</small></b></div><div><span>⌂</span><b>For any project<small>Walls, ceilings and more</small></b></div></div>
+</div></section>
+<div class="calc-shell">
+<div class="calc-top">
+<section class="calc-panel calc-workspace" aria-label="Paint Calculator">
+<h2>Paint Calculator</h2><p class="section-sub">Choose a mode and enter your project details.</p>
+<div class="calc-tabs" role="tablist" aria-label="Calculation mode"><button type="button" role="tab" aria-selected="true" class="active" data-mode="needed">Paint Needed</button><button type="button" role="tab" aria-selected="false" data-mode="coverage">Paint Coverage</button><button type="button" role="tab" aria-selected="false" data-mode="cost">Paint Cost</button></div>
+<div class="calc-mode" data-panel="needed">
+<div class="calc-subtabs"><button type="button" class="chosen" data-area-mode="area">By Area (Square Feet)</button><button type="button" data-area-mode="room">By Room Dimensions</button></div>
+<div class="calc-fields" data-fields="area">
+<label>Total area to paint <span><input type="number" value="500" min="0" aria-label="Total area to paint"><select aria-label="Area unit"><option>sq ft</option><option>sq m</option></select></span><small>Total paintable wall or ceiling area.</small></label>
+<label>Paint coverage rate <span><input type="number" value="350" min="0" aria-label="Paint coverage rate"><select aria-label="Coverage unit"><option>sq ft per gallon</option><option>sq m per liter</option></select></span><small>Check the paint can for the manufacturer's coverage rate.</small></label>
+<label>Number of coats <span class="stepper"><button type="button" data-step="-1" aria-label="Remove a coat">−</button><output>2</output><button type="button" data-step="1" aria-label="Add a coat">+</button></span><small>Most projects use two coats.</small></label>
+<label>Extra allowance <span><input type="number" value="10" aria-label="Extra paint allowance"><select aria-label="Allowance unit"><option>%</option></select></span><small>Allow for texture, waste and touch-ups.</small></label>
+</div>
+<div class="calc-fields is-hidden" data-fields="room">
+<label>Room length <span><input type="number" value="15" min="0"><select><option>ft</option><option>m</option></select></span></label>
+<label>Room width <span><input type="number" value="12" min="0"><select><option>ft</option><option>m</option></select></span></label>
+<label>Wall height <span><input type="number" value="9" min="0"><select><option>ft</option><option>m</option></select></span></label>
+<label>Coverage per gallon <span><input type="number" value="350" min="0"><select><option>sq ft/gal</option></select></span></label>
+<label>Number of coats <span class="stepper"><button type="button" data-step="-1">−</button><output>2</output><button type="button" data-step="1">+</button></span></label>
+</div>
+<button class="calc-submit" type="button" data-calc-action>▦ &nbsp; Calculate Paint Needed →</button>
+</div>
+<div class="calc-mode is-hidden" data-panel="coverage">
+<div class="calc-fields">
+<label>Available paint <span><input type="number" value="2" min="0"><select><option>gallons</option><option>liters</option></select></span><small>How much paint do you already have?</small></label>
+<label>Coverage rate <span><input type="number" value="350" min="0"><select><option>sq ft per gallon</option><option>sq m per liter</option></select></span><small>Use the value from your paint label.</small></label>
+<label>Number of coats <span class="stepper"><button type="button" data-step="-1">−</button><output>2</output><button type="button" data-step="1">+</button></span></label>
+</div>
+<button class="calc-submit" type="button" data-calc-action>▦ &nbsp; Calculate Coverage →</button>
+</div>
+<div class="calc-mode is-hidden" data-panel="cost">
+<div class="calc-fields">
+<label>Paint quantity <span><input type="number" value="4" min="0"><select><option>gallons</option><option>liters</option></select></span></label>
+<label>Price per gallon <span><input type="number" value="38" min="0"><select><option>USD</option></select></span></label>
+<label>Supplies and materials <span><input type="number" value="25" min="0"><select><option>USD</option></select></span></label>
+</div>
+<button class="calc-submit" type="button" data-calc-action>▦ &nbsp; Estimate Paint Cost →</button>
+</div>
+</section>
+<section class="calc-panel calc-results" aria-label="Results"><h2>Results</h2><p class="section-sub">Estimated quantities for your project.</p><div class="calc-answer"><span class="result-symbol" aria-hidden="true">▣</span><div><strong id="result-value">3.14 gallons</strong><small id="result-label">Illustrative paint needed</small></div></div><div class="calc-result-breakdown"><div><span>Estimated area</span><b id="detail-area">500 sq ft</b></div><div><span>Coverage rate</span><b id="detail-rate">350 sq ft/gal</b></div><div><span>Number of coats</span><b id="detail-coats">2</b></div><div><span>Estimated paint</span><b id="detail-total">3.14 gallons</b></div></div><p class="calc-advice"><b>ⓘ</b> This is a visual prototype with sample results. Calculation logic will be added after design approval.</p></section>
+<aside class="calc-panel calc-related"><h2>Related Calculators</h2>
+<a class="related-item" href="../paint-calculators/"><img src="../assets/images/guide-3.jpg" alt=""><span><b>Paint Cost Calculator</b><small>Estimate your paint budget.</small></span><i>›</i></a>
+<a class="related-item" href="../paint-calculators/"><img src="../assets/images/guide-8.jpg" alt=""><span><b>Room Paint Calculator</b><small>Plan paint for a single room.</small></span><i>›</i></a>
+<a class="related-item" href="../paint-calculators/"><img src="../assets/images/guide-4.jpg" alt=""><span><b>Ceiling Paint Calculator</b><small>Estimate paint for ceilings.</small></span><i>›</i></a>
+<a class="related-item" href="../paint-calculators/"><img src="../assets/images/guide-8.jpg" alt=""><span><b>Trim Paint Calculator</b><small>Baseboards, doors and trim.</small></span><i>›</i></a>
+<a class="related-item" href="../paint-calculators/"><img src="../assets/images/guide-4.jpg" alt=""><span><b>Exterior Paint Calculator</b><small>Paint for exterior walls.</small></span><i>›</i></a>
+</aside></div>
+<div class="calc-bottom">
+<section class="calc-panel calc-info"><h2>How Paint Calculation Works</h2><p>Paint quantity depends on the surface area, the product's coverage rate, and the number of coats. A small extra allowance helps account for texture, application method and touch-ups.</p><div class="fact-box"><h3>Key Factors</h3><ul><li>Surface type and texture</li><li>Paint type and finish</li><li>Manufacturer coverage rate</li><li>Number of coats</li><li>Application method</li><li>Color change and primer</li></ul></div></section>
+<section class="calc-panel calc-info"><h2>Tips for Accurate Results</h2><img class="tips-photo" src="../assets/images/guide-8.jpg" alt="Paint and decorating materials" loading="lazy"><ul><li>Read the actual coverage rate on the paint can.</li><li>Include the full area of walls and ceilings.</li><li>Allow for a second coat when needed.</li><li>Consider textured or porous surfaces.</li><li>Keep paint from the same batch for touch-ups.</li></ul></section>
+<section class="calc-panel calc-info"><h2>Popular Paint Guides</h2>
+<a class="related-item" href="../paint-calculators/"><img src="../assets/images/guide-8.jpg" alt=""><span><b>How to Calculate Paint for a Room</b><small>Step-by-step guide and examples.</small></span><i>›</i></a>
+<a class="related-item" href="../paint-calculators/"><img src="../assets/images/guide-3.jpg" alt=""><span><b>How Much Does Paint Cost?</b><small>A complete guide to paint prices.</small></span><i>›</i></a>
+<a class="related-item" href="../paint-calculators/"><img src="../assets/images/guide-4.jpg" alt=""><span><b>Interior vs. Exterior Paint</b><small>Know the differences.</small></span><i>›</i></a>
+<a class="related-item" href="../paint-calculators/"><img src="../assets/images/guide-8.jpg" alt=""><span><b>Paint Coverage Explained</b><small>Understanding coverage rates.</small></span><i>›</i></a>
+</section>
+</div>
+<section class="calc-panel calc-faq"><h2>Frequently Asked Questions</h2><details><summary>How many square feet does a gallon of paint cover?</summary><p>Many paints specify a coverage range around 300–400 square feet per gallon for a single coat, but check your exact product label.</p></details><details><summary>Should I plan for two coats?</summary><p>Two coats are common for an even finish. The ideal number depends on the old and new colors, paint type and surface.</p></details><details><summary>How much extra paint should I buy?</summary><p>An allowance around 10–15% can be a useful planning starting point, depending on surface and application.</p></details></section>
+</div>
+</main><div id="shared-footer"></div>
+<script src="../assets/shared-header.js" defer></script>
+<script src="../assets/theme.js" defer></script>
+<script src="../assets/shared-footer.js" defer></script>
+<script src="calculator.js" defer></script>
+</body></html>
