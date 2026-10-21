@@ -207,3 +207,32 @@ html[data-theme="dark"] .guide-image span{color:#fff}
 html[data-theme="dark"] .metricpedia-wordmark,html[data-theme="dark"] .metricpedia-footer-logo{color:#edf4ff}
 html[data-theme="dark"] .hero h1 span{color:#5b91ff}
 @media(max-width:720px){.metricpedia-brand{width:min(100%,290px);margin-bottom:18px}.metricpedia-wordmark{font-size:50px;letter-spacing:-2.6px}.metricpedia-ruler{height:37px}.ruler-numbers{font-size:14px}.hero{padding-top:25px}.header nav{margin-right:0}.metricpedia-footer-logo{font-size:26px}}
+
+
+/* Metricpedia approved alignment: the ruler spans exactly from the M to the final a. */
+.metricpedia-brand{
+  width:max-content;
+  max-width:calc(100% - 16px);
+  align-items:stretch;
+}
+.metricpedia-wordmark{
+  width:100%;
+  white-space:nowrap;
+}
+.metricpedia-ruler{
+  box-sizing:border-box;
+  width:100%;
+  flex:none;
+  height:42px;
+}
+.ruler-ticks{
+  background-image:
+    repeating-linear-gradient(to right,#fff 0 1.5px,transparent 1.5px 100%);
+  background-size:2% 100%;
+  background-repeat:repeat-x;
+}
+@media(max-width:720px){
+ .metricpedia-brand{width:max-content;max-width:calc(100% - 16px)}
+ .metricpedia-wordmark{font-size:clamp(32px,8.9vw,50px);letter-spacing:-2.6px}
+ .metricpedia-ruler{height:42px}
+}
