@@ -5,7 +5,7 @@
  'use strict';
  const esc = value => String(value ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
  const short = value => String(value ?? '').slice(0,400);
- function mount({container,getReport,getLink}) {
+ function mount({container,getReport,getLink,printPreviewUrl}) {
   if (!container) return;
   container.innerHTML = '<div class="mp-share-title">Save or Share Results</div><div class="mp-share-buttons">'+
   '<button type="button" data-mp-share="email" aria-label="Email result"><span aria-hidden="true">✉</span>Email</button>'+
@@ -48,9 +48,21 @@
      break;
     }
     case 'print':
-     renderPrintable(report,link);
-     status.textContent='Choose a printer or “Save as PDF” in the print dialog.';
-     window.print();break;
+     if (printPreviewUrl) {
+      try {
+       sessionStorage.setItem('metricpedia:print-report:v1',JSON.stringify({
+        version:1,createdAt:new Date().toISOString(),report,link
+       }));
+       window.location.assign(printPreviewUrl);
+      } catch (error) {
+       status.textContent='Unable to prepare print preview. Please check browser storage settings.';
+      }
+     } else {
+      renderPrintable(report,link);
+      status.textContent='Choose a printer or “Save as PDF” in the print dialog.';
+      window.print();
+     }
+     break;
     case 'copy':
      try {
       if (navigator.clipboard && window.isSecureContext) await navigator.clipboard.writeText(link);
