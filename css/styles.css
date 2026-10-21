@@ -175,3 +175,19 @@ html[data-theme="dark"] .guide-image span{color:#fff}
 @media(max-width:1050px){.categories-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
 @media(max-width:720px){.categories-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.categories-grid .category{min-height:72px;padding:10px;gap:7px}.categories-grid .category .arrow{display:none}.categories-grid .category h3{font-size:12px}.category-symbol,.categories-grid .category>img{width:34px;height:34px;font-size:18px}}
 @media(max-width:420px){.categories-grid .category small{font-size:10px}}
+
+
+/* Uniform editorial cards: consistent image height and maximum 3-line excerpts. */
+#guides .guides-grid{align-items:stretch}
+#guides .guide-column{display:contents}
+#guides .guide{height:100%;display:flex;flex-direction:column;min-width:0}
+#guides .guide-image{flex:none}
+#guides .guide-image img,
+#guides .guide-column .guide-image img{height:125px!important;object-fit:cover}
+#guides .guide-copy{flex:1;display:flex;flex-direction:column;min-height:0}
+#guides .guide h3{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;line-clamp:2;overflow:hidden;min-height:calc(1.35em * 2)}
+#guides .guide p{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:3;line-clamp:3;overflow:hidden;min-height:calc(1.5em * 3);max-height:calc(1.5em * 3)}
+@media(max-width:720px){
+  #guides .guide-image img,
+  #guides .guide-column .guide-image img{height:110px!important}
+}
