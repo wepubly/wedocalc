@@ -22,3 +22,27 @@ html[data-theme="dark"] .mp-ad-id{color:#91a5c0!important}
 /* Subcategory hub: third calculator card is a fixed-size advertising placeholder. */
 .paint-page .paint-grid .mp-ad-subcategory{min-height:276px;padding:8px;flex-direction:column}
 .paint-page .paint-grid .mp-ad-subcategory .mp-ad-inner{height:100%}
+
+/* Individual calculator template: reserved top billboard directly after hero. */
+.calculator-page .mp-calculator-top-slot{
+  width:100%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  margin:0 0 20px;
+}
+.calculator-page .mp-ad-billboard{
+  width:min(970px,100%);
+  height:250px;
+  min-height:250px;
+  border-radius:9px;
+}
+.calculator-page .mp-ad-billboard .mp-ad-inner{height:100%}
+@media(max-width:700px){
+  .calculator-page .mp-calculator-top-slot{margin-bottom:15px}
+  .calculator-page .mp-ad-billboard{
+    width:min(320px,100%);
+    height:100px;
+    min-height:100px;
+  }
+}
