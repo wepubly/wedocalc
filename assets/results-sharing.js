@@ -9,7 +9,7 @@
   if (!container) return;
   container.innerHTML = '<div class="mp-share-title">Save or Share Results</div><div class="mp-share-buttons">'+
   '<button type="button" data-mp-share="email" aria-label="Email result"><span aria-hidden="true">✉</span>Email</button>'+
-  '<button type="button" data-mp-share="print" aria-label="Print or save PDF"><span aria-hidden="true">▤</span>Print</button>'+
+  '<button type="button" data-mp-share="print" aria-label="Print or save PDF"><span aria-hidden="true"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9V3h12v6"/><rect x="6" y="14" width="12" height="7" rx="1"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><path d="M18 12h.01"/></svg></span>Print</button>'+
   '<button type="button" data-mp-share="copy" aria-label="Copy calculation link"><span aria-hidden="true">↗</span>Copy Link</button></div>'+
   '<p class="mp-share-status" role="status" aria-live="polite"></p>';
   const status = container.querySelector('.mp-share-status');
