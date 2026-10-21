@@ -20,3 +20,8 @@ footer{border-top:1px solid #e8edf5;margin-top:10px;padding:4px 0 5px}.footer-in
 
 /* Keep the approved page gutters at every desktop width. */
 @media(min-width:721px){.content,.footer-inner{width:91.2%;margin-left:auto;margin-right:auto}}
+
+/* Official header logo: retain original PNG bytes and fit its transparent canvas. */
+.header-logo{display:block;position:relative;overflow:hidden;flex:none;width:162px;height:33px}
+.header .header-logo .logo{position:absolute;width:90.24%;height:auto;max-width:none;left:4.72%;top:-171.5%;mix-blend-mode:normal}
+@media(max-width:720px){.header-logo{width:140px;height:28.52px}}
