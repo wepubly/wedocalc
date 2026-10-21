@@ -1,0 +1,14 @@
+/* Metricpedia planning placeholders. These are not live ads.
+   CMS integration will replace/hide content at these stable data-ad-slot keys. */
+.mp-ad-placeholder{display:flex!important;align-items:center!important;justify-content:center!important;min-width:0;min-height:0;border:1px dashed #b4c5dc!important;background:#eef4fc!important;box-shadow:none!important;cursor:default!important}
+.mp-ad-placeholder:hover{transform:none!important;border-color:#b4c5dc!important;box-shadow:none!important}
+.mp-ad-inner{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;width:100%;min-width:0;padding:8px;text-align:center}
+.mp-ad-brand{font-weight:800!important;font-size:13px!important;letter-spacing:-.6px;color:#385d8f!important}
+.mp-ad-label{font-size:12px!important;font-weight:700!important;color:#657b9c!important}
+.mp-ad-id{font-size:9px!important;letter-spacing:.2px;color:#8495ab!important}
+#popular .mp-ad-popular{min-height:107px;padding:4px}
+#guides .mp-ad-guide{flex:1;min-height:142px;margin:0;padding:4px}
+html[data-theme="dark"] .mp-ad-placeholder{background:#19283b!important;border-color:#415a79!important}
+html[data-theme="dark"] .mp-ad-brand{color:#bdcde2!important}
+html[data-theme="dark"] .mp-ad-label{color:#adbed6!important}
+html[data-theme="dark"] .mp-ad-id{color:#91a5c0!important}
