@@ -5,9 +5,6 @@
   function apply(theme) {
     const dark = theme === 'dark';
     root.dataset.theme = dark ? 'dark' : 'light';
-    document.querySelectorAll('.header-logo img, .footer-logo img').forEach(image => {
-      image.src = 'assets/images/wedocalc-logo-' + (dark ? 'dark' : 'light') + '.png';
-    });
     toggle.setAttribute('aria-pressed', String(dark));
     toggle.setAttribute('aria-label', dark ? 'Switch to light theme' : 'Switch to dark theme');
     toggle.title = toggle.getAttribute('aria-label');
@@ -16,11 +13,11 @@
       : '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M20 14A8 8 0 0 1 10 4a8 8 0 1 0 10 10Z"/></svg>';
   }
   let saved = 'light';
-  try { saved = localStorage.getItem('wedocalc-theme') || 'light'; } catch {}
+  try { saved = localStorage.getItem('metricpedia-preview-theme') || 'light'; } catch {}
   apply(saved);
   toggle.addEventListener('click', () => {
     const next = root.dataset.theme === 'dark' ? 'light' : 'dark';
     apply(next);
-    try { localStorage.setItem('wedocalc-theme', next); } catch {}
+    try { localStorage.setItem('metricpedia-preview-theme', next); } catch {}
   });
 })();
