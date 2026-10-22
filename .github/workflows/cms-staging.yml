@@ -75,6 +75,9 @@ jobs:
           const visual=await fetch(origin+'/admin');
           const visualHtml=await visual.text();
           if(!visual.ok||!visualHtml.includes('Visão geral do Editorial Center')||!visual.headers.get('x-robots-tag')?.includes('noindex'))throw Error('Visual-only staging admin missing or not protected against indexing');
+          const editor=await fetch(origin+'/admin/test-article');
+          const editorHtml=await editor.text();
+          if(!editor.ok||!editorHtml.includes('Criar matéria de teste')||!editorHtml.includes('Meta description')||!editor.headers.get('x-robots-tag')?.includes('noindex'))throw Error('Local-only test article editor not deployed');
           const r=await fetch(origin+'/admin/setup');
           if(!r.ok||!r.headers.get('x-robots-tag')?.includes('noindex'))throw Error('Staging setup/noindex check failed');
           const api=await fetch(origin+'/api/editorial/articles');if(api.status!==401)throw Error('Administrative API must require authentication');
