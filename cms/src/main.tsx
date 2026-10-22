@@ -30,6 +30,7 @@ const blank = () => ({
   approvalReference: "",
   intendedRunAt: "",
   seoTitle: "",
+  canonicalUrl: "",
   description: "",
   excerpt: "",
   body: "",
@@ -596,6 +597,9 @@ function App() {
                     onSubmit={(e) => {
                       e.preventDefault();
                       void work(async () => {
+                        for(const [field,label] of [["externalId","ID externo do trabalho"],["finalVersion","Identificador da versão final"],["title","Título"],["slug","Slug"]] as const){
+                          if(!String(draft[field]||"").trim())throw new Error("Preencha o campo obrigatório: "+label+".");
+                        }
                         const result = await api(
                           current ? "/articles/" + current.id : "/articles",
                           current ? "PUT" : "POST",
@@ -692,6 +696,7 @@ function App() {
                     </label>
                     <div className="grid">
                       {input("seoTitle", "SEO title")}
+                      {input("canonicalUrl", "Canonical URL (opcional; deixe vazio para automática)")}
                       {input("description", "Meta description")}
                       <label>
                         Imagem de capa
