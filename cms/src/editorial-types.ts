@@ -15,6 +15,7 @@ export interface Snapshot {
   excerpt: string;
   body: string;
   seoTitle: string;
+  canonicalUrl?: string;
   description: string;
   author: string;
   language: "en-US";
