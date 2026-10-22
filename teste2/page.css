@@ -12,3 +12,16 @@
 [data-theme=dark] .teste2 .hero-tools .new-logo .light-logo{display:none}
 [data-theme=dark] .teste2 .hero-tools .new-logo .dark-logo{display:block}
 @media(max-width:700px){.teste2 .new-header{height:66px;gap:12px}.teste2 .new-header nav{padding:0;gap:18px}.teste2 .new-actions{gap:10px}.teste2 .hero-tools .new-logo{width:min(330px,90%);margin:4px auto 22px}.teste2>main,[data-theme=dark] .teste2>main{background-attachment:scroll}}
+
+/* Brand at left; centered headline and supporting copy above the search. */
+.teste2 .hero-copy .new-logo{width:min(100%,360px);margin:0 auto;display:block}
+.teste2 .hero-copy .new-logo img{width:100%;height:auto;max-height:124px;object-fit:contain}
+.teste2 .hero-copy .new-logo .dark-logo{display:none}
+[data-theme=dark] .teste2 .hero-copy .new-logo .light-logo{display:none}
+[data-theme=dark] .teste2 .hero-copy .new-logo .dark-logo{display:block}
+.teste2 .search-heading{text-align:center;margin:0 0 24px}
+.teste2 .search-heading h1{font-size:clamp(23px,2.5vw,36px);line-height:1.15;letter-spacing:-1px;white-space:nowrap;margin:0 0 10px;color:inherit;font-weight:800}
+.teste2 .search-heading p{font-size:16px;line-height:1.5;margin:0;color:#354d6b}
+[data-theme=dark] .teste2 .search-heading p{color:#b8c9df}
+@media(max-width:1100px) and (min-width:701px){.teste2 .project-hero{grid-template-columns:260px 1fr}.teste2 .search-heading h1{font-size:24px}.teste2 .search-heading p{font-size:14px}}
+@media(max-width:700px){.teste2 .hero-copy .new-logo{width:min(290px,85%);margin:0 auto 8px}.teste2 .search-heading{margin-bottom:20px}.teste2 .search-heading h1{font-size:clamp(18px,5vw,30px);letter-spacing:-.7px}.teste2 .search-heading p{font-size:14px}}
