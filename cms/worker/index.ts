@@ -35,6 +35,7 @@ import {
 import {
   integration,
   extraAdmin,
+  requireAuditorCredential,
   normalizeEditorial,
   validateEditorial,
 } from "./integration";
@@ -602,6 +603,7 @@ async function api(request: Request, env: Env, path: string) {
         409, "Aprovação final exige o Auditor, a evidência e o hash desta versão."
       );
       if (action === "publish") {
+        if(env.ENVIRONMENT==="production-lab")throw new HttpError(403,"Publicação manual desativada. O CMS publicará após agendamento aprovado.");
         const d = await jsonBody(request);
         if (d.version !== a.draft_version)
           throw new HttpError(409, "Reabra a versão atual antes de publicar.");
@@ -612,6 +614,7 @@ async function api(request: Request, env: Env, path: string) {
         });
       }
       if (action === "unpublish") {
+        if(env.ENVIRONMENT==="production-lab")await requireAuditorCredential(request,env);
         const origin = new URL(env.PUBLIC_ORIGIN).origin;
         const linked = (await publicArticles(env)).some(
           (r) =>
