@@ -80,6 +80,10 @@ function App() {
     [versions, setVersions] = useState<any[]>([]),
     [events, setEvents] = useState<any[]>([]);
   const [credential, setCredential] = useState("");
+  const [reviewActor, setReviewActor] = useState("Auditor");
+  const [reviewNotes, setReviewNotes] = useState("");
+  const [qualityResult, setQualityResult] = useState<any>(null);
+  const [agentRole, setAgentRole] = useState("writer");
   const [campaignCalculator, setCampaignCalculator] = useState("paint-calculator");
   const [campaignInfo, setCampaignInfo] = useState<any>(null);
   const [campaignStart, setCampaignStart] = useState("");
@@ -151,6 +155,8 @@ function App() {
     setEvents(e);
     setTab("articles");
     setEvidence("");
+    setQualityResult(null);
+    setReviewNotes("");
   }
   const categoryName = (id: string) =>
     routes.find((r) => r.id === id)?.name || id;
@@ -228,7 +234,7 @@ function App() {
         <strong>
           Metricpedia <span>Editorial Center</span>
         </strong>
-        <small>HOMOLOGAÇÃO · não indexável</small>
+        <small>ESTÚDIO EDITORIAL · não indexável</small>
         {auth && (
           <button
             onClick={() =>
@@ -465,6 +471,7 @@ function App() {
                     ))}
                   </select>
                 </div>
+                {rows.length === 0 && <section className="panel"><p>Nenhum artigo cadastrado. Crie a primeira matéria usando o editor abaixo.</p></section>}
                 <div className="table">
                   <table>
                     <thead>
@@ -736,13 +743,42 @@ function App() {
                           : "Publicação bloqueada: falta confirmação da aprovação externa."}
                       </p>
                       <label>
-                        Referência verificável da aprovação final
+                        Referência da aprovação final pelo Auditor
                         <input
                           value={evidence}
                           onChange={(e) => setEvidence(e.target.value)}
-                          placeholder="ID/mensagem final do Supervisor no grupo"
+                          placeholder="ID/mensagem de aprovação do Auditor no grupo"
                         />
                       </label>
+                      <section className="panel">
+                        <h3>Revisão editorial · versão {current.draft_version}</h3>
+                        <p>Status: <strong>{current.review?.status === "review" ? "Aguardando Auditor" : current.review?.status === "changes" ? "Correções solicitadas" : current.review?.status === "approved" ? "Aprovada pelo Auditor" : "Rascunho"}</strong></p>
+                        {current.review?.notes && <p>Notas: {current.review.notes} — {current.review.reviewer}</p>}
+                        <label>Responsável
+                          <input value={reviewActor} onChange={e => setReviewActor(e.target.value)} placeholder="Escritor ou Auditor" />
+                        </label>
+                        <label>Notas da revisão
+                          <textarea value={reviewNotes} onChange={e => setReviewNotes(e.target.value)} placeholder="Detalhes do envio, revisão ou correções" />
+                        </label>
+                        <div className="actions">
+                          <button disabled={busy || current.review?.status === "approved"} onClick={() => void work(async () => {
+                            await api("/articles/" + current.id + "/submit-review","POST",{version:current.draft_version,actor:reviewActor || "Escritor",notes:reviewNotes});
+                            await refresh();await open(current.id);setNotice("Versão enviada ao Auditor.");
+                          })}>Enviar para revisão</button>
+                          <button disabled={busy || !current.review || current.review.status === "changes"} onClick={() => void work(async () => {
+                            await api("/articles/" + current.id + "/request-changes","POST",{version:current.draft_version,actor:reviewActor || "Auditor",notes:reviewNotes});
+                            await refresh();await open(current.id);setNotice("Correções solicitadas.");
+                          })}>Solicitar correções</button>
+                          <button disabled={busy} onClick={() => void work(async () => {
+                            setQualityResult(await api("/articles/" + current.id + "/quality"));
+                          })}>Verificar qualidade</button>
+                        </div>
+                        {qualityResult && <div className="message">
+                          <strong>Verificação de qualidade</strong>
+                          {qualityResult.blockers?.length ? <ul>{qualityResult.blockers.map((x:string,i:number)=><li key={i}>{x}</li>)}</ul> : <p>Nenhum bloqueio encontrado.</p>}
+                          {qualityResult.warnings?.length > 0 && <ul>{qualityResult.warnings.map((x:string,i:number)=><li key={i}>{x}</li>)}</ul>}
+                        </div>}
+                      </section>
                       <div className="actions">
                         <button
                           disabled={busy || !evidence}
@@ -765,7 +801,7 @@ function App() {
                             })
                           }
                         >
-                          Confirmar aprovação externa
+                          Auditor: aprovar versão e hash
                         </button>
                         <label>
                           Publicar em (Brasília)
@@ -805,11 +841,11 @@ function App() {
                               );
                               await refresh();
                               await open(current.id);
-                              setNotice("Publicado no blog de homologação.");
+                              setNotice("Publicado no blog do laboratório.");
                             })
                           }
                         >
-                          Publicar na homologação
+                          Publicar no laboratório
                         </button>
                         <button
                           onClick={() =>
@@ -864,7 +900,8 @@ function App() {
                   Horários de Brasília. As versões sem autorização não podem ser
                   agendadas.
                 </p>
-                {schedules.map((s) => (
+                {schedules.length === 0 && <section className="panel"><p>Nenhuma matéria agendada. Abra um artigo aprovado ou use Campanhas de 14 dias.</p></section>}
+              {schedules.map((s) => (
                   <section className="panel" key={s.id}>
                     <h2>
                       {rows.find((r) => r.id === s.article_id)?.snapshot.title}
@@ -1033,6 +1070,7 @@ function App() {
                     <button disabled={busy}>Enviar imagem</button>
                   </form>
                 </section>
+                {media.length === 0 && <section className="panel"><p>A biblioteca ainda não tem imagens. Envie uma capa acima e depois selecione-a em qualquer artigo.</p></section>}
                 <div className="media-grid">
                   {media.map((m) => (
                     <article className="panel" key={m.id}>
@@ -1224,6 +1262,7 @@ function App() {
                   Registros de integração e administração. O histórico de cada
                   versão fica no artigo.
                 </p>
+                {logs.length === 0 && <section className="panel"><p>O histórico aparecerá após as primeiras operações editoriais.</p></section>}
                 {logs.map((l) => (
                   <section className="panel" key={l.id}>
                     <strong>{l.action}</strong>
@@ -1238,7 +1277,7 @@ function App() {
             {tab === "settings" && (
               <>
                 <h1>Acesso e agentes</h1>
-                <section className="panel">
+                {location.hostname.startsWith("metricpedia-editorial-lab.") ? <section className="panel"><p>Acesso aberto para testes. Nenhuma senha de administrador é necessária neste laboratório.</p></section> : <section className="panel">
                   <h2>Alterar minha senha</h2>
                   <form
                     onSubmit={(e) => {
@@ -1278,13 +1317,11 @@ function App() {
                       Alterar senha e encerrar sessões
                     </button>
                   </form>
-                </section>
+                </section>}
                 <section className="panel">
                   <h2>Criar credencial de integração</h2>
                   <p>
-                    Escritor: envio e status. Supervisor: confirmação externa,
-                    agendamento e publicação. Essas credenciais não dão acesso
-                    administrativo.
+                    Escritor: enviar e agendar após a aprovação. Auditor: solicitar correções e autorizar a versão. Supervisor: somente acompanhar. A publicação agendada é executada pelo CMS.
                   </p>
                   <form
                     onSubmit={(e) => {
@@ -1304,20 +1341,27 @@ function App() {
                       Nome do agente
                       <input name="name" required />
                     </label>
+                    <label>Papel do bot
+                      <select value={agentRole} onChange={e => setAgentRole(e.target.value)}>
+                        <option value="writer">Escritor — enviar e agendar</option>
+                        <option value="auditor">Auditor — revisar e aprovar</option>
+                        <option value="supervisor">Supervisor — acompanhar</option>
+                      </select>
+                    </label>
                     <div className="actions">
                       {[
                         "submit",
                         "status",
                         "authorize",
                         "schedule",
-                        "publish",
                       ].map((s) => (
                         <label className="check" key={s}>
                           <input
                             type="checkbox"
                             name="scopes"
                             value={s}
-                            defaultChecked={["submit", "status"].includes(s)}
+                            checked={(agentRole === "writer" ? ["submit","status","schedule"] : agentRole === "auditor" ? ["status","authorize"] : ["status"]).includes(s)}
+                            readOnly
                           />
                           {s}
                         </label>
