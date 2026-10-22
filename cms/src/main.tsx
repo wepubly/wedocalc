@@ -54,11 +54,16 @@ const tabs = [
   ["logs", "Histórico"],
   ["settings", "Acesso e agentes"],
 ];
+const tabIds = tabs.map(([id]) => id);
+const tabFromUrl = () => {
+  const part = location.pathname.split("/").filter(Boolean)[1];
+  return tabIds.includes(part) ? part : "dashboard";
+};
 function App() {
   const [auth, setAuth] = useState(false),
     [loading, setLoading] = useState(true),
     [setup, setSetup] = useState(false),
-    [tab, setTab] = useState("dashboard"),
+    [tab, setTab] = useState(tabFromUrl),
     [error, setError] = useState(""),
     [notice, setNotice] = useState(""),
     [busy, setBusy] = useState(false);
@@ -79,6 +84,16 @@ function App() {
     [evidence, setEvidence] = useState(""),
     [versions, setVersions] = useState<any[]>([]),
     [events, setEvents] = useState<any[]>([]);
+  useEffect(() => {
+    if (!location.hostname.startsWith("metricpedia-editorial-lab.")) return;
+    const url = "/admin/" + tab;
+    if (location.pathname !== url) history.replaceState({tab}, "", url);
+  }, [tab]);
+  useEffect(() => {
+    const onPop = () => setTab(tabFromUrl());
+    window.addEventListener("popstate", onPop);
+    return () => window.removeEventListener("popstate", onPop);
+  }, []);
   const [credential, setCredential] = useState("");
   const [reviewActor, setReviewActor] = useState("Auditor");
   const [reviewNotes, setReviewNotes] = useState("");
@@ -332,7 +347,10 @@ function App() {
               <button
                 key={id}
                 className={tab === id ? "active" : ""}
-                onClick={() => setTab(id)}
+                onClick={() => {
+                  if (location.hostname.startsWith("metricpedia-editorial-lab.")) history.pushState({tab:id}, "", "/admin/" + id);
+                  setTab(id);
+                }}
               >
                 {label}
               </button>
