@@ -75,6 +75,13 @@ async function principal(r: Request, e: Env) {
     scopes: JSON.parse(row.scopes),
   } as Principal;
 }
+export async function requireAuditorCredential(request: Request, env: Env) {
+  const actor=await principal(request,env);
+  scope(actor,"authorize");
+  if(actor.scopes.includes("submit")||actor.scopes.includes("schedule")||actor.scopes.includes("publish"))
+    throw new HttpError(403,"A aprovação exige credencial exclusiva do Auditor.");
+  return actor;
+}
 function scope(p: Principal, s: string) {
   if (!p.scopes.includes(s))
     throw new HttpError(403, "Permissão necessária: " + s);
@@ -435,8 +442,12 @@ export async function extraAdmin(r: Request, e: Env, path: string) {
   if (detail) {
     if (r.method === "GET" && detail[2] === "details")
       return json(await details(e, detail[1]));
-    if (r.method === "POST" && detail[2] === "authorize")
-      return authorize(e, detail[1], await jsonBody(r), "owner");
+    if (r.method === "POST" && detail[2] === "authorize") {
+      const actor=e.ENVIRONMENT === "production-lab"
+        ? await requireAuditorCredential(r,e)
+        : null;
+      return authorize(e, detail[1], await jsonBody(r), actor ? "Auditor: "+actor.name : "owner");
+    }
   }
   if (path === "/api/editorial/logs" && r.method === "GET")
     return json(
