@@ -43,6 +43,7 @@ export function articleHtml(
 ) {
   updatedAt = modifiedDate(publishedAt, updatedAt);
   const url = origin + "/blog/" + s.slug + "/";
+  const canonical = s.canonicalUrl || url;
   const image = s.coverId
     ? (preview ? "/api/editorial/media/" : "/media/") + s.coverId
     : "";
@@ -66,7 +67,7 @@ export function articleHtml(
         dateModified: updatedAt,
         author: { "@type": authorType, name: s.author },
         publisher,
-        mainEntityOfPage: { "@type": "WebPage", "@id": url },
+        mainEntityOfPage: { "@type": "WebPage", "@id": canonical },
         ...(image && !preview ? { image: origin + image } : {}),
         ...(s.category ? { articleSection: s.category } : {}),
       },
@@ -85,7 +86,7 @@ export function articleHtml(
             name: "Blog",
             item: origin + "/blog/",
           },
-          { "@type": "ListItem", position: 3, name: s.title, item: url },
+          { "@type": "ListItem", position: 3, name: s.title, item: canonical },
         ],
       },
       ...(s.faq?.length ? [{
@@ -123,7 +124,7 @@ export function articleHtml(
   return page(
     s.seoTitle || s.title,
     s.description || s.excerpt,
-    url,
+    canonical,
     `<nav class="breadcrumb" aria-label="Breadcrumb"><a href="https://metricpedia.com/">Home</a><span>›</span><a href="/blog">Blog</a><span>›</span><span aria-current="page">${escape(s.title)}</span></nav><article><p class="meta">${escape(s.category)}</p><h1>${escape(s.title)}</h1><p class="meta">By ${escape(s.author)}${dates}</p>${image ? `<img class="cover" src="${image}" alt="${escape(s.coverAlt)}"${dimensions} fetchpriority="high" decoding="async">` : ""}${bodyHtml(s.body)}${context.calculator ? `<p><a href="${escape(context.calculator.path)}">${escape(context.calculator.name)}</a></p>` : ""}${faqContent}${sourceHtml(s)}${related}<p class="meta">${s.tags.map((t) => `<a href="/blog?tag=${encodeURIComponent(t)}">${escape(t)}</a>`).join(" · ")}</p></article>`,
     preview
       ? ""
@@ -140,5 +141,5 @@ export function articleMarkdown(
 ) {
   updatedAt = modifiedDate(publishedAt, updatedAt);
   // Same immutable snapshot as HTML; no parallel content storage.
-  return `# ${s.title}\n\nAuthor: ${s.author}\nPublished: ${publishedAt}\nUpdated: ${updatedAt}\nCanonical: ${origin}/blog/${s.slug}\nLanguage: ${s.language}\n\n${s.excerpt}\n\n${s.body}${s.sources?.length ? "\n\n## Sources and references\n" + s.sources.map((r) => `- [${r.title || r.url}](${r.url})`).join("\n") : ""}${related.length ? "\n\n## Related reading\n" + related.map((r) => `- [${r.title}](${origin}/blog/${r.slug})`).join("\n") : ""}\n`;
+  return `# ${s.title}\n\nAuthor: ${s.author}\nPublished: ${publishedAt}\nUpdated: ${updatedAt}\nCanonical: ${s.canonicalUrl || origin + "/blog/" + s.slug}\nLanguage: ${s.language}\n\n${s.excerpt}\n\n${s.body}${s.sources?.length ? "\n\n## Sources and references\n" + s.sources.map((r) => `- [${r.title || r.url}](${r.url})`).join("\n") : ""}${related.length ? "\n\n## Related reading\n" + related.map((r) => `- [${r.title}](${origin}/blog/${r.slug})`).join("\n") : ""}\n`;
 }
