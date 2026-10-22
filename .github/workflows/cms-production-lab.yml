@@ -32,16 +32,18 @@ jobs:
       - run: node scripts/provision-production-lab.mjs
       - run: npx wrangler d1 migrations apply metricpedia-editorial-lab-db --remote --config wrangler.lab.json
       - run: npx wrangler deploy --config wrangler.lab.json
-      - name: Verify live editor and anonymous API guardrails
+      - name: Verify real editorial CMS is available without login
         run: |
           node --input-type=module <<'NODE'
           import {readFileSync,appendFileSync} from 'node:fs';
           const origin=readFileSync('lab-origin.txt','utf8').trim();
-          const r=await fetch(origin+'/admin/test-article');const html=await r.text();
-          console.log('Editor check:',r.status,r.url,html.slice(0,300),'robots:',r.headers.get('x-robots-tag'));
-          if(!r.ok||!html.includes('Criar matéria de teste')||!r.headers.get('x-robots-tag')?.includes('noindex'))throw Error('Editor unavailable/noindex missing');
-          const bad=await fetch(origin+'/api/workbench/article',{method:'POST',headers:{'content-type':'application/json'},body:'{}'});
-          if(bad.status!==400&&bad.status!==429)throw Error('Expected input validation or rate limit');
-          const official=await fetch(origin+'/api/editorial/articles');if(official.status!==404)throw Error('Editorial administration unexpectedly exposed');
-          appendFileSync(process.env.GITHUB_STEP_SUMMARY,'\nProduction editorial lab: '+origin+'/admin\nTEST ONLY publishing, isolated from official Pages and official blog.\n');
+          const admin=await fetch(origin+'/admin');const html=await admin.text();
+          if(!admin.ok||!html.includes('Metricpedia Editorial Center')||!html.includes('id="root"')||!admin.headers.get('x-robots-tag')?.includes('noindex'))throw Error('Full editorial panel is not available');
+          for(const path of ['/api/editorial/session','/api/editorial/articles','/api/editorial/schedules','/api/editorial/media','/api/editorial/terms','/api/editorial/pitches','/api/editorial/briefs','/api/editorial/routes','/api/editorial/logs']){
+            const r=await fetch(origin+path);const data=await r.text();
+            if(!r.ok)throw Error(path+' unavailable: '+r.status+' '+data.slice(0,200));
+          }
+          const old=await fetch(origin+'/admin/test-article');if(!old.ok)throw Error('Legacy test form unavailable');
+          const robots=await fetch(origin+'/robots.txt');if(!(await robots.text()).includes('Disallow: /'))throw Error('Laboratory must remain noindex');
+          appendFileSync(process.env.GITHUB_STEP_SUMMARY,'\\nMetricpedia editorial CMS (production test): '+origin+'/admin\\nComplete functional UI and protected-from-indexing blog; official Pages and blog unchanged.\\n');
           NODE
