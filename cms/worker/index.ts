@@ -310,12 +310,15 @@ export async function upload(request: Request, env: Env) {
     500,
     true,
   );
+  const checksum = Array.from(new Uint8Array(await crypto.subtle.digest("SHA-256", data)),x=>x.toString(16).padStart(2,"0")).join("");
+  const existing = await env.DB.prepare("SELECT id,name,alt,width,height FROM media WHERE content_sha256=?").bind(checksum).first<{id:string;name:string;alt:string;width:number;height:number}>();
+  if(existing) return json({...existing, duplicate:true},200);
   const id = crypto.randomUUID(),
     key = "editorial/" + id;
   await env.MEDIA.put(key, data, { httpMetadata: { contentType: mime } });
   try {
     await env.DB.prepare(
-      "INSERT INTO media(id,object_key,name,mime,size,alt,created_at,width,height,source,license) VALUES(?,?,?,?,?,?,?,?,?,?,?)",
+      "INSERT INTO media(id,object_key,name,mime,size,alt,created_at,width,height,source,license,content_sha256) VALUES(?,?,?,?,?,?,?,?,?,?,?,?)",
     )
       .bind(
         id,
@@ -329,6 +332,7 @@ export async function upload(request: Request, env: Env) {
         dimensions.height,
         source,
         license,
+        checksum,
       )
       .run();
   } catch (e) {
