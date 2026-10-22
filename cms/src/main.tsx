@@ -924,7 +924,7 @@ function App() {
                                 headers:{"Content-Type":"application/json","Authorization":"Bearer "+auditorToken.trim()},
                                 body:"{}"
                               });
-                              const result=await response.json();
+                              const result:any=await response.json();
                               if(!response.ok)throw new Error(result.error||"Não autorizado.");
                               await refresh();
                               await open(current.id);
