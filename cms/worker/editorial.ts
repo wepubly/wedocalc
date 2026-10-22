@@ -25,14 +25,16 @@ export async function reviewed(env: Env, a: Article, v: number) {
     .bind(a.id, v)
     .first<{ snapshot: string }>();
   const approval = await env.DB.prepare(
-    "SELECT digest FROM external_approvals WHERE article_id=? AND version=?",
+    "SELECT digest,approved_by FROM external_approvals WHERE article_id=? AND version=?",
   )
     .bind(a.id, v)
-    .first<{ digest: string }>();
+    .first<{ digest: string; approved_by: string }>();
   if (!saved || !approval || approval.digest !== (await hash(saved.snapshot)))
     throw new HttpError(409, "Confirmação externa desta versão ausente.");
   if (v !== a.draft_version || (await review(env, a))?.status !== "approved")
     throw new HttpError(409, "A versão atual precisa da aprovação do Auditor.");
+  if(env.ENVIRONMENT==="production-lab" && !approval?.approved_by?.startsWith("Auditor: "))
+    throw new HttpError(409,"Aprovação antiga registrada sem credencial: revalide esta versão com um Auditor credenciado.");
 }
 export function safeSource(url: string) {
   return !!safeUrl(url) && /^https?:\/\//.test(url);
