@@ -1,4 +1,4 @@
-name: Metricpedia Editorial Lab (production)
+name: Metricpedia CMS production — Ublong blog clone
 on:
   push:
     branches: [work/metricpedia-cms-blog-v1]
@@ -29,50 +29,7 @@ jobs:
       - run: npm ci
       - run: npm run check
       - run: npm run build
-      - run: npm test
-      - run: node scripts/provision-production-lab.mjs
-      - run: npx wrangler d1 migrations apply metricpedia-editorial-lab-db --remote --config wrangler.lab.json
-      - run: npx wrangler deploy --config wrangler.lab.json
-      - name: Configure optional restricted Non-Writer enrollment secret
-        env:
-          SETUP_KEY: ${{ secrets.METRICPEDIA_SETUP_TOKEN }}
-        run: |
-          if [ -n "$SETUP_KEY" ]; then
-            printf '%s' "$SETUP_KEY" | npx wrangler secret put SETUP_TOKEN --config wrangler.lab.json
-          else
-            echo 'Non-Writer enrollment locked: repository secret METRICPEDIA_SETUP_TOKEN missing.' >> "$GITHUB_STEP_SUMMARY"
-          fi
-      - name: Verify real editorial CMS is available without login
-        run: |
-          node --input-type=module <<'NODE'
-          import {readFileSync,appendFileSync} from 'node:fs';
-          const origin=readFileSync('lab-origin.txt','utf8').trim();
-          const admin=await fetch(origin+'/admin');const html=await admin.text();
-          if(!admin.ok||!html.includes('Metricpedia Editorial Center')||!html.includes('id="root"')||!admin.headers.get('x-robots-tag')?.includes('noindex'))throw Error('Full editorial panel is not available');
-          for(const path of ['/admin/publications','/api/editorial/session','/api/editorial/articles','/api/editorial/schedules','/api/editorial/media','/api/editorial/terms','/api/editorial/pitches','/api/editorial/briefs','/api/editorial/routes','/api/editorial/logs']){
-            const r=await fetch(origin+path);const data=await r.text();
-            if(!r.ok)throw Error(path+' unavailable: '+r.status+' '+data.slice(0,200));
-          }
-          const campaign=await fetch(origin+'/api/editorial/campaigns?calculatorId=paint-calculator');const campaignJson=await campaign.json();
-          if(!campaign.ok||campaignJson.calculatorId!=='paint-calculator'||!Array.isArray(campaignJson.articles)||typeof campaignJson.ready!=='boolean')throw Error('14-day campaign API not available');
-          const unauthorized=await fetch(origin+'/api/editorial/agents',{
-            method:'POST',
-            headers:{'Content-Type':'application/json','Origin':origin},
-            body:JSON.stringify({name:'Forbidden test Auditor',scopes:['status','authorize']})
-          });
-          if(unauthorized.status!==400)throw Error('Unauthorized public Non-Writer enrollment must be rejected, got '+unauthorized.status);
-          const current=await fetch(origin+'/api/editorial/articles').then(r=>r.json());
-          if(Array.isArray(current)&&current[0]?.id){
-            const articleId=current[0].id;
-            const noAuth=await fetch(origin+'/api/editorial/articles/'+articleId+'/authorize',{method:'POST',headers:{'Content-Type':'application/json','Origin':origin},body:'{}'});
-            if(noAuth.status!==401)throw Error('Uncredentialed approval was not rejected: '+noAuth.status);
-            const unsafePublish=await fetch(origin+'/api/editorial/articles/'+articleId+'/publish',{method:'POST',headers:{'Content-Type':'application/json','Origin':origin},body:'{}'});
-            if(unsafePublish.status!==403)throw Error('Manual publication must be blocked in lab: '+unsafePublish.status);
-          }
-          const old=await fetch(origin+'/admin/test-article');if(!old.ok)throw Error('Legacy test form unavailable');
-          const robots=await fetch(origin+'/robots.txt');if(!(await robots.text()).includes('Disallow: /'))throw Error('Laboratory must remain noindex');
-          appendFileSync(process.env.GITHUB_STEP_SUMMARY,'\\nMetricpedia editorial CMS (production test): '+origin+'/admin\\nComplete functional UI and protected-from-indexing blog; official Pages and blog unchanged.\\n');
-          NODE
-      - name: Clean only owner-identified mission test records after verification
-        if: contains(github.event.head_commit.message, '[cleanup-tests]')
-        run: node scripts/cleanup-mission-tests.mjs
+      - run: node tests/production.mjs
+      - run: node scripts/configure-production.mjs
+      - run: npx wrangler deploy --config wrangler.production.json
+      - run: node scripts/verify-production.mjs

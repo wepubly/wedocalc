@@ -1,4 +1,6 @@
 export interface Snapshot {
+  categoryId?: string;
+  destination?: {category: {id:string;name:string;path:string}; subcategory: {id:string;name:string;path:string}; calculator: {id:string;name:string;path:string}};
   externalId?: string;
   briefId?: string;
   primaryKeyword?: string;

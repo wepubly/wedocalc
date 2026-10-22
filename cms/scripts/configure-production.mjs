@@ -1,0 +1,16 @@
+import {writeFileSync} from 'node:fs';
+import assert from 'node:assert/strict';
+const account=process.env.CLOUDFLARE_ACCOUNT_ID,token=process.env.CLOUDFLARE_API_TOKEN;
+assert.equal(account,'b81896777d206a2239625d9cf2e8a40b');assert.ok(token);
+async function api(path){const r=await fetch('https://api.cloudflare.com/client/v4'+path,{headers:{Authorization:'Bearer '+token}});const d=await r.json();if(!r.ok||!d.success)throw Error('Cloudflare inspection failed '+path+': '+JSON.stringify(d.errors));return d.result;}
+const [zones,dbs,buckets,pages]=await Promise.all([api('/zones?name=metricpedia.com'),api(`/accounts/${account}/d1/database?per_page=100`),api(`/accounts/${account}/r2/buckets`),api(`/accounts/${account}/pages/projects/wedocalc`)]);
+const zone=zones.find(z=>z.name==='metricpedia.com');assert.ok(zone,'Existing metricpedia.com zone must be accessible');assert.equal(pages.production_branch,'main');
+const db=dbs.find(d=>d.name==='metricpedia-editorial-lab-db');assert.ok(db,'Reuse existing editorial D1 database');assert.ok((buckets.buckets||buckets).some(b=>b.name==='metricpedia-editorial-lab-media'));
+// Reuse existing resources. No database, bucket, domain or Worker is created.
+const r=await fetch(`https://api.cloudflare.com/client/v4/accounts/${account}/d1/database/${db.uuid}/query`,{method:'POST',headers:{Authorization:'Bearer '+token,'Content-Type':'application/json'},body:JSON.stringify({sql:"SELECT c.path AS category_path,s.path AS type_path,r.path AS calculator_path FROM routes r JOIN routes s ON s.id=r.parent_id JOIN routes c ON c.id=s.parent_id WHERE r.kind='calculator' AND r.state='live' AND s.state='live' AND c.state='live'"})});const q=await r.json();assert.ok(r.ok&&q.success,'Read existing destinations');
+const articlePrefixes=q.result[0].results.map(d=>'/'+[d.category_path,d.type_path,d.calculator_path].map(p=>p.replace(/^\/+|\/+$/g,'')).join('/')+'/*');
+const patterns=['/admin*','/cms','/cms/','/admin-assets/*','/api/editorial/*','/api/public/latest-articles','/blog*','/media/*','/feed.xml','/sitemap-blog.xml',...articlePrefixes];
+const existingRoutes=await api(`/zones/${zone.id}/workers/routes`);
+for(const suffix of patterns){const conflict=existingRoutes.find(r=>r.pattern==='metricpedia.com'+suffix&&r.script&&r.script!=='metricpedia-editorial-lab');assert.ok(!conflict,'Do not replace another Worker route: '+suffix);}
+writeFileSync('wrangler.production.json',JSON.stringify({name:'metricpedia-editorial-lab',main:'worker/production.ts',compatibility_date:'2026-10-01',account_id:account,workers_dev:true,preview_urls:false,assets:{directory:'./dist',binding:'ASSETS',run_worker_first:true},d1_databases:[{binding:'DB',database_name:db.name,database_id:db.uuid,migrations_dir:'lab-migrations'}],r2_buckets:[{binding:'MEDIA',bucket_name:'metricpedia-editorial-lab-media'}],vars:{ENVIRONMENT:'production',PUBLIC_ORIGIN:'https://metricpedia.com'},routes:patterns.map(suffix=>({pattern:'metricpedia.com'+suffix,zone_id:zone.id})),triggers:{crons:['* * * * *']},observability:{enabled:false}},null,2));
+console.log('Reuse existing Worker/D1/R2. Production CMS: https://metricpedia.com/admin. Article routes: '+articlePrefixes.join(', '));
