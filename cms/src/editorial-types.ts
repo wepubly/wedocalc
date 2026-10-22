@@ -27,5 +27,6 @@ export interface Snapshot {
   pillarId?: string;
   relatedIds?: string[];
   sources?: { title: string; url: string }[];
+  faq?: { question: string; answer: string }[];
   requiresSources?: boolean;
 }
