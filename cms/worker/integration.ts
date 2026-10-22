@@ -1,3 +1,4 @@
+import { campaigns } from "./campaigns";
 import { Env, Snapshot, HttpError, now } from "./types";
 import { hash, jsonBody, randomToken, readBody } from "./security";
 import { article, version, snapshot, publish, upload } from "./index";
@@ -80,15 +81,9 @@ async function principal(r: Request, e: Env) {
     scopes: JSON.parse(row.scopes),
   } as Principal;
 }
-export async function requireAuditorCredential(request: Request, env: Env) {
-  const actor=await principal(request,env);
-  scope(actor,"authorize");
-  if(actor.scopes.includes("submit")||actor.scopes.includes("schedule")||actor.scopes.includes("publish"))
-    throw new HttpError(403,"A aprovação exige credencial exclusiva do Auditor.");
-  if(env.ENVIRONMENT==="production-lab"){
-    const trust=await env.DB.prepare("SELECT agent_id FROM lab_trusted_auditors WHERE agent_id=?").bind(actor.id).first();
-    if(!trust)throw new HttpError(403,"Credencial antiga ou não cadastrada pelo responsável. Gere uma credencial de Auditor autorizada.");
-  }
+export async function requireWriterCredential(request: Request, env: Env) {
+  const actor = await principal(request, env);
+  scope(actor, "submit");
   return actor;
 }
 function scope(p: Principal, s: string) {
@@ -157,7 +152,18 @@ async function details(e: Env, id: string) {
   };
 }
 export async function integration(r: Request, e: Env, path: string) {
-  const p = await principal(r, e);
+  const p = await requireWriterCredential(r, e);
+  const campaignPath = path.replace("/api/integration/", "/api/editorial/");
+  if (/^\/api\/integration\/(campaigns|calculator-audits)(?:\/|$)/.test(path)) {
+    scope(p, r.method === "GET" ? "status" : "schedule");
+    const response = await campaigns(r, e, campaignPath);
+    if (response) return response;
+  }
+  if (r.method === "GET" && ["/api/integration/schedules","/api/integration/briefs","/api/integration/routes"].includes(path)) {
+    scope(p,"status");
+    const table = path.split("/").pop()!;
+    return json((await e.DB.prepare("SELECT * FROM " + table).all()).results);
+  }
   if (path === "/api/integration/packages" && r.method === "POST") {
     scope(p, "submit");
     const d = await jsonBody(r),
@@ -248,7 +254,7 @@ export async function integration(r: Request, e: Env, path: string) {
     return upload(r, e);
   }
   const m =
-    /^\/api\/integration\/articles\/([a-f0-9-]+)(?:\/(authorize|schedule|publish|submit-review|request-changes))?$/.exec(
+    /^\/api\/integration\/articles\/([a-f0-9-]+)(?:\/(authorize|schedule|reschedule|cancel|publish|submit-review|request-changes))?$/.exec(
       path,
     );
   if (m) {
@@ -265,20 +271,27 @@ export async function integration(r: Request, e: Env, path: string) {
       return json(await details(e, id));
     }
     if (r.method === "POST" && m[2]) {
-      const requiredScope = m[2] === "submit-review" ? "submit"
+      const requiredScope = ["cancel","reschedule"].includes(m[2]) ? "schedule" : m[2] === "submit-review" ? "submit"
         : m[2] === "request-changes" ? "authorize" : m[2];
       scope(p, requiredScope);
       const d = await jsonBody(r);
       if (m[2] === "submit-review" || m[2] === "request-changes") {
         const a = await article(e, id);
         if (d.version !== a.draft_version) throw new HttpError(409, "Versão alterada.");
-        const actor = (m[2] === "submit-review" ? "Escritor: " : "Auditor: ") + p.name;
+        const actor = "Escritor: " + p.name;
         await transition(e, a, m[2], actor, typeof d.notes === "string" ? d.notes.slice(0,2000) : "");
         return json({ok:true,version:a.draft_version});
       }
       if (m[2] === "authorize") {
-        if(e.ENVIRONMENT==="production-lab")await requireAuditorCredential(r,e);
-        return authorize(e,id,d,"Auditor: "+p.name);
+        if(e.ENVIRONMENT==="production-lab")await requireWriterCredential(r,e);
+        return authorize(e,id,d,"Escritor: "+p.name);
+      }
+      if (m[2] === "cancel") {
+        const a = await article(e,id);
+        if(d.version !== a.draft_version) throw new HttpError(409,"Versão alterada.");
+        await e.DB.prepare("UPDATE schedules SET status='cancelled' WHERE article_id=? AND version=? AND status='queued'").bind(id,d.version).run();
+        await event(e,"cancel-schedule",p.id,{id,version:d.version});
+        return json({ok:true});
       }
       const a = await article(e, id);
       if (d.version !== a.draft_version)
@@ -419,34 +432,14 @@ export async function extraAdmin(r: Request, e: Env, path: string) {
     if (r.method === "POST") {
       const d = await jsonBody(r),
         scopes = strings(d.scopes, 5);
-      if(e.ENVIRONMENT==="production-lab" && scopes.includes("authorize")){
-        const ownerKey=r.headers.get("X-Metricpedia-Owner-Key")||"";
-        if(!e.SETUP_TOKEN || e.SETUP_TOKEN.length<24)
-          throw new HttpError(503,"Configure a chave de administração do laboratório no GitHub antes de criar credenciais de Auditor.");
-        const a=new Uint8Array(await crypto.subtle.digest("SHA-256",new TextEncoder().encode(ownerKey)));
-        const b=new Uint8Array(await crypto.subtle.digest("SHA-256",new TextEncoder().encode(e.SETUP_TOKEN)));
-        let diff=0;for(let i=0;i<a.length;i++)diff|=a[i]^b[i];
-        if(!ownerKey||diff!==0)throw new HttpError(403,"A chave do responsável é necessária para credenciais de Auditor.");
-      }
-      if (
-        !scopes.length ||
-        scopes.some(
-          (s) =>
-            !["submit", "status", "authorize", "schedule", "publish"].includes(
-              s,
-            ),
-        ) ||
-        (scopes.includes("submit") &&
-          scopes.some((s) => ["authorize", "publish"].includes(s)))
-      )
-        fail("O Escritor pode enviar e agendar, mas não pode aprovar nem publicar diretamente.");
+      if (!scopes.includes("submit") || !scopes.includes("status") ||
+          scopes.some(s => !["submit","status","authorize","schedule"].includes(s)))
+        fail("Somente o Escritor pode operar o CMS. Use submit, status, authorize e schedule.");
       const token = randomToken(),
         id = crypto.randomUUID();
       await e.DB.prepare("INSERT INTO agents VALUES(?,?,?,?,1,?)")
         .bind(id, txt(d.name), await hash(token), JSON.stringify(scopes), now())
         .run();
-      if(e.ENVIRONMENT==="production-lab"&&scopes.includes("authorize"))
-        await e.DB.prepare("INSERT INTO lab_trusted_auditors(agent_id,created_at) VALUES(?,?)").bind(id,now()).run();
       await event(e, "create-agent", "owner", { id, scopes });
       return json({ id, token, scopes }, 201);
     }
@@ -468,9 +461,10 @@ export async function extraAdmin(r: Request, e: Env, path: string) {
       return json(await details(e, detail[1]));
     if (r.method === "POST" && detail[2] === "authorize") {
       const actor=e.ENVIRONMENT === "production-lab"
-        ? await requireAuditorCredential(r,e)
+        ? await requireWriterCredential(r,e)
         : null;
-      return authorize(e, detail[1], await jsonBody(r), actor ? "Auditor: "+actor.name : "owner");
+      if (actor) scope(actor,"authorize");
+      return authorize(e, detail[1], await jsonBody(r), actor ? "Escritor: "+actor.name : "Escritor: interface");
     }
   }
   if (path === "/api/editorial/logs" && r.method === "GET")

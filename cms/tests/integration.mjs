@@ -164,13 +164,13 @@ try {
       201,
     )
   ).data;
-  const supervisor = (
+  const operator = (
     await req(
       "/api/editorial/agents",
       "POST",
       {
-        name: "TEST ONLY Supervisor",
-        scopes: ["status", "authorize", "schedule", "publish"],
+        name: "TEST ONLY Writer Operator",
+        scopes: ["submit", "status", "authorize", "schedule"],
       },
       undefined,
       201,
@@ -185,8 +185,8 @@ try {
   );
   const writerScheduler = (await req("/api/editorial/agents","POST",{name:"TEST ONLY Writer + Scheduler",scopes:["submit","status","schedule"]},undefined,201)).data;
   assert.ok(writerScheduler.token);
-  const auditor = (await req("/api/editorial/agents","POST",{name:"TEST ONLY Auditor",scopes:["status","authorize"]},undefined,201)).data;
-  const watcher = (await req("/api/editorial/agents","POST",{name:"TEST ONLY Supervisor Observer",scopes:["status"]},undefined,201)).data;
+  await req("/api/editorial/agents","POST",{name:"TEST ONLY Auditor",scopes:["status","authorize"]},undefined,400);
+  await req("/api/editorial/agents","POST",{name:"TEST ONLY Supervisor Observer",scopes:["status"]},undefined,400);
   await req("/api/editorial/articles", "GET", undefined, writer.token, 401);
   const image = await import("node:fs").then((fs) =>
     fs.readFileSync(cms + "../assets/icons/category-0.png"),
@@ -273,7 +273,7 @@ try {
       digest: unsafe.digest,
       evidence: "TEST ONLY rejected unsafe link",
     },
-    supervisor.token,
+    operator.token,
     400,
   );
   const first = (
@@ -288,11 +288,11 @@ try {
   await req("/api/integration/articles/" + id + "/submit-review","POST",{version:1,notes:"Writer sent to Auditor"},writer.token);
   const submitted=(await req("/api/editorial/articles/" + id)).data;
   assert.equal(submitted.review_status,"review");
-  await req("/api/integration/articles/" + id + "/request-changes","POST",{version:1,notes:"Fix source details"},auditor.token);
+  await req("/api/integration/articles/" + id + "/request-changes","POST",{version:1,notes:"Fix source details"},operator.token);
   const corrections=(await req("/api/editorial/articles/" + id)).data;
   assert.equal(corrections.review_status,"changes");
   await req("/api/integration/articles/" + id + "/submit-review","POST",{version:1,notes:"Resubmitted after corrections"},writer.token);
-  await req("/api/integration/articles/" + id + "/authorize","POST",{version:1,digest:first.digest,evidence:"watcher cannot approve"},watcher.token,403);
+  await req("/api/integration/articles/" + id + "/authorize","POST",{version:1,digest:first.digest,evidence:"watcher cannot approve"},writer.token,403);
 
   await req(
     "/api/integration/packages",
@@ -312,8 +312,8 @@ try {
     "/api/integration/articles/" + id + "/publish",
     "POST",
     { version: 1 },
-    supervisor.token,
-    409,
+    operator.token,
+    403,
   );
   await req(
     "/api/integration/articles/" + id + "/authorize",
@@ -326,7 +326,7 @@ try {
     "/api/integration/articles/" + id + "/authorize",
     "POST",
     { version: 1, digest: "wrong", evidence: "test approval" },
-    supervisor.token,
+    operator.token,
     409,
   );
   await req(
@@ -335,23 +335,35 @@ try {
     {
       version: 1,
       digest: first.digest,
-      evidence: "TEST ONLY external Supervisor message #1",
+      evidence: "Grok approval message #1",
     },
-    supervisor.token,
+    operator.token,
   );
   await req(
     "/api/integration/articles/" + id + "/schedule",
     "POST",
     { version: 1, runAt: "bad" },
-    supervisor.token,
+    operator.token,
     400,
   );
+  const later = new Date(Date.now()+3600000).toISOString();
+  await req("/api/integration/articles/"+id+"/schedule","POST",{version:1,runAt:later},operator.token);
+  await req("/api/integration/articles/"+id+"/reschedule","POST",{version:1,runAt:new Date(Date.now()+7200000).toISOString()},operator.token);
+  await req("/api/integration/articles/"+id+"/cancel","POST",{version:1},operator.token);
+  const cancelled=(await req("/api/integration/schedules","GET",undefined,operator.token)).data;
+  assert.ok(!cancelled.some(x=>x.article_id===id&&x.status==="queued"));
+  const audit={calculatorId:"paint-calculator",formulaChecked:"area / coverage",testInputs:"area=100 coverage=10",expectedResult:"10",observedResult:"10",auditor:"Grok Auditor",verdict:"passed"};
+  await req("/api/integration/calculator-audits","POST",audit,operator.token,400);
+  await req("/api/integration/calculator-audits","POST",{...audit,approvalReference:"Grok audit message #2"},operator.token,201);
+  const readiness=(await req("/api/integration/campaigns?calculatorId=paint-calculator","GET",undefined,operator.token)).data;
+  assert.equal(readiness.audit.approval_reference,"Grok audit message #2");
+  assert.equal(readiness.ready,false);
   const target = new Date(Date.now() + 10000).toISOString();
   await req(
     "/api/integration/articles/" + id + "/schedule",
     "POST",
     { version: 1, runAt: target },
-    supervisor.token,
+    operator.token,
   );
   await pause(10500);
   const scheduleCall = () => fetch(origin + "/__scheduled?cron=*+*+*+*+*");
@@ -392,8 +404,8 @@ try {
     "/api/integration/articles/" + id + "/publish",
     "POST",
     { version: 2 },
-    supervisor.token,
-    409,
+    operator.token,
+    403,
   );
   await req(
     "/api/integration/packages",
@@ -410,13 +422,13 @@ try {
     "/api/integration/articles/" + id + "/authorize",
     "POST",
     { version: 2, digest: second.digest, evidence: "TEST ONLY version 2" },
-    supervisor.token,
+    operator.token,
   );
   await req(
     "/api/integration/articles/" + id + "/schedule",
     "POST",
     { version: 2, runAt: new Date(Date.now() + 3600000).toISOString() },
-    supervisor.token,
+    operator.token,
   );
   cmd([
     "d1",

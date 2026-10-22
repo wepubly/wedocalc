@@ -103,9 +103,7 @@ function App() {
   const [reviewActor, setReviewActor] = useState("Auditor");
   const [reviewNotes, setReviewNotes] = useState("");
   const [qualityResult, setQualityResult] = useState<any>(null);
-  const [agentRole, setAgentRole] = useState("writer");
-  const [auditorToken, setAuditorToken] = useState("");
-  const [ownerKey, setOwnerKey] = useState("");
+  const [writerToken, setWriterToken] = useState("");
   const [internalLinkTarget, setInternalLinkTarget] = useState("");
   const [internalLinkText, setInternalLinkText] = useState("");
   const [campaignCalculator, setCampaignCalculator] = useState("paint-calculator");
@@ -806,8 +804,8 @@ function App() {
                             current.externalApproval.approved_by
                           : "Publicação bloqueada: falta confirmação da aprovação externa."}
                       </p>
-                      {location.hostname.startsWith("metricpedia-editorial-lab.") && current.externalApproval && !String(current.externalApproval.approved_by || "").startsWith("Auditor: ") &&
-                        <p className="message error">Esta aprovação foi registrada antes da exigência de credencial do Auditor. Os dados estão preservados, mas a versão deve ser revalidada antes de agendar ou publicar.</p>}
+                      {location.hostname.startsWith("metricpedia-editorial-lab.") && current.externalApproval && !String(current.externalApproval.approved_by || "").startsWith("Escritor: ") &&
+                        <p className="message error">Esta aprovação foi registrada antes da exigência de credencial do Escritor. Os dados estão preservados, mas a versão deve ser revalidada antes de agendar ou publicar.</p>}
                       <label>
                         Referência da aprovação final pelo Auditor
                         <input
@@ -816,8 +814,8 @@ function App() {
                           placeholder="ID/mensagem de aprovação do Auditor no grupo"
                         />
                       </label>
-                      <label>Credencial exclusiva do Auditor (obrigatória para aprovar)
-                        <input type="password" autoComplete="off" value={auditorToken} onChange={e=>setAuditorToken(e.target.value)} placeholder="Cole a credencial gerada em Acesso e agentes" />
+                      <label>Credencial do Escritor (para registrar a aprovação do Grok)
+                        <input type="password" autoComplete="off" value={writerToken} onChange={e=>setWriterToken(e.target.value)} placeholder="Cole a credencial gerada em Acesso e agentes" />
                       </label>
                       <section className="panel">
                         <h3>Revisão editorial · versão {current.draft_version}</h3>
@@ -837,7 +835,7 @@ function App() {
                           <button disabled={busy || !current.review || current.review.status === "changes"} onClick={() => void work(async () => {
                             await api("/articles/" + current.id + "/request-changes","POST",{version:current.draft_version,actor:reviewActor || "Auditor",notes:reviewNotes});
                             await refresh();await open(current.id);setNotice("Correções solicitadas.");
-                          })}>Solicitar correções</button>
+                          })}>Registrar correções solicitadas no Grok</button>
                           <button disabled={busy} onClick={() => void work(async () => {
                             setQualityResult(await api("/articles/" + current.id + "/quality"));
                           })}>Verificar qualidade</button>
@@ -850,13 +848,13 @@ function App() {
                       </section>
                       <div className="actions">
                         <button
-                          disabled={busy || !evidence || !auditorToken.trim()}
+                          disabled={busy || !evidence || !writerToken.trim()}
                           onClick={() =>
                             work(async () => {
-                              if(!auditorToken.trim()) throw new Error("Informe a credencial exclusiva do Auditor.");
+                              if(!writerToken.trim()) throw new Error("Informe a credencial do Escritor.");
                               const response = await fetch(base + "/articles/" + current.id + "/authorize", {
                                 method:"POST",
-                                headers:{"Content-Type":"application/json","Authorization":"Bearer "+auditorToken.trim()},
+                                headers:{"Content-Type":"application/json","Authorization":"Bearer "+writerToken.trim()},
                                 body:JSON.stringify({version:current.draft_version,digest:current.digest,evidence})
                               });
                               const result:any = await response.json();
@@ -870,7 +868,7 @@ function App() {
                             })
                           }
                         >
-                          Auditor: aprovar versão e hash
+                          Registrar aprovação do Grok para esta versão e hash
                         </button>
                         <label>
                           Publicar em (Brasília)
@@ -881,7 +879,7 @@ function App() {
                           />
                         </label>
                         <button
-                          disabled={busy || !current.externalApproval || !runAt || (location.hostname.startsWith("metricpedia-editorial-lab.") && !String(current.externalApproval.approved_by || "").startsWith("Auditor: "))}
+                          disabled={busy || !current.externalApproval || !runAt || (location.hostname.startsWith("metricpedia-editorial-lab.") && !String(current.externalApproval.approved_by || "").startsWith("Escritor: "))}
                           onClick={() =>
                             work(async () => {
                               await api(
@@ -920,10 +918,10 @@ function App() {
                           disabled={busy || !current.published_version}
                           onClick={() =>
                             work(async () => {
-                              if(!auditorToken.trim())throw new Error("A retirada de publicação exige a credencial do Auditor.");
+                              if(!writerToken.trim())throw new Error("A retirada de publicação exige a credencial do Escritor.");
                               const response=await fetch(base + "/articles/" + current.id + "/unpublish",{
                                 method:"POST",
-                                headers:{"Content-Type":"application/json","Authorization":"Bearer "+auditorToken.trim()},
+                                headers:{"Content-Type":"application/json","Authorization":"Bearer "+writerToken.trim()},
                                 body:"{}"
                               });
                               const result:any=await response.json();
@@ -1056,7 +1054,8 @@ function App() {
                     <label>Entradas de teste<textarea name="testInputs" required /></label>
                     <label>Resultado esperado<input name="expectedResult" required /></label>
                     <label>Resultado observado<input name="observedResult" required /></label>
-                    <label>Nome do Auditor<input name="auditor" required /></label>
+                    <label>Auditor responsável no Grok<input name="auditor" required /></label>
+                    <label>Referência da auditoria no grupo Grok<input name="approvalReference" required maxLength={2000} /></label>
                     <label>Conclusão<select name="verdict"><option value="passed">Aprovado — resultados conferem</option><option value="failed">Reprovado — resultados divergentes</option></select></label>
                     <label>Observações<textarea name="notes" /></label>
                     <button disabled={busy}>Registrar auditoria</button>
@@ -1437,7 +1436,7 @@ function App() {
                 <section className="panel">
                   <h2>Criar credencial de integração</h2>
                   <p>
-                    Escritor: enviar e agendar após a aprovação. Auditor: solicitar correções e autorizar a versão. Supervisor: somente acompanhar. A publicação agendada é executada pelo CMS.
+                    Somente o Escritor opera o CMS: registra as decisões e auditorias recebidas no Grok e gerencia os agendamentos. Auditor e Supervisor trabalham exclusivamente no grupo Grok.
                   </p>
                   <form
                     onSubmit={(e) => {
@@ -1447,8 +1446,7 @@ function App() {
                         const d = await api("/agents", "POST", {
                           name: f.get("name"),
                           scopes: f.getAll("scopes"),
-                        }, agentRole==="auditor" ? {"X-Metricpedia-Owner-Key":ownerKey} : {});
-                        setOwnerKey("");
+                        });
                         setCredential(d.token);
                         await refresh();
                       });
@@ -1458,16 +1456,7 @@ function App() {
                       Nome do agente
                       <input name="name" required />
                     </label>
-                    {agentRole === "auditor" && <label>Chave do responsável (necessária somente para criar Auditor)
-                      <input type="password" autoComplete="off" value={ownerKey} onChange={e=>setOwnerKey(e.target.value)} placeholder="Chave já configurada em METRICPEDIA_SETUP_TOKEN" />
-                    </label>}
-                    <label>Papel do bot
-                      <select value={agentRole} onChange={e => setAgentRole(e.target.value)}>
-                        <option value="writer">Escritor — enviar e agendar</option>
-                        <option value="auditor">Auditor — revisar e aprovar</option>
-                        <option value="supervisor">Supervisor — acompanhar</option>
-                      </select>
-                    </label>
+                    <p>Papel autorizado: Escritor</p>
                     <div className="actions">
                       {[
                         "submit",
@@ -1480,7 +1469,7 @@ function App() {
                             type="checkbox"
                             name="scopes"
                             value={s}
-                            checked={(agentRole === "writer" ? ["submit","status","schedule"] : agentRole === "auditor" ? ["status","authorize"] : ["status"]).includes(s)}
+                            checked={["submit","status","authorize","schedule"].includes(s)}
                             readOnly
                           />
                           {s}

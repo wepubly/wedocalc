@@ -1,28 +1,42 @@
-# Acesso e conclusão do deploy
+# Responsabilidades editoriais — adendo vigente
 
-## Secrets e permissões
+Somente o **Escritor** opera o CMS e suas APIs. Auditor e Supervisor atuam exclusivamente no grupo Grok. A aprovação é uma decisão externa: o Escritor registra sua referência, versão e hash; o CMS verifica esses dados antes de agendar ou publicar. Não há painel independente de aprovação nem login novo nesta fase.
 
-GitHub → `wepubly/wedocalc` → Settings → Secrets and variables → Actions → Repository secrets.
+O Auditor revisa os artigos e testa a calculadora no Grok. O Supervisor verifica a operação uma vez por dia por meio dos relatórios compartilhados nesse grupo, sem credencial de CMS. Este sistema não envia mensagens ao grupo nem cria uma integração para esses agentes.
 
-1. Atualizar `CLOUDFLARE_API_TOKEN` (não criar outro de mesmo nome) se as chamadas D1/R2 retornarem erro 10000. No Cloudflare → My Profile → API Tokens → token utilizado → Edit: conta `b81896777d206a2239625d9cf2e8a40b`, permissões Account / Workers Scripts / Edit, D1 / Edit, Workers R2 Storage / Edit; manter Cloudflare Pages / Edit para os workflows já existentes. Não restringir a IP incompatível com GitHub runners.
-2. Criar `METRICPEDIA_SETUP_TOKEN`: chave temporária escolhida por você, 24+ caracteres, usada só para abrir o primeiro cadastro. Não é a sua senha administrativa. Não envie pelo chat.
-3. Account ID já está no workflow. `PUBLIC_ORIGIN`, `ENVIRONMENT` e IDs D1/R2 são gerados após consulta real; não precisam de secrets de frontend.
+## Credencial do Escritor
 
-Após atualizar secrets, em Actions → Metricpedia CMS staging → execução da branch → Re-run failed jobs. Se verify já passou, ele é reaproveitado. O workflow só cria recursos com os nomes específicos de homologação. O relatório final mostra o endereço real.
+Gerar no painel uma credencial com `submit`, `status`, `authorize` e `schedule`. O escopo `authorize` registra a aprovação recebida; não substitui a decisão editorial externa. Credenciais antigas sem `submit` são desativadas pela migração. O token é apresentado uma única vez e enviado em `Authorization: Bearer TOKEN`. Não é necessário login interativo no ambiente editorial de produção existente.
 
-## Cadastrar sua própria senha
+## API operacional do Escritor
 
-Abra o endereço de staging devolvido pela execução, `/admin/setup`. Informe a chave temporária `METRICPEDIA_SETUP_TOKEN`, escolha um usuário e sua senha de 12+ caracteres. Em seguida entre em `/admin/login`. Depois do primeiro cadastro o endpoint inicial fica fechado, mesmo que o segredo continue configurado. Remova o secret temporário do GitHub quando terminar; isso não remove o proprietário nem sua senha. Em Acesso e agentes é possível alterar a senha, encerrando as sessões existentes.
+| Método e rota | Uso |
+| --- | --- |
+| `POST /api/integration/packages` | Cadastrar ou atualizar uma versão imutável, SEO e links internos; manter o contrato de pacote existente e a chave de idempotência. |
+| `POST /api/integration/media` | Enviar imagem binária com nome, texto alternativo, origem e licença nos cabeçalhos existentes. |
+| `GET /api/integration/articles/:id` | Consultar versão, hash, aprovação e situação do artigo. |
+| `POST /api/integration/articles/:id/authorize` | Registrar `{version, digest, evidence}` da aprovação recebida no Grok. |
+| `POST /api/integration/articles/:id/submit-review` | Registrar envio da versão para revisão externa. |
+| `POST /api/integration/articles/:id/request-changes` | Registrar correções solicitadas no Grok. |
+| `POST /api/integration/articles/:id/schedule` | Agendar `{version, runAt}`; data ISO com fuso explícito. |
+| `POST /api/integration/articles/:id/reschedule` | Alterar a data com `{version, runAt}`; cancela o agendamento anterior e revalida a aprovação. |
+| `POST /api/integration/articles/:id/cancel` | Cancelar o agendamento da `{version}` atual. |
+| `GET /api/integration/schedules` | Consultar fila, datas e status para relatórios. |
+| `GET /api/integration/briefs` | Consultar briefings autorizados. |
+| `GET /api/integration/routes` | Consultar categorias e calculadoras existentes. |
+| `POST /api/integration/calculator-audits` | Registrar a auditoria externa da calculadora. |
+| `GET /api/integration/campaigns?calculatorId=ID` | Consultar elegibilidade e histórico da campanha. |
+| `POST /api/integration/campaigns/activate` | Ativar a fila com `{calculatorId, startDate}`. |
+| `POST /api/integration/campaigns/cancel` | Cancelar a campanha `{id}` e os itens ainda na fila. |
 
-Sem SETUP_TOKEN, o Worker pode estar implantado, mas o cadastro fica bloqueado. Não há uma senha padrão nem administrador público de primeiro acesso.
+O registro da auditoria exige `calculatorId`, `formulaChecked`, `testInputs`, `expectedResult`, `observedResult`, `auditor`, `verdict` (`passed`/`failed`) e `approvalReference` (referência da mensagem no Grok); `notes` é opcional. A referência identifica a evidência externa, sem alegar verificação automática do grupo.
 
-## Primeiros passos
+## Controles preservados
 
-1. Cadastre o briefing aprovado (ID, palavras-chave, circuito e calculadora).
-2. Crie uma credencial de escritor com `submit` e `status`, entregue no cofre seguro do agente.
-3. Envie um pacote de homologação conforme GROK_API.md.
-4. Confira a versão recebida. Confirme a aprovação já feita no Grok usando o hash/evidência, ou valide uma credencial independente do Supervisor.
-5. Agende usando horário Brasília. O armazenamento e a API usam ISO UTC/com offset.
-6. Confira blog, logs, noindex e publicação. Testes devem ter título TEST ONLY.
+A aprovação corresponde à versão e ao hash exatos. Uma edição cria outra versão e cancela os agendamentos anteriores. A campanha exige exatamente sete artigos aprovados de cada circuito, quatorze no total, e a última auditoria aprovada com referência no Grok. Auditorias legadas continuam preservadas, mas precisam de novo registro com referência antes de ativar outra campanha. Agendamentos existentes não são apagados pela migração.
 
-Não há recuperação automática de senha por e-mail nesta versão. Não publicar em produção nem remover bloqueios de indexação por este workflow.
+A Central de Publicações mantém a consulta de artigos agendados e publicados pelo proprietário e a gestão de agendamentos pelo Escritor. A supervisão usa relatórios compartilhados no Grok. Não foram criados endpoints operacionais para Auditor ou Supervisor.
+
+## Deploy
+
+Usar o fluxo de produção editorial existente `.github/workflows/cms-production-lab.yml`, acionado pela branch `work/metricpedia-cms-blog-v1`. O nome histórico do Worker contém `lab`, mas este é o ambiente editorial já publicado, sem criação de staging ou infraestrutura adicional nesta mudança. A configuração sem login e as proteções contra indexação existentes são preservadas. Não mudar o site estático, o domínio ou o roteamento de publicação sem necessidade desta missão.

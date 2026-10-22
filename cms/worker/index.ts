@@ -35,7 +35,7 @@ import {
 import {
   integration,
   extraAdmin,
-  requireAuditorCredential,
+  requireWriterCredential,
   normalizeEditorial,
   validateEditorial,
 } from "./integration";
@@ -630,7 +630,7 @@ async function api(request: Request, env: Env, path: string) {
         });
       }
       if (action === "unpublish") {
-        if(env.ENVIRONMENT==="production-lab")await requireAuditorCredential(request,env);
+        if(env.ENVIRONMENT==="production-lab")await requireWriterCredential(request,env);
         const origin = new URL(env.PUBLIC_ORIGIN).origin;
         const linked = (await publicArticles(env)).some(
           (r) =>

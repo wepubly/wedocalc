@@ -29,17 +29,18 @@ jobs:
       - run: npm ci
       - run: npm run check
       - run: npm run build
+      - run: npm test
       - run: node scripts/provision-production-lab.mjs
       - run: npx wrangler d1 migrations apply metricpedia-editorial-lab-db --remote --config wrangler.lab.json
       - run: npx wrangler deploy --config wrangler.lab.json
-      - name: Configure optional restricted Auditor enrollment secret
+      - name: Configure optional restricted Non-Writer enrollment secret
         env:
           SETUP_KEY: ${{ secrets.METRICPEDIA_SETUP_TOKEN }}
         run: |
           if [ -n "$SETUP_KEY" ]; then
             printf '%s' "$SETUP_KEY" | npx wrangler secret put SETUP_TOKEN --config wrangler.lab.json
           else
-            echo 'Auditor enrollment locked: repository secret METRICPEDIA_SETUP_TOKEN missing.' >> "$GITHUB_STEP_SUMMARY"
+            echo 'Non-Writer enrollment locked: repository secret METRICPEDIA_SETUP_TOKEN missing.' >> "$GITHUB_STEP_SUMMARY"
           fi
       - name: Verify real editorial CMS is available without login
         run: |
@@ -59,7 +60,7 @@ jobs:
             headers:{'Content-Type':'application/json','Origin':origin},
             body:JSON.stringify({name:'Forbidden test Auditor',scopes:['status','authorize']})
           });
-          if(unauthorized.status!==403)throw Error('Unauthorized public Auditor enrollment must be rejected, got '+unauthorized.status);
+          if(unauthorized.status!==400)throw Error('Unauthorized public Non-Writer enrollment must be rejected, got '+unauthorized.status);
           const current=await fetch(origin+'/api/editorial/articles').then(r=>r.json());
           if(Array.isArray(current)&&current[0]?.id){
             const articleId=current[0].id;

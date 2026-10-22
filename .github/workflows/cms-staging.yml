@@ -1,7 +1,6 @@
 name: Metricpedia CMS staging
 on:
-  push:
-    branches: [work/metricpedia-cms-blog-v1]
+  workflow_dispatch:
 permissions:
   contents: read
 concurrency:
@@ -27,7 +26,7 @@ jobs:
       - run: npm test
   staging:
     needs: verify
-    if: github.ref == 'refs/heads/work/metricpedia-cms-blog-v1'
+    if: false # Staging retired by the Writer-only production mission
     runs-on: ubuntu-latest
     timeout-minutes: 12
     defaults:
