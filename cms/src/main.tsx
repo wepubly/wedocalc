@@ -1115,7 +1115,7 @@ function App() {
                         if (!r.ok) throw Error(d.error);
                         await refresh();
                         form.reset();
-                        setNotice("Imagem armazenada com origem e licença.");
+                        setNotice(d.duplicate ? "Imagem idêntica já existia: reutilizada da biblioteca sem gerar outra cópia." : "Imagem armazenada com origem e licença.");
                       });
                     }}
                   >
