@@ -43,6 +43,8 @@ jobs:
             const r=await fetch(origin+path);const data=await r.text();
             if(!r.ok)throw Error(path+' unavailable: '+r.status+' '+data.slice(0,200));
           }
+          const campaign=await fetch(origin+'/api/editorial/campaigns?calculatorId=paint-calculator');const campaignJson=await campaign.json();
+          if(!campaign.ok||campaignJson.calculatorId!=='paint-calculator'||!Array.isArray(campaignJson.articles)||typeof campaignJson.ready!=='boolean')throw Error('14-day campaign API not available');
           const old=await fetch(origin+'/admin/test-article');if(!old.ok)throw Error('Legacy test form unavailable');
           const robots=await fetch(origin+'/robots.txt');if(!(await robots.text()).includes('Disallow: /'))throw Error('Laboratory must remain noindex');
           appendFileSync(process.env.GITHUB_STEP_SUMMARY,'\\nMetricpedia editorial CMS (production test): '+origin+'/admin\\nComplete functional UI and protected-from-indexing blog; official Pages and blog unchanged.\\n');
