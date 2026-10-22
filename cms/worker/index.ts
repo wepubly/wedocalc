@@ -705,7 +705,7 @@ async function handle(request: Request, env: Env): Promise<Response> {
   if (path.startsWith("/api/integration/"))
     return integration(request, env, path);
   if (path.startsWith("/api/")) return api(request, env, path);
-  if (path.startsWith("/admin-assets/")) {
+  if (path === "/admin-assets" || path.startsWith("/admin-assets/")) {
     const asset = await env.ASSETS.fetch(request);
     if (
       asset.headers.get("content-type")?.includes("text/html") &&
@@ -723,7 +723,7 @@ async function handle(request: Request, env: Env): Promise<Response> {
     if (path === "/admin" && !(await session(request, env)))
       return Response.redirect(url.origin + "/admin/login", 302);
     return env.ASSETS.fetch(
-      new Request(new URL("/admin-assets/index.html", request.url)),
+      new Request(new URL("/admin-assets/", request.url)),
     );
   }
   if (path === "/") return Response.redirect(url.origin + "/admin", 302);

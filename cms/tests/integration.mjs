@@ -107,6 +107,7 @@ try {
     }
   }
   if (!ready) throw Error("Local Worker did not start: " + output.slice(-3000));
+  assert.match((await req("/admin/setup")).raw, /Metricpedia Editorial Center/);
   await req("/api/editorial/articles", "GET", undefined, undefined, 401);
   await req(
     "/api/editorial/setup",
