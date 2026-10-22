@@ -1,7 +1,7 @@
 import { Env, Snapshot, HttpError, now } from "./types";
 import { hash, jsonBody, randomToken, readBody } from "./security";
 import { article, version, snapshot, publish, upload } from "./index";
-import { requireQuality, transition } from "./editorial";
+import { requireQuality, transition, review } from "./editorial";
 const json = (v: unknown, status = 200) =>
   Response.json(v, { status, headers: { "Cache-Control": "no-store" } });
 const fail = (m: string): never => {
@@ -137,6 +137,7 @@ async function details(e: Env, id: string) {
     snapshot: v.data,
     digest: await hash(JSON.stringify(v.data)),
     externalApproval: approval,
+    review: await review(e, a),
   };
 }
 export async function integration(r: Request, e: Env, path: string) {
