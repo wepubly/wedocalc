@@ -38,6 +38,7 @@ jobs:
           import {readFileSync,appendFileSync} from 'node:fs';
           const origin=readFileSync('lab-origin.txt','utf8').trim();
           const r=await fetch(origin+'/admin/test-article');const html=await r.text();
+          console.log('Editor check:',r.status,r.url,html.slice(0,300),'robots:',r.headers.get('x-robots-tag'));
           if(!r.ok||!html.includes('Criar matéria de teste')||!r.headers.get('x-robots-tag')?.includes('noindex'))throw Error('Editor unavailable/noindex missing');
           const bad=await fetch(origin+'/api/workbench/article',{method:'POST',headers:{'content-type':'application/json'},body:'{}'});
           if(bad.status!==400&&bad.status!==429)throw Error('Expected input validation or rate limit');
