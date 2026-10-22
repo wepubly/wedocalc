@@ -1221,7 +1221,10 @@ function App() {
                     e.preventDefault();
                     const node=e.currentTarget;
                     void work(async()=>{
-                      await api("/terms","POST",Object.fromEntries(new FormData(node).entries()));
+                      const d=Object.fromEntries(new FormData(node).entries());
+                      const slug=String(d.name||"").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"");
+                      if(!slug)throw new Error("Nome inválido.");
+                      await api("/terms","POST",{...d,slug});
                       await refresh();node.reset();setNotice("Termo editorial cadastrado.");
                     });
                   }}>
@@ -1250,7 +1253,7 @@ function App() {
                     <strong>{p.title}</strong><p>{p.notes}</p>
                     <small>Status: {p.status}</small>
                     <div className="actions">
-                      {["planned","approved","archived"].map(status=><button type="button" key={status} disabled={busy||p.status===status} onClick={()=>void work(async()=>{await api("/pitches/"+p.id,"POST",{status});await refresh();})}>{status==="approved"?"Aprovar pauta":status==="archived"?"Arquivar":"Planejar"}</button>)}
+                      {["planned","approved","archived"].map(status=><button type="button" key={status} disabled={busy||p.status===status} onClick={()=>void work(async()=>{await api("/pitches/"+p.id,"PUT",{status});await refresh();})}>{status==="approved"?"Aprovar pauta":status==="archived"?"Arquivar":"Planejar"}</button>)}
                     </div>
                   </div>)}
                 </section>
