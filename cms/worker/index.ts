@@ -485,7 +485,7 @@ async function api(request: Request, env: Env, path: string) {
       return json(
         (
           await env.DB.prepare(
-            `SELECT a.*,r.status AS review_status,r.reviewer,r.notes AS review_notes,v.snapshot FROM articles a LEFT JOIN editorial_reviews r ON r.article_id=a.id AND r.version=a.draft_version JOIN article_versions v ON v.article_id=a.id AND v.version=a.draft_version ORDER BY a.updated_at DESC`,
+            `SELECT a.*,(SELECT e.version FROM editorial_events e WHERE e.article_id=a.id AND e.action IN ('publish','scheduled-publication') ORDER BY e.id DESC LIMIT 1) AS last_publication_version,(SELECT e.created_at FROM editorial_events e WHERE e.article_id=a.id AND e.action IN ('publish','scheduled-publication') ORDER BY e.id DESC LIMIT 1) AS last_publication_at,(SELECT pv.snapshot FROM editorial_events e JOIN article_versions pv ON pv.article_id=e.article_id AND pv.version=e.version WHERE e.article_id=a.id AND e.action IN ('publish','scheduled-publication') ORDER BY e.id DESC LIMIT 1) AS publication_snapshot,r.status AS review_status,r.reviewer,r.notes AS review_notes,v.snapshot FROM articles a LEFT JOIN editorial_reviews r ON r.article_id=a.id AND r.version=a.draft_version JOIN article_versions v ON v.article_id=a.id AND v.version=a.draft_version ORDER BY a.updated_at DESC`,
           ).all()
         ).results.map((r) => ({
           ...r,

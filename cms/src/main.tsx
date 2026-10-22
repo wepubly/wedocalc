@@ -105,6 +105,7 @@ function App() {
   const [reviewNotes, setReviewNotes] = useState("");
   const [qualityResult, setQualityResult] = useState<any>(null);
   const [writerToken, setWriterToken] = useState("");
+  const [sourcesText, setSourcesText] = useState<string | null>(null);
   const [fieldErrors, setFieldErrors] = useState<Record<string,string>>({});
   const [linkQuery, setLinkQuery] = useState("");
   const [editingLink, setEditingLink] = useState<number | null>(null);
@@ -203,6 +204,7 @@ function App() {
     setEditingLink(null);
     setCurrent(d);
     setDraft(d.snapshot);
+    setSourcesText(null);
     setVersions(v);
     setEvents(e);
     setTab("articles");
@@ -474,6 +476,7 @@ function App() {
                     onClick={() => {
                       setCurrent(null);
                       setDraft(blank());
+                      setSourcesText(null);
                       setFieldErrors({});
                       setEditingLink(null);
                       setVersions([]);
@@ -634,6 +637,7 @@ function App() {
                         }
                         if(draft.slug && !/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(draft.slug))errors.slug="Use letras minúsculas, números e hífens.";
                         if(draft.canonicalUrl) { try { const u=new URL(draft.canonicalUrl); if(u.protocol!=="https:" || u.hostname!=="metricpedia.com" || u.username || u.password || u.search || u.hash)throw Error(); } catch { errors.canonicalUrl="Canonical deve ser uma URL HTTPS de metricpedia.com, sem parâmetros."; } }
+                        if(sourcesText!==null) { try { if(!Array.isArray(JSON.parse(sourcesText)))throw Error(); } catch { errors.sources="Fontes: use uma lista JSON válida."; } }
                         setFieldErrors(errors);
                         if(Object.keys(errors).length)throw Error(Object.values(errors)[0]);
                         try {
@@ -709,9 +713,10 @@ function App() {
                     <label>
                       Resumo
                       <textarea
+                        {...invalid("excerpt")}
                         value={draft.excerpt}
                         onChange={(e) => field("excerpt", e.target.value)}
-                      />
+                      />{feedback("excerpt")}
                     </label>
                     <section className="panel">
                       <h3>Inserir links internos</h3>
@@ -753,6 +758,7 @@ function App() {
                       <label>
                         Imagem de capa
                         <select
+                          {...invalid("coverId")}
                           value={draft.coverId}
                           onChange={(e) =>
                             setDraft({
@@ -772,6 +778,7 @@ function App() {
                           ))}
                         </select>
                       </label>
+                      {feedback("coverId")}
                       {input("coverAlt", "Alt text")}
                     </div>
                     <label>
@@ -817,16 +824,20 @@ function App() {
                     <label>
                       Fontes e referências (JSON)
                       <textarea
-                        value={JSON.stringify(draft.sources)}
+                        {...invalid("sources")}
+                        value={sourcesText ?? JSON.stringify(draft.sources)}
                         onChange={(e) => {
+                          setSourcesText(e.target.value);
                           try {
                             field("sources", JSON.parse(e.target.value));
                           } catch {
+                            setFieldErrors(prev=>({...prev,sources:"Fontes: use uma lista JSON válida."}));
                             setError("Fontes: use uma lista JSON válida.");
                           }
                         }}
                       />
                     </label>
+                    {feedback("sources")}
                     <section className="panel">
                       <h3>FAQ e dados estruturados</h3>
                       <p>Adicione perguntas e respostas úteis. Se houver FAQ, o artigo exibirá as respostas e incluirá schema FAQPage.</p>
@@ -1025,12 +1036,12 @@ function App() {
                   Horários de Brasília. As versões sem autorização não podem ser
                   agendadas.
                 </p>
-                {rows.filter(r=>(r.published_version || withdrawn(r)) && !schedules.some(s=>s.article_id===r.id && s.status==="published") && (!publicationFilter || publicationFilter===(withdrawn(r)?"withdrawn":"published"))).map(r=><section className="panel" key={r.id}><h2>{r.snapshot.title}</h2><p>{publicationLabel(withdrawn(r)?"withdrawn":"published")} · {brasiliaDisplay(r.published_at)} · v{r.published_version || "—"}</p><p>{categoryName(r.snapshot.calculatorId)} · Circuito {r.snapshot.circuit}</p><button onClick={()=>void work(()=>open(r.id))}>Abrir</button></section>)}
+                {rows.filter(r=>(r.published_version || withdrawn(r)) && !schedules.some(s=>s.article_id===r.id && s.status==="published") && (!publicationFilter || publicationFilter===(withdrawn(r)?"withdrawn":"published"))).map(r=><section className="panel" key={r.id}><h2>{JSON.parse(r.publication_snapshot || "{}").title || r.snapshot.title}</h2><p>{publicationLabel(withdrawn(r)?"withdrawn":"published")} · {brasiliaDisplay(r.last_publication_at || r.published_at)} · v{r.published_version || r.last_publication_version || "—"}</p><p>{categoryName(JSON.parse(r.publication_snapshot || "{}").calculatorId || r.snapshot.calculatorId)} · Circuito {JSON.parse(r.publication_snapshot || "{}").circuit || r.snapshot.circuit}</p><button onClick={()=>void work(()=>open(r.id))}>Abrir</button></section>)}
                 {schedules.length === 0 && <section className="panel"><p>Nenhuma matéria agendada. Abra um artigo aprovado ou use Campanhas de 14 dias.</p></section>}
               {schedules.filter(s=>!publicationFilter || scheduleStatus(s)===publicationFilter).map((s) => (
                   <section className="panel" key={s.id}>
                     <h2>
-                      {rows.find((r) => r.id === s.article_id)?.snapshot.title}
+                      {JSON.parse(s.snapshot || "{}").title || rows.find((r) => r.id === s.article_id)?.snapshot.title}
                     </h2>
                     <p>
                       {brasiliaDisplay(s.run_at)} · v{s.version} · {publicationLabel(scheduleStatus(s))}

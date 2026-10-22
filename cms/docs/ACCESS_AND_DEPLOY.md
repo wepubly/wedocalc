@@ -40,3 +40,11 @@ A Central de Publicações mantém a consulta de artigos agendados e publicados 
 ## Deploy
 
 Usar o fluxo de produção editorial existente `.github/workflows/cms-production-lab.yml`, acionado pela branch `work/metricpedia-cms-blog-v1`. O nome histórico do Worker contém `lab`, mas este é o ambiente editorial já publicado, sem criação de staging ou infraestrutura adicional nesta mudança. A configuração sem login e as proteções contra indexação existentes são preservadas. Não mudar o site estático, o domínio ou o roteamento de publicação sem necessidade desta missão.
+
+## Endereço definitivo do CMS — 22/10/2026
+
+O endereço operacional definitivo é https://metricpedia-editorial-lab.alex-b81.workers.dev/admin. O termo `lab` é histórico: o workflow `cms-production-lab.yml` publica nesse mesmo Worker, D1 e R2. Não é necessário criar domínio, serviço ou credencial adicional. O site estático e suas rotas públicas permanecem no projeto Pages existente.
+
+A Central de Publicações está em `/admin/publications`, consultando a fila existente e o snapshot da versão correspondente. O estado retirado é derivado de publicação anterior com `published_version` vazio; não altera o enum histórico da fila. Testes de publicação e retirada rodam somente no banco efêmero do CI.
+
+A manutenção pontual `scripts/cleanup-mission-tests.mjs` só é acionada por commit com `[cleanup-tests]`, depois dos testes, deploy e smoke checks. Usa IDs exatos, valida títulos e vínculos, faz cópia de recuperação no mesmo bucket R2 e compara todos os demais registros antes/depois. Não remove credenciais nem histórico operacional.

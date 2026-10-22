@@ -456,6 +456,17 @@ try {
   assert.ok(failed.last_error);
   assert.equal((await req("/blog/" + payload.slug + "/")).raw, published);
   await req("/api/editorial/articles/" + id + "/cancel-schedule", "POST", {});
+  const history=(await req("/api/editorial/schedules")).data;
+  const publishedSchedule=history.find(s=>s.article_id===id && s.status==="published");
+  assert.equal(JSON.parse(publishedSchedule.snapshot).title,payload.title);
+  assert.equal(publishedSchedule.version,1);
+  await req("/api/editorial/articles/"+id+"/unpublish","POST",{});
+  const withdrawn=(await req("/api/editorial/articles")).data.find(a=>a.id===id);
+  assert.equal(withdrawn.published_version,null);
+  assert.ok(withdrawn.published_at);
+  assert.equal(withdrawn.last_publication_version,1);
+  assert.equal(JSON.parse(withdrawn.publication_snapshot).title,payload.title);
+  await req("/blog/"+payload.slug+"/","GET",undefined,undefined,404);
   const secondPassword = randomBytes(24).toString("hex");
   await req("/api/editorial/password", "POST", {
     currentPassword: password,
