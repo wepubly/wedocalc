@@ -792,7 +792,7 @@ async function handle(request: Request, env: Env): Promise<Response> {
   }
   if (!["GET", "HEAD"].includes(request.method))
     throw new HttpError(405, "Método não permitido.");
-  if (path.startsWith("/blog/test-")) return testArticle(request, env, path);
+  if (path.startsWith("/test-blog/")) return testArticle(request, env, path);
   const media = /^\/media\/([a-f0-9-]+)$/.exec(path);
   if (media) return mediaResponse(env, media[1], false);
   const origin = new URL(env.PUBLIC_ORIGIN).origin;
