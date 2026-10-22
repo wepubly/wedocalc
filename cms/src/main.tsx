@@ -3,6 +3,7 @@ import { createRoot } from "react-dom/client";
 import { brasiliaDisplay, brasiliaToUtc } from "./editorial-time";
 import "./admin.css";
 const base = "/api/editorial";
+const encodeMetadata = (value: string) => "utf8-b64:" + btoa(Array.from(new TextEncoder().encode(value), b => String.fromCharCode(b)).join(""));
 async function api(path: string, method = "GET", body?: unknown) {
   const r = await fetch(base + path, {
     method,
@@ -1069,9 +1070,9 @@ function App() {
                           headers: {
                             "Content-Type": file.type,
                             "X-File-Name": encodeURIComponent(file.name),
-                            "X-Image-Alt": String(fd.get("alt")),
-                            "X-Image-Source": String(fd.get("source")),
-                            "X-Image-License": String(fd.get("license")),
+                            "X-Image-Alt": encodeMetadata(String(fd.get("alt"))),
+                            "X-Image-Source": encodeMetadata(String(fd.get("source"))),
+                            "X-Image-License": encodeMetadata(String(fd.get("license"))),
                           },
                           body: file,
                         });
