@@ -790,7 +790,7 @@ async function handle(request: Request, env: Env): Promise<Response> {
   if (path === "/admin/test-article" && ["staging","production-lab"].includes(env.ENVIRONMENT) && ["GET","HEAD"].includes(request.method))
     return env.ASSETS.fetch(new Request(new URL("/admin-assets/test-article.html", request.url)));
   if (env.ENVIRONMENT === "production-lab" &&
-      /^\/admin\/(dashboard|articles|schedules|campaigns|media|briefs|logs|settings)$/.test(path) &&
+      /^\/admin\/(dashboard|articles|schedules|publications|campaigns|media|briefs|logs|settings)$/.test(path) &&
       ["GET","HEAD"].includes(request.method))
     return env.ASSETS.fetch(new Request(new URL("/admin-assets/",request.url)));
   if (

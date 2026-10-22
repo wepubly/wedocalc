@@ -49,7 +49,7 @@ jobs:
           const origin=readFileSync('lab-origin.txt','utf8').trim();
           const admin=await fetch(origin+'/admin');const html=await admin.text();
           if(!admin.ok||!html.includes('Metricpedia Editorial Center')||!html.includes('id="root"')||!admin.headers.get('x-robots-tag')?.includes('noindex'))throw Error('Full editorial panel is not available');
-          for(const path of ['/api/editorial/session','/api/editorial/articles','/api/editorial/schedules','/api/editorial/media','/api/editorial/terms','/api/editorial/pitches','/api/editorial/briefs','/api/editorial/routes','/api/editorial/logs']){
+          for(const path of ['/admin/publications','/api/editorial/session','/api/editorial/articles','/api/editorial/schedules','/api/editorial/media','/api/editorial/terms','/api/editorial/pitches','/api/editorial/briefs','/api/editorial/routes','/api/editorial/logs']){
             const r=await fetch(origin+path);const data=await r.text();
             if(!r.ok)throw Error(path+' unavailable: '+r.status+' '+data.slice(0,200));
           }
