@@ -322,6 +322,18 @@ export async function upload(request: Request, env: Env) {
   const checksum = Array.from(new Uint8Array(await crypto.subtle.digest("SHA-256", data)),x=>x.toString(16).padStart(2,"0")).join("");
   const existing = await env.DB.prepare("SELECT id,name,alt,width,height FROM media WHERE content_sha256=?").bind(checksum).first<{id:string;name:string;alt:string;width:number;height:number}>();
   if(existing) return json({...existing, duplicate:true},200);
+  // Backfill duplicate detection for older image records created before checksums existed.
+  const legacy=(await env.DB.prepare("SELECT id,object_key,name,alt,width,height FROM media WHERE content_sha256 IS NULL AND mime=? AND size=? LIMIT 30").bind(mime,data.length).all<{id:string;object_key:string;name:string;alt:string;width:number;height:number}>()).results;
+  for(const item of legacy){
+    const old=await env.MEDIA.get(item.object_key);
+    if(!old)continue;
+    const bytes=await old.arrayBuffer();
+    const oldHash=Array.from(new Uint8Array(await crypto.subtle.digest("SHA-256",bytes)),x=>x.toString(16).padStart(2,"0")).join("");
+    if(oldHash===checksum){
+      await env.DB.prepare("UPDATE media SET content_sha256=? WHERE id=? AND content_sha256 IS NULL").bind(checksum,item.id).run();
+      return json({id:item.id,name:item.name,alt:item.alt,width:item.width,height:item.height,duplicate:true},200);
+    }
+  }
   const id = crypto.randomUUID(),
     key = "editorial/" + id;
   await env.MEDIA.put(key, data, { httpMetadata: { contentType: mime } });
@@ -346,6 +358,10 @@ export async function upload(request: Request, env: Env) {
       .run();
   } catch (e) {
     await env.MEDIA.delete(key);
+    if(e instanceof Error && /UNIQUE constraint/i.test(e.message)){
+      const row=await env.DB.prepare("SELECT id,name,alt,width,height FROM media WHERE content_sha256=?").bind(checksum).first();
+      if(row)return json({...row,duplicate:true},200);
+    }
     throw e;
   }
   return json({ id, name, alt, ...dimensions }, 201);
