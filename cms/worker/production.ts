@@ -287,6 +287,14 @@ async function api(request: Request, env: Env, path: string) {
     if (request.method === "POST") return upload(request, env);
   }
   const file = /^\/api\/editorial\/media\/([a-f0-9-]+)$/.exec(path);
+  if (file && request.method === "PUT") {
+    const existing = await env.DB.prepare("SELECT id FROM media WHERE id=?").bind(file[1]).first();
+    if (!existing) return json({error:"Imagem não encontrada."},404);
+    const data = await request.json() as {alt?:string};
+    const alt = text(data.alt,"Texto alternativo",250);
+    await env.DB.prepare("UPDATE media SET alt=? WHERE id=?").bind(alt,file[1]).run();
+    return json({id:file[1],alt});
+  }
   if (file && request.method === "GET")
     return mediaResponse(env, file[1], true);
   if (path === "/api/editorial/articles") {

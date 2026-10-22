@@ -42,3 +42,6 @@ jobs:
           npx esbuild worker/pages.ts --bundle --format=esm --platform=browser --target=es2022 --outfile=../public-dist/_worker.js
       - run: npx wrangler pages deploy ../public-dist --project-name wedocalc --branch main --commit-hash "$GITHUB_SHA"
       - run: node scripts/verify-production.mjs
+      - name: Remove only named Grok test records after production verification
+        if: contains(github.event.head_commit.message, '[cleanup-grok-tests]')
+        run: node scripts/cleanup-grok-tests.mjs

@@ -241,3 +241,5 @@
 
 
 body{margin:0}.destination-preview{overflow-wrap:anywhere;padding:14px;background:var(--cms-card);border:1px solid var(--cms-border);border-radius:8px}.destination-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:16px}
+
+.cms .cms-feedback{position:fixed;bottom:20px;right:20px;z-index:1000;max-width:min(560px,calc(100vw - 40px));padding:16px 22px;border:2px solid currentColor;border-radius:10px;box-shadow:0 4px 20px #0003}.cms .cms-error.cms-feedback{bottom:110px}

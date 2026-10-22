@@ -86,7 +86,6 @@ export default function AdminApp() {
     [pitchNotes, setPitchNotes] = useState(""),
     [runAt, setRunAt] = useState("");
   const [reviewer, setReviewer] = useState("Escritor — aprovação recebida no Grok"), [reviewNotes,setReviewNotes] = useState("");
-  const [quality,setQuality] = useState<{blockers:string[];warnings:string[]} | null>(null);
   const [events,setEvents] = useState<{version:number;action:string;actor:string;notes:string;created_at:string}[]>([]);
   const [slugTouched, setSlugTouched] = useState(false);
   const [dark, setDark] = useState(
@@ -142,7 +141,7 @@ export default function AdminApp() {
     setDraft(selectDestination(routes,row ? { ...empty(), ...row.snapshot } : empty()));
     setDirty(false);
     setVersions([]);
-    setQuality(null);setEvents([]);setReviewNotes("");
+    setEvents([]);setReviewNotes("");
     setNotice("");
     setError("");
     setRunAt("");
@@ -152,7 +151,6 @@ export default function AdminApp() {
     await api('/articles/'+current.id+'/'+action,'POST',{version:current.draft_version,actor:reviewer,notes:reviewNotes});
     setCurrent(await api('/articles/'+current.id));await refresh();
     setNotice(action==='approve'?'Versão aprovada. Alterações futuras precisarão de nova aprovação.':action==='request-changes'?'Correções solicitadas.':'Versão enviada para revisão.');
-    setQuality(await api('/articles/'+current.id+'/quality'));
     setEvents(await api('/articles/'+current.id+'/events'));
   }
   async function save() {
@@ -189,12 +187,12 @@ export default function AdminApp() {
         <button onClick={theme}>Tema {dark ? "claro" : "escuro"}</button>
       </header>
       {error && (
-        <p role="alert" className="cms-error">
+        <p role="alert" className="cms-error cms-feedback">
           {error}
         </p>
       )}
       {notice && (
-        <p role="status" className="cms-notice">
+        <p role="status" aria-live="polite" className="cms-notice cms-feedback">
           {notice}
         </p>
       )}
@@ -427,7 +425,6 @@ export default function AdminApp() {
                     <div className="cms-quality"><h3>Qualidade editorial</h3>
                       {!draft.title && <p>Título ausente.</p>}{!draft.body.trim() && <p>Conteúdo vazio.</p>}{!draft.description && <p>Meta description ausente; será usado o resumo.</p>}{draft.coverId && !draft.coverAlt && <p>Imagem sem alt text.</p>}{draft.requiresSources && !draft.sources?.length && <p>Adicione fontes para este conteúdo.</p>}
                       {draft.coverId && !!media.find(m=>m.id===draft.coverId)?.width && media.find(m=>m.id===draft.coverId)!.width! < 1200 && <p>Recomendação para Discover: capa com pelo menos 1200 px de largura. Capas menores são permitidas.</p>}
-                      {quality && <>{quality.blockers.map(m=><p key={m}>{m}</p>)}{quality.warnings.map(m=><p key={m}>{m}</p>)}</>}
                     </div>
                     {current && <details open><summary>Revisão da versão {current.draft_version}</summary>
                       <p>Somente o Escritor opera este CMS. Registre abaixo a aprovação recebida do Auditor no grupo Grok. A referência não verifica a identidade do Auditor.</p><p>Status: {current.review_status === "approved"?"Aprovado":current.review_status === "review"?"Em revisão":current.review_status === "changes"?"Correções solicitadas":"Rascunho"}. Publicação exige aprovação desta versão.</p>
@@ -438,7 +435,6 @@ export default function AdminApp() {
                         <button type="button" disabled={dirty || current.review_status==='approved'} onClick={()=>perform(()=>reviewAction('submit-review'))}>Enviar para revisão</button>
                         <button type="button" disabled={dirty || current.review_status!=='review'} onClick={()=>perform(()=>reviewAction('approve'))}>Registrar aprovação recebida</button>
                         <button type="button" disabled={dirty || !['review','approved'].includes(current.review_status || '')} onClick={()=>perform(()=>reviewAction('request-changes'))}>Registrar correções recebidas</button>
-                        <button type="button" disabled={dirty} onClick={()=>perform(async()=>{setQuality(await api('/articles/'+current.id+'/quality'));setEvents(await api('/articles/'+current.id+'/events'));})}>Verificar qualidade e auditoria</button>
                       </div>
                       {events.map((e,i)=><p key={i}>v{e.version} · {e.action} · {e.actor} · {brasiliaDisplay(e.created_at)} · {e.notes}</p>)}
                     </details>}
@@ -751,6 +747,10 @@ export default function AdminApp() {
                     <figcaption>
                       {m.name} · {Math.round(m.size / 1024)} KB{m.width && m.height ? ` · ${m.width} × ${m.height} px` : ""}
                     </figcaption>
+                    <form onSubmit={e=>{e.preventDefault();const alt=String(new FormData(e.currentTarget).get('alt')||'');void perform(async()=>{await api('/media/'+m.id,'PUT',{alt});await refresh();setNotice('Texto alternativo salvo.');});}}>
+                      <label>Texto alternativo (alt)<input name="alt" defaultValue={m.alt} maxLength={250} /></label>
+                      <button disabled={busy}>Salvar alt</button>
+                    </form>
                   </figure>
                 ))}
               </div>
@@ -787,11 +787,12 @@ export default function AdminApp() {
                     <button
                       disabled={busy}
                       onClick={() =>
-                        perform(async () => {
+                        confirm("Cancelar este agendamento?") && perform(async () => {
                           await api(
                             "/articles/" + s.article_id + "/cancel-schedule",
                             "POST",
                           );
+                          setNotice("Agendamento cancelado");
                           await refresh();
                         })
                       }

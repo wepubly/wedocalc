@@ -16,15 +16,17 @@ try{
  let ready=false;for(let i=0;i<100;i++){try{await req('/api/editorial/session');ready=true;break;}catch{if(server.exitCode!==null)break;await pause(200);}}
  if(!ready)throw Error('Production entry point did not start '+output.slice(-2000));
  const routes=(await req('/api/editorial/routes')).json();assert.equal(routes.length,3);
- const selected=selectDestination(routes,{slug:'example'});
- assert.equal(selected.categoryId,'home-garden');assert.equal(selected.subcategoryId,'paint-calculators');assert.equal(selected.calculatorId,'paint-calculator');assert.equal(articlePath(selected),'/home-garden/paint-calculators/paint-calculator/example/');
- const multiple=[...routes,{id:'paint-cost',kind:'calculator',name:'Paint Cost',path:'/paint-cost/',parent_id:'paint-calculators',state:'live'}];
- assert.equal(selectDestination(multiple,{slug:'example'}).calculatorId,'');
- assert.equal(selectDestination(multiple,{slug:'example',calculatorId:'paint-cost'}).calculatorId,'paint-cost');
+ const blank=selectDestination(routes,{slug:'example'});
+ for(const field of ['categoryId','subcategoryId','calculatorId'])assert.equal(blank[field],'');
+ const selected=selectDestination(routes,{slug:'example',categoryId:'home-garden',subcategoryId:'paint-calculators',calculatorId:'paint-calculator'});
+ assert.equal(articlePath(selected),'/home-garden/paint-calculators/paint-calculator/example/');
  const image=Buffer.alloc(24);Buffer.from([137,80,78,71,13,10,26,10]).copy(image);image.writeUInt32BE(1600,16);image.writeUInt32BE(900,20);
  const upload=await fetch(origin+'/api/editorial/media',{method:'POST',headers:{Origin:origin,'Content-Type':'image/png','X-File-Name':'ci-cover.png'},body:image});assert.equal(upload.status,201);const media=await upload.json();
- const payload={title:'CI Paint Guide',slug:'ci-paint-guide',excerpt:'Measure the room before calculating paint.',body:'## Measure the room\n\nUse the [Paint Calculator](/paint-calculator/) to estimate paint.',author:'Metricpedia Editorial',authorType:'Organization',language:'en-US',tags:[],category:'Home & Garden',categoryId:'home-garden',subcategoryId:'paint-calculators',calculatorId:'paint-calculator',coverId:media.id,coverAlt:'Paint calculator example',seoTitle:'Paint Guide',description:'How to estimate room paint.',sources:[],relatedIds:[]};
+ const payload={title:'CI Paint Guide',slug:'ci-paint-guide',excerpt:'Measure the room before calculating paint.',body:'## Measure the room\n\nUse the [Paint Calculator](/paint-calculator/) to estimate paint.',author:'Metricpedia Editorial',authorType:'Organization',language:'en-US',tags:[],category:'Home & Garden',categoryId:'home-garden',subcategoryId:'paint-calculators',calculatorId:'paint-calculator',coverId:media.id,coverAlt:'Paint calculator example',seoTitle:'Paint Guide | Metricpedia',description:'How to estimate room paint.',sources:[],relatedIds:[]};
  await req('/api/editorial/articles','POST',{...payload,subcategoryId:'home-garden'},400);
+ for(const field of ['categoryId','subcategoryId','calculatorId'])await req('/api/editorial/articles','POST',{...payload,[field]:''},400);
+ await req('/api/editorial/media/'+media.id,'PUT',{alt:'Updated image description'});
+ assert.equal((await req('/api/editorial/media')).json().find(m=>m.id===media.id).alt,'Updated image description');
  const created=(await req('/api/editorial/articles','POST',payload,201)).json();const id=created.id;
  const saved=(await req('/api/editorial/articles/'+id)).json();assert.equal(saved.snapshot.destination.calculator.name,'Paint Calculator');assert.equal(saved.digest,createHash('sha256').update(JSON.stringify(saved.snapshot)).digest('hex'));
  assert.match((await req('/admin/preview/'+id)).raw,/Home &amp; Garden/);
@@ -37,7 +39,7 @@ try{
  await req('/api/editorial/articles/'+id+'/schedule','POST',{version:1,runAt:new Date(Date.now()+7200000).toISOString()});
  cmd(['d1','execute','metricpedia-cms-local-db','--local','--command',`UPDATE schedules SET run_at='2000-01-01T00:00:00.000Z' WHERE article_id='${id}' AND status='queued'`]);
  const scheduled=await fetch(origin+'/__scheduled?cron=*+*+*+*+*');assert.equal(scheduled.status,200);
- const published=await req(path);assert.match(published.raw,new RegExp(origin+path));assert.match(published.raw,/Paint Calculator/);assert.match(published.raw,/canonical/);assert.match((await req('/blog/')).raw,new RegExp(path));assert.match((await req('/sitemap-blog.xml')).raw,new RegExp(path));assert.match((await req(path+'.md')).raw,new RegExp(path));
+ const published=await req(path);assert.match(published.raw,/<title>Paint Guide \| Metricpedia<\/title>/);assert.match(published.raw,/img\.cover\{display:block;height:auto;width:100%;aspect-ratio:16\/9/);assert.match(published.raw,new RegExp(origin+path));assert.match(published.raw,/Paint Calculator/);assert.match(published.raw,/canonical/);assert.match((await req('/blog/')).raw,new RegExp(path));assert.match((await req('/sitemap-blog.xml')).raw,new RegExp(path));assert.match((await req(path+'.md')).raw,new RegExp(path));
  assert.equal((await req('/api/editorial/schedules')).json().filter(s=>s.status==='published').length,1);
  await req('/api/editorial/articles/'+id,'PUT',{...saved.snapshot,title:'CI updated guide',version:1});assert.equal((await req('/api/editorial/articles/'+id+'/versions')).json().length,2);
  assert.equal((await req(path)).raw,published.raw);
