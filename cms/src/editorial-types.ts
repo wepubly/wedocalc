@@ -1,0 +1,31 @@
+export interface Snapshot {
+  externalId?: string;
+  briefId?: string;
+  primaryKeyword?: string;
+  secondaryKeywords?: string[];
+  subcategoryId?: string;
+  calculatorId?: string;
+  articleType?: "pillar" | "cluster";
+  circuit?: number;
+  finalVersion?: string;
+  approvalReference?: string;
+  intendedRunAt?: string;
+  title: string;
+  slug: string;
+  excerpt: string;
+  body: string;
+  seoTitle: string;
+  description: string;
+  author: string;
+  language: "en-US";
+  category: string;
+  tags: string[];
+  coverId: string;
+  coverAlt: string;
+  authorType?: "Person" | "Organization";
+  isPillar?: boolean;
+  pillarId?: string;
+  relatedIds?: string[];
+  sources?: { title: string; url: string }[];
+  requiresSources?: boolean;
+}

@@ -1,0 +1,14 @@
+CREATE TABLE owner (id INTEGER PRIMARY KEY CHECK(id=1), username TEXT NOT NULL, salt TEXT NOT NULL, password_hash TEXT NOT NULL, iterations INTEGER NOT NULL, epoch INTEGER NOT NULL DEFAULT 1);
+ALTER TABLE sessions ADD COLUMN epoch INTEGER NOT NULL DEFAULT 1;
+ALTER TABLE media ADD COLUMN source TEXT NOT NULL DEFAULT '';
+ALTER TABLE media ADD COLUMN license TEXT NOT NULL DEFAULT '';
+ALTER TABLE media ADD COLUMN article_id TEXT;
+CREATE TABLE routes (id TEXT PRIMARY KEY, kind TEXT NOT NULL CHECK(kind IN ('category','subcategory','calculator')), name TEXT NOT NULL, path TEXT NOT NULL UNIQUE, parent_id TEXT REFERENCES routes(id), state TEXT NOT NULL CHECK(state IN ('live','planned')));
+INSERT INTO routes VALUES('home-garden','category','Home & Garden','/home-garden/',NULL,'live'),('paint-calculators','subcategory','Paint Calculators','/paint-calculators/','home-garden','live'),('paint-calculator','calculator','Paint Calculator','/paint-calculator/','paint-calculators','live');
+INSERT INTO terms VALUES('home-garden','category','Home & Garden','home-garden');
+CREATE TABLE briefs (id TEXT PRIMARY KEY, title TEXT NOT NULL, category_id TEXT NOT NULL REFERENCES routes(id), subcategory_id TEXT NOT NULL REFERENCES routes(id), calculator_id TEXT NOT NULL REFERENCES routes(id), primary_keyword TEXT NOT NULL, secondary_keywords TEXT NOT NULL CHECK(json_valid(secondary_keywords)), circuit INTEGER NOT NULL CHECK(circuit IN (1,2)), active INTEGER NOT NULL DEFAULT 1, created_at TEXT NOT NULL);
+CREATE TABLE agents (id TEXT PRIMARY KEY, name TEXT NOT NULL, token_hash TEXT NOT NULL UNIQUE, scopes TEXT NOT NULL CHECK(json_valid(scopes)), active INTEGER NOT NULL DEFAULT 1, created_at TEXT NOT NULL);
+CREATE TABLE submissions (external_id TEXT PRIMARY KEY, article_id TEXT NOT NULL UNIQUE REFERENCES articles(id), brief_id TEXT NOT NULL REFERENCES briefs(id), submitted_by TEXT NOT NULL REFERENCES agents(id));
+CREATE TABLE submission_versions (external_id TEXT NOT NULL REFERENCES submissions(external_id), final_version TEXT NOT NULL, payload_hash TEXT NOT NULL, article_version INTEGER NOT NULL, PRIMARY KEY(external_id,final_version));
+CREATE TABLE external_approvals (article_id TEXT NOT NULL, version INTEGER NOT NULL, digest TEXT NOT NULL, evidence TEXT NOT NULL, approved_by TEXT NOT NULL, approved_at TEXT NOT NULL, PRIMARY KEY(article_id,version), FOREIGN KEY(article_id,version) REFERENCES article_versions(article_id,version));
+CREATE TABLE system_events (id INTEGER PRIMARY KEY AUTOINCREMENT,action TEXT NOT NULL,actor TEXT NOT NULL,detail TEXT NOT NULL,created_at TEXT NOT NULL);
