@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import type { Snapshot } from "./editorial-types";
 import "./admin.css";
 import { brasiliaDisplay, brasiliaToUtc, nextBrasiliaFive } from "./editorial-time";
-import {articlePath} from "./destination";
+import {articlePath,selectDestination} from "./destination";
 
 type Row = {
   id: string;
@@ -107,7 +107,7 @@ export default function AdminApp() {
     setSchedules(s);
   }
   useEffect(() => {
-    Promise.all([refresh(),api("/routes").then(setRoutes)]).catch(e=>setError(e.message)).finally(()=>setLoading(false));
+    Promise.all([refresh(),api("/routes").then((r)=>{setRoutes(r);setDraft(d=>selectDestination(r,d));})]).catch(e=>setError(e.message)).finally(()=>setLoading(false));
   }, []);
   useEffect(() => {
     const guard = (e: BeforeUnloadEvent) => {
@@ -139,7 +139,7 @@ export default function AdminApp() {
     if (dirty && !confirm("Descartar alterações ainda não salvas?")) return;
     setCurrent(row);
     setSlugTouched(!!row);
-    setDraft(row ? { ...empty(), ...row.snapshot } : empty());
+    setDraft(selectDestination(routes,row ? { ...empty(), ...row.snapshot } : empty()));
     setDirty(false);
     setVersions([]);
     setQuality(null);setEvents([]);setReviewNotes("");
@@ -285,9 +285,9 @@ export default function AdminApp() {
                       />
                     </label>
                     <fieldset><legend>Destino final da matéria</legend><div className="destination-grid">
-                      <label>Categoria<select required value={draft.categoryId||""} onChange={e=>{change("categoryId",e.target.value);change("category",routes.find(r=>r.id===e.target.value)?.name||"");change("subcategoryId","");change("calculatorId","");change("destination",undefined);}}><option value="">Selecione a categoria</option>{routes.filter(r=>r.kind==="category"&&r.state==="live").map(r=><option key={r.id} value={r.id}>{r.name}</option>)}</select></label>
-                      <label>Tipo de calculadora<select required disabled={!draft.categoryId} value={draft.subcategoryId||""} onChange={e=>{change("subcategoryId",e.target.value);change("calculatorId","");change("destination",undefined);}}><option value="">Selecione o tipo</option>{routes.filter(r=>r.kind==="subcategory"&&r.parent_id===draft.categoryId&&r.state==="live").map(r=><option key={r.id} value={r.id}>{r.name}</option>)}</select></label>
-                      <label>Calculadora<select required disabled={!draft.subcategoryId} value={draft.calculatorId||""} onChange={e=>{change("calculatorId",e.target.value);const c=routes.find(r=>r.id===draft.categoryId),t=routes.find(r=>r.id===draft.subcategoryId),r=routes.find(r=>r.id===e.target.value);change("destination",c&&t&&r?{category:c,subcategory:t,calculator:r}:undefined);}}><option value="">Selecione a calculadora</option>{routes.filter(r=>r.kind==="calculator"&&r.parent_id===draft.subcategoryId&&r.state==="live").map(r=><option key={r.id} value={r.id}>{r.name}</option>)}</select></label>
+                      <label>Categoria<select required value={draft.categoryId||""} onChange={e=>{setDraft(d=>selectDestination(routes,{...d,categoryId:e.target.value,subcategoryId:"",calculatorId:""}));setDirty(true);}}><option value="">Selecione a categoria</option>{routes.filter(r=>r.kind==="category"&&r.state==="live").map(r=><option key={r.id} value={r.id}>{r.name}</option>)}</select></label>
+                      <label>Tipo de calculadora<select required disabled={!draft.categoryId} value={draft.subcategoryId||""} onChange={e=>{setDraft(d=>selectDestination(routes,{...d,subcategoryId:e.target.value,calculatorId:""}));setDirty(true);}}><option value="">Selecione o tipo</option>{routes.filter(r=>r.kind==="subcategory"&&r.parent_id===draft.categoryId&&r.state==="live").map(r=><option key={r.id} value={r.id}>{r.name}</option>)}</select></label>
+                      <label>Calculadora<select required disabled={!draft.subcategoryId} value={draft.calculatorId||""} onChange={e=>{setDraft(d=>selectDestination(routes,{...d,calculatorId:e.target.value}));setDirty(true);}}><option value="">Selecione a calculadora</option>{routes.filter(r=>r.kind==="calculator"&&r.parent_id===draft.subcategoryId&&r.state==="live").map(r=><option key={r.id} value={r.id}>{r.name}</option>)}</select></label>
                     </div><p className="destination-preview">URL final: <strong>{draft.destination ? "https://metricpedia.com"+articlePath({...draft,slug:draft.slug||"nome-do-artigo"}) : "Selecione categoria, tipo e calculadora."}</strong></p></fieldset>
                     <label>
                       Resumo

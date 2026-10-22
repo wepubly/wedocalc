@@ -4,6 +4,7 @@ import {readFileSync,writeFileSync,unlinkSync} from 'node:fs';
 import assert from 'node:assert/strict';
 import {setTimeout as pause} from 'node:timers/promises';
 import {createHash} from 'node:crypto';
+import {selectDestination,articlePath} from '../src/destination.ts';
 const cli='node_modules/wrangler/bin/wrangler.js',config='.production-ci.json',state='.wrangler/production-ci';
 const cfg=JSON.parse(readFileSync('wrangler.local.json','utf8'));cfg.main='worker/production.ts';cfg.vars.PUBLIC_ORIGIN='http://127.0.0.1:8792';writeFileSync(config,JSON.stringify(cfg));
 function cmd(args){const r=spawnSync(process.execPath,[cli,...args,'--config',config,'--persist-to',state],{encoding:'utf8',env:{...process.env,CI:'true',WRANGLER_SEND_METRICS:'false'}});if(r.status!==0)throw Error(r.stdout+r.stderr);return r.stdout;}
@@ -15,6 +16,11 @@ try{
  let ready=false;for(let i=0;i<100;i++){try{await req('/api/editorial/session');ready=true;break;}catch{if(server.exitCode!==null)break;await pause(200);}}
  if(!ready)throw Error('Production entry point did not start '+output.slice(-2000));
  const routes=(await req('/api/editorial/routes')).json();assert.equal(routes.length,3);
+ const selected=selectDestination(routes,{slug:'example'});
+ assert.equal(selected.categoryId,'home-garden');assert.equal(selected.subcategoryId,'paint-calculators');assert.equal(selected.calculatorId,'paint-calculator');assert.equal(articlePath(selected),'/home-garden/paint-calculators/paint-calculator/example/');
+ const multiple=[...routes,{id:'paint-cost',kind:'calculator',name:'Paint Cost',path:'/paint-cost/',parent_id:'paint-calculators',state:'live'}];
+ assert.equal(selectDestination(multiple,{slug:'example'}).calculatorId,'');
+ assert.equal(selectDestination(multiple,{slug:'example',calculatorId:'paint-cost'}).calculatorId,'paint-cost');
  const image=Buffer.alloc(24);Buffer.from([137,80,78,71,13,10,26,10]).copy(image);image.writeUInt32BE(1600,16);image.writeUInt32BE(900,20);
  const upload=await fetch(origin+'/api/editorial/media',{method:'POST',headers:{Origin:origin,'Content-Type':'image/png','X-File-Name':'ci-cover.png'},body:image});assert.equal(upload.status,201);const media=await upload.json();
  const payload={title:'CI Paint Guide',slug:'ci-paint-guide',excerpt:'Measure the room before calculating paint.',body:'## Measure the room\n\nUse the [Paint Calculator](/paint-calculator/) to estimate paint.',author:'Metricpedia Editorial',authorType:'Organization',language:'en-US',tags:[],category:'Home & Garden',categoryId:'home-garden',subcategoryId:'paint-calculators',calculatorId:'paint-calculator',coverId:media.id,coverAlt:'Paint calculator example',seoTitle:'Paint Guide',description:'How to estimate room paint.',sources:[],relatedIds:[]};
