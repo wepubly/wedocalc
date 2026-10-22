@@ -1,7 +1,8 @@
-name: Metricpedia public preview (production domain)
+name: Metricpedia production site and CMS
 on:
   push:
     branches: [main]
+    paths-ignore: [".github/**"]
   workflow_dispatch:
 permissions:
   contents: read
@@ -51,7 +52,26 @@ jobs:
           node --check assets/results-sharing.js
           grep -q 'mp-share' public-dist/paint-calculator/index.html
           grep -qi 'noindex, nofollow' public-dist/index.html || { echo 'Public visual prototype must remain noindex'; exit 1; }
-      - name: Publish Metricpedia public preview
+      - name: Reuse production CMS source
+        uses: actions/checkout@v4
+        with:
+          ref: work/metricpedia-cms-blog-v1
+          path: editorial-source
+      - name: Include production CMS in site deployments
+        working-directory: editorial-source/cms
+        run: |
+          npm ci
+          npm run check
+          npm run build
+          node scripts/configure-production.mjs
+          npx wrangler deploy --config wrangler.production.json
+          cp -R dist/admin-assets ../../public-dist/
+          cp pages-routes.json ../../public-dist/_routes.json
+          npx esbuild worker/pages.ts --bundle --format=esm --platform=browser --target=es2022 --outfile=../../public-dist/_worker.js
+      - name: Publish Metricpedia production site
         run: npx --yes wrangler@4 pages deploy public-dist --project-name wedocalc --branch main --commit-hash "$GITHUB_SHA"
       - name: Report
-        run: echo 'Published visual-only Metricpedia prototype to existing Pages production project, retaining noindex.' >> "$GITHUB_STEP_SUMMARY"
+        run: echo 'Published Metricpedia site and production blog CMS to existing Pages project.' >> "$GITHUB_STEP_SUMMARY"
+      - name: Verify production CMS and site
+        working-directory: editorial-source/cms
+        run: node scripts/verify-production.mjs
