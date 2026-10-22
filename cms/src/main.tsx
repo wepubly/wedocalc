@@ -4,10 +4,10 @@ import { brasiliaDisplay, brasiliaToUtc } from "./editorial-time";
 import "./admin.css";
 const base = "/api/editorial";
 const encodeMetadata = (value: string) => "utf8-b64:" + btoa(Array.from(new TextEncoder().encode(value), b => String.fromCharCode(b)).join(""));
-async function api(path: string, method = "GET", body?: unknown) {
+async function api(path: string, method = "GET", body?: unknown, extraHeaders: Record<string,string> = {}) {
   const r = await fetch(base + path, {
     method,
-    headers: body ? { "Content-Type": "application/json" } : {},
+    headers: { ...(body ? { "Content-Type": "application/json" } : {}), ...extraHeaders },
     body: body ? JSON.stringify(body) : undefined,
   });
   const d: any = await r.json();
@@ -104,6 +104,7 @@ function App() {
   const [qualityResult, setQualityResult] = useState<any>(null);
   const [agentRole, setAgentRole] = useState("writer");
   const [auditorToken, setAuditorToken] = useState("");
+  const [ownerKey, setOwnerKey] = useState("");
   const [internalLinkTarget, setInternalLinkTarget] = useState("");
   const [internalLinkText, setInternalLinkText] = useState("");
   const [campaignCalculator, setCampaignCalculator] = useState("paint-calculator");
@@ -1435,7 +1436,8 @@ function App() {
                         const d = await api("/agents", "POST", {
                           name: f.get("name"),
                           scopes: f.getAll("scopes"),
-                        });
+                        }, agentRole==="auditor" ? {"X-Metricpedia-Owner-Key":ownerKey} : {});
+                        setOwnerKey("");
                         setCredential(d.token);
                         await refresh();
                       });
@@ -1445,6 +1447,9 @@ function App() {
                       Nome do agente
                       <input name="name" required />
                     </label>
+                    {agentRole === "auditor" && <label>Chave do responsável (necessária somente para criar Auditor)
+                      <input type="password" autoComplete="off" value={ownerKey} onChange={e=>setOwnerKey(e.target.value)} placeholder="Chave já configurada em METRICPEDIA_SETUP_TOKEN" />
+                    </label>}
                     <label>Papel do bot
                       <select value={agentRole} onChange={e => setAgentRole(e.target.value)}>
                         <option value="writer">Escritor — enviar e agendar</option>
