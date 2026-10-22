@@ -214,7 +214,7 @@ try {
     description:
       "Test of the editorial infrastructure, not a published editorial guide.",
     excerpt: "TEST ONLY – staging validation article.",
-    body: "## TEST ONLY\n\nThis is a clearly identified integration test.\n\n<script>alert(1)</script>\n\n[Unsafe](javascript:alert(1))",
+    body: "## TEST ONLY\n\nThis is a clearly identified integration test.\n\n<script>alert(1)</script>",
     author: "Metricpedia Editorial",
     language: "en-US",
     tags: [],
@@ -225,6 +225,32 @@ try {
     pillarId: "",
     isPillar: true,
   };
+  const unsafePackage = {
+    ...payload,
+    externalId: "test-unsafe",
+    slug: "test-only-unsafe",
+    body: "[Unsafe](javascript:alert(1))",
+  };
+  const unsafe = (
+    await req(
+      "/api/integration/packages",
+      "POST",
+      unsafePackage,
+      writer.token,
+      201,
+    )
+  ).data;
+  await req(
+    "/api/integration/articles/" + unsafe.id + "/authorize",
+    "POST",
+    {
+      version: 1,
+      digest: unsafe.digest,
+      evidence: "TEST ONLY rejected unsafe link",
+    },
+    supervisor.token,
+    400,
+  );
   const first = (
       await req("/api/integration/packages", "POST", payload, writer.token, 201)
     ).data,
