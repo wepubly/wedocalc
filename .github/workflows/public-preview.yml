@@ -43,10 +43,8 @@ jobs:
         run: |
           mkdir -p public-dist
           cp index.html public-dist/
-          cp -R css assets home-garden paint-calculators paint-calculator print admin public-dist/
+          cp -R css assets home-garden paint-calculators paint-calculator print public-dist/
           test -f public-dist/print/paint-calculator/index.html
-          test -f public-dist/admin/index.html
-          test -f public-dist/admin/test-article/index.html
           cp _headers public-dist/
           node --check paint-calculator/calculator.js
           node --check assets/results-sharing.js
