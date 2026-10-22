@@ -39,6 +39,7 @@ const blank = () => ({
   coverId: "",
   coverAlt: "",
   sources: [],
+  faq: [],
   relatedIds: [],
   pillarId: "",
   isPillar: false,
@@ -747,6 +748,18 @@ function App() {
                         }}
                       />
                     </label>
+                    <section className="panel">
+                      <h3>FAQ e dados estruturados</h3>
+                      <p>Adicione perguntas e respostas úteis. Se houver FAQ, o artigo exibirá as respostas e incluirá schema FAQPage.</p>
+                      {(draft.faq || []).map((f:any,i:number) => (
+                        <div className="panel" key={i}>
+                          <label>Pergunta<input value={f.question||""} onChange={e=>setDraft({...draft,faq:draft.faq.map((v:any,n:number)=>n===i?{...v,question:e.target.value}:v)})} /></label>
+                          <label>Resposta<textarea value={f.answer||""} onChange={e=>setDraft({...draft,faq:draft.faq.map((v:any,n:number)=>n===i?{...v,answer:e.target.value}:v)})} /></label>
+                          <button type="button" onClick={()=>setDraft({...draft,faq:draft.faq.filter((_:any,n:number)=>n!==i)})}>Remover FAQ</button>
+                        </div>
+                      ))}
+                      <button type="button" disabled={(draft.faq||[]).length>=12} onClick={()=>setDraft({...draft,faq:[...(draft.faq||[]),{question:"",answer:""}]})}>Adicionar pergunta e resposta</button>
+                    </section>
                     <button className="primary" disabled={busy}>
                       Salvar versão
                     </button>
