@@ -557,11 +557,20 @@ async function api(request: Request, env: Env, path: string) {
         })),
       );
     if (action && request.method === "POST") {
-      if (["submit-review", "approve", "request-changes"].includes(action))
-        throw new HttpError(
-          409,
-          "Use a confirmação externa vinculada ao hash.",
-        );
+      if (action === "submit-review" || action === "request-changes") {
+        const d = await jsonBody(request);
+        if (d.version !== a.draft_version)
+          throw new HttpError(409, "A versão mudou. Reabra a matéria.");
+        const notes = typeof d.notes === "string" ? d.notes.trim().slice(0, 2000) : "";
+        const actor = typeof d.actor === "string" && d.actor.trim()
+          ? d.actor.trim().slice(0, 120)
+          : action === "submit-review" ? "Escritor" : "Auditor";
+        await transition(env, a, action, actor, notes);
+        return json({ok: true, review: await review(env, a)});
+      }
+      if (action === "approve") throw new HttpError(
+        409, "Aprovação final exige o Auditor, a evidência e o hash desta versão."
+      );
       if (action === "publish") {
         const d = await jsonBody(request);
         if (d.version !== a.draft_version)
