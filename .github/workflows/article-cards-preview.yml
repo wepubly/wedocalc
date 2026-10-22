@@ -1,0 +1,46 @@
+name: Metricpedia public article cards — isolated preview
+on:
+  push:
+    branches: [work/metricpedia-public-article-cards]
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: metricpedia-article-cards-preview
+  cancel-in-progress: true
+jobs:
+  preview:
+    if: github.ref == 'refs/heads/work/metricpedia-public-article-cards'
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    env:
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      CLOUDFLARE_ACCOUNT_ID: b81896777d206a2239625d9cf2e8a40b
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: public-cards/package-lock.json
+      - run: npm ci
+        working-directory: public-cards
+      - run: npx playwright install --with-deps chromium
+        working-directory: public-cards
+      - name: Test public rendering and desktop/mobile with isolated fixtures
+        run: CARDS_BROWSER=1 node tests/public-cards.mjs
+      - name: Record production state without modifying configuration or data
+        run: node public-cards/preview-guard.mjs before
+      - name: Package public assets only
+        run: |
+          mkdir -p preview-dist
+          cp index.html _headers preview-dist/
+          cp -R css assets home-garden paint-calculators paint-calculator print preview-dist/
+          npm --prefix public-cards run build
+          printf '%s' '{"version":1,"include":["/*"],"exclude":[]}' > preview-dist/_routes.json
+          test ! -e preview-dist/admin
+          test ! -e preview-dist/cms
+      - name: Deploy only the existing Pages preview environment
+        run: npx --yes wrangler@4 pages deploy preview-dist --project-name wedocalc --branch work/metricpedia-public-article-cards --commit-hash "$GITHUB_SHA"
+      - name: Verify preview and unchanged production deployment
+        run: node public-cards/preview-guard.mjs after
