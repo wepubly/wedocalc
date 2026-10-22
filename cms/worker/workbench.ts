@@ -70,7 +70,7 @@ export async function workbench(req:Request,env:Env,path:string):Promise<Respons
  await key(req,env);
  if(req.method==="GET"&&m[1]){
   const row=await getArticle(env,m[1]);if(!row)throw new HttpError(404,"Rascunho não encontrado.");
-  return j({id:row.id,data:JSON.parse(row.payload),imageId:row.image_id,status:row.status,previewUrl:row.status==="test_published"?"/blog/test-"+row.slug+"/":null});
+  return j({id:row.id,data:JSON.parse(row.payload),imageId:row.image_id,status:row.status,previewUrl:row.status==="test_published"?"/test-blog/"+row.slug+"/":null});
  }
  if(req.method==="POST"&&!m[2]){
   const raw=await req.text();if(raw.length>limit)throw new HttpError(413,"Conteúdo muito grande.");
@@ -91,24 +91,24 @@ export async function workbench(req:Request,env:Env,path:string):Promise<Respons
   const row=await getArticle(env,m[1]);if(!row)throw new HttpError(404,"Rascunho não encontrado.");
   if(!JSON.parse(row.payload).body)throw new HttpError(400,"Rascunho sem conteúdo.");
   await env.DB.prepare("UPDATE staging_test_articles SET status='test_published',updated_at=? WHERE id=?").bind(now(),row.id).run();
-  return j({url:"/blog/test-"+row.slug+"/",status:"test_published"});
+  return j({url:"/test-blog/"+row.slug+"/",status:"test_published"});
  }
  throw new HttpError(405,"Método não permitido.");
 }
 export async function testArticle(req:Request,env:Env,path:string):Promise<Response>{
  if(env.ENVIRONMENT!=="staging"||!["GET","HEAD"].includes(req.method))throw new HttpError(404,"Não encontrado.");
- const img=/^\/blog\/test-cover\/([a-f0-9-]{36})$/.exec(path);
+ const img=/^\/test-blog\/cover\/([a-f0-9-]{36})$/.exec(path);
  if(img){
  const row=await env.DB.prepare("SELECT i.object_key,i.mime FROM staging_test_images i JOIN staging_test_articles a ON a.image_id=i.id WHERE i.id=? AND a.status='test_published' LIMIT 1").bind(img[1]).first<{object_key:string;mime:string}>();
  if(!row)throw new HttpError(404,"Capa não encontrada.");const obj=await env.MEDIA.get(row.object_key);if(!obj)throw new HttpError(404,"Capa não encontrada.");
  return new Response(obj.body,{headers:{"Content-Type":row.mime,"X-Robots-Tag":"noindex,nofollow","Cache-Control":"no-store","X-Content-Type-Options":"nosniff"}});
  }
- const m=/^\/blog\/test-([a-z0-9]+(?:-[a-z0-9]+)*)$/.exec(path);
+ const m=/^\/test-blog\/([a-z0-9]+(?:-[a-z0-9]+)*)$/.exec(path);
  if(!m)throw new HttpError(404,"Artigo de teste não encontrado.");
  const row=await env.DB.prepare("SELECT * FROM staging_test_articles WHERE slug=? AND status='test_published'").bind(m[1]).first<{payload:string;image_id:string|null;updated_at:string}>();
  if(!row)throw new HttpError(404,"Artigo de teste não encontrado.");
  const d=JSON.parse(row.payload) as Record<string,string>;
- const cover=row.image_id?'<img style="width:100%;border-radius:14px" src="/blog/test-cover/'+row.image_id+'" alt="'+escape(d.coverAlt||d.title)+'">':"";
+ const cover=row.image_id?'<img style="width:100%;border-radius:14px" src="/test-blog/cover/'+row.image_id+'" alt="'+escape(d.coverAlt||d.title)+'">':"";
  const body='<!doctype html><html lang="en-US"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow"><title>'+escape(d.seoTitle||d.title)+' — Metricpedia TEST</title><meta name="description" content="'+escape(d.meta)+'"><style>body{margin:0;background:#f1f7ff;color:#102a4d;font:17px/1.75 Arial,sans-serif}header{background:white;padding:17px 5%;font-size:26px;font-weight:800;color:#082957}.wrap{max-width:850px;background:white;margin:30px auto;padding:32px;border-radius:14px}.notice{background:#fff0e5;border:1px solid #f7d2b4;padding:12px;border-radius:8px;color:#81400e;font-size:13px}h1{font-size:38px;line-height:1.2}@media(max-width:850px){.wrap{margin:12px;padding:20px}}</style></head><body><header>Metricpedia</header><main class="wrap"><div class="notice">TEST ONLY — Homologação, não indexado, não publicado no site oficial</div><p>'+escape(d.category)+' / '+escape(d.subcategory)+'</p><h1>'+escape(d.title)+'</h1><p>'+escape(d.excerpt)+'</p>'+cover+articleMarkup(d)+'<p><a href="https://metricpedia.com/paint-calculator/">Related calculator →</a></p><hr><small>'+escape(d.author)+'</small></main></body></html>';
  return new Response(body,{headers:{"Content-Type":"text/html; charset=utf-8","X-Robots-Tag":"noindex,nofollow,noarchive","Cache-Control":"no-store","X-Content-Type-Options":"nosniff"}});
 }
