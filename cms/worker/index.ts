@@ -282,22 +282,30 @@ export async function upload(request: Request, env: Env) {
   const dimensions = imageDimensions(data, mime);
   if (!dimensions)
     throw new HttpError(415, "Imagem inválida ou dimensões ilegíveis.");
-  let fileName = request.headers.get("x-file-name") || "image";
+  const headerText = (name: string) => {
+    const raw = request.headers.get(name) || "";
+    if (!raw.startsWith("utf8-b64:")) return raw;
+    try {
+      const bytes = Uint8Array.from(atob(raw.slice(9)), c => c.charCodeAt(0));
+      return new TextDecoder("utf-8",{fatal:true}).decode(bytes);
+    } catch { throw new HttpError(400, "Cabeçalho de imagem inválido: " + name); }
+  };
+  let fileName = headerText("x-file-name") || "image";
   try {
     fileName = decodeURIComponent(fileName);
   } catch {
     throw new HttpError(400, "Nome de arquivo inválido.");
   }
   const name = text(fileName, "Nome", 200, true),
-    alt = text(request.headers.get("x-image-alt") || "", "Descrição", 250);
+    alt = text(headerText("x-image-alt"), "Descrição", 250);
   const source = text(
-    request.headers.get("x-image-source") || "",
+    headerText("x-image-source"),
     "Origem",
     2000,
     true,
   );
   const license = text(
-    request.headers.get("x-image-license") || "",
+    headerText("x-image-license"),
     "Licença",
     500,
     true,
@@ -333,6 +341,9 @@ async function api(request: Request, env: Env, path: string) {
   if (!["GET", "HEAD"].includes(request.method)) checkOrigin(request);
   if (path === "/api/editorial/login" && request.method === "POST")
     return login(request, env);
+  if (env.ENVIRONMENT === "production-lab" &&
+      (path === "/api/editorial/login" || path === "/api/editorial/setup"))
+    throw new HttpError(403,"Autenticação por usuário desativada no laboratório.");
   if (path === "/api/editorial/setup" && request.method === "POST")
     return setup(request, env);
   if (path === "/api/editorial/setup-status" && request.method === "GET")
