@@ -17,21 +17,26 @@ const strings = (v: unknown, max = 30) =>
   v.every((x) => typeof x === "string" && x.length < 200)
     ? (v as string[])
     : fail("Lista inválida.");
+const named=(v:unknown,field:string,max=200)=> {
+  if(typeof v!=="string"||!v.trim()||v.length>max)
+    throw new HttpError(400,"Preencha o campo obrigatório: "+field+".");
+  return v.trim();
+};
 export function normalizeEditorial(d: Record<string, unknown>) {
   return {
-    externalId: txt(d.externalId),
-    briefId: txt(d.briefId),
-    primaryKeyword: txt(d.primaryKeyword),
+    externalId: named(d.externalId,"ID externo do trabalho"),
+    briefId: named(d.briefId,"Briefing aprovado"),
+    primaryKeyword: named(d.primaryKeyword,"Palavra-chave principal"),
     secondaryKeywords: strings(d.secondaryKeywords || []),
-    subcategoryId: txt(d.subcategoryId),
-    calculatorId: txt(d.calculatorId),
+    subcategoryId: named(d.subcategoryId,"Subcategoria"),
+    calculatorId: named(d.calculatorId,"Calculadora relacionada"),
     articleType: ["pillar", "cluster"].includes(String(d.articleType))
       ? (d.articleType as "pillar" | "cluster")
       : fail("Tipo deve ser pillar ou cluster."),
     circuit: [1, 2].includes(Number(d.circuit))
       ? Number(d.circuit)
       : fail("Circuito inválido."),
-    finalVersion: txt(d.finalVersion),
+    finalVersion: named(d.finalVersion,"Identificador da versão final"),
     approvalReference:
       typeof d.approvalReference === "string"
         ? d.approvalReference.slice(0, 1000)
