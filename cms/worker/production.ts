@@ -521,6 +521,7 @@ async function handle(request:Request,env:Env):Promise<Response> {
  const url=new URL(request.url),path=url.pathname;
  if(!env.DB||!env.MEDIA)throw new HttpError(503,'CMS não configurado.');
  if(env.ENVIRONMENT==='production'&&url.hostname.endsWith('.workers.dev'))return Response.redirect('https://metricpedia.com'+path+url.search,308);
+ if(path==='/admin/index.html'||path==='/admin/test-article'||path==='/admin/test-article/')return Response.redirect(url.origin+'/admin',308);
  if(path.startsWith('/api/')){
   if(path==='/api/public/latest-articles'&&request.method==='GET')return json({articles:(await publicArticles(env)).slice(0,6).map(r=>({title:r.data.title,category:r.data.category,calculatorId:r.data.calculatorId,description:r.data.excerpt,href:articlePath(r.data),image:r.data.coverId?'/media/'+r.data.coverId:null,alt:r.data.coverAlt,publishedAt:r.published_at}))});
   return api(request,env,path);
