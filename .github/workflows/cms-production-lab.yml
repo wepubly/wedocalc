@@ -36,7 +36,7 @@ jobs:
         run: |
           git fetch origin main --depth=1
           mkdir -p ../public-dist
-          git archive FETCH_HEAD index.html css assets home-garden paint-calculators paint-calculator print _headers | tar -x -C ../public-dist
+          git -C .. archive FETCH_HEAD index.html css assets home-garden paint-calculators paint-calculator print _headers | tar -x -C ../public-dist
           cp -R dist/admin-assets ../public-dist/
           cp pages-routes.json ../public-dist/_routes.json
           npx esbuild worker/pages.ts --bundle --format=esm --platform=browser --target=es2022 --outfile=../public-dist/_worker.js
