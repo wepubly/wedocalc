@@ -58,7 +58,7 @@ export async function workbench(req:Request,env:Env,path:string):Promise<Respons
   if(!["image/jpeg","image/png","image/webp"].includes(mime))throw new HttpError(400,"Formato inválido.");
   const bytes=new Uint8Array(await req.arrayBuffer());
   if(bytes.length>5*1024*1024||!bytes.length)throw new HttpError(413,"Imagem deve ter até 5 MB.");
-  try{imageDimensions(bytes,mime)}catch{throw new HttpError(400,"Arquivo de imagem inválido.");}
+  if(!imageDimensions(bytes,mime))throw new HttpError(400,"Arquivo de imagem inválido.");
   const id=crypto.randomUUID(),object_key="staging-workbench/"+id;
   await env.MEDIA.put(object_key,bytes,{httpMetadata:{contentType:mime}});
   try{await env.DB.prepare("INSERT INTO staging_test_images(id,object_key,mime,size,created_at) VALUES (?,?,?,?,?)").bind(id,object_key,mime,bytes.length,now()).run()}
