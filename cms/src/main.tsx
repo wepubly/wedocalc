@@ -897,7 +897,7 @@ function App() {
                         >
                           Agendar
                         </button>
-                        <button
+                        {!location.hostname.startsWith("metricpedia-editorial-lab.") && <button
                           disabled={busy || !current.externalApproval}
                           onClick={() =>
                             work(async () => {
@@ -913,15 +913,19 @@ function App() {
                           }
                         >
                           Publicar no laboratório
-                        </button>
+                        </button>}
                         <button
+                          disabled={busy || !current.published_version}
                           onClick={() =>
                             work(async () => {
-                              await api(
-                                "/articles/" + current.id + "/unpublish",
-                                "POST",
-                                {},
-                              );
+                              if(!auditorToken.trim())throw new Error("A retirada de publicação exige a credencial do Auditor.");
+                              const response=await fetch(base + "/articles/" + current.id + "/unpublish",{
+                                method:"POST",
+                                headers:{"Content-Type":"application/json","Authorization":"Bearer "+auditorToken.trim()},
+                                body:"{}"
+                              });
+                              const result=await response.json();
+                              if(!response.ok)throw new Error(result.error||"Não autorizado.");
                               await refresh();
                               await open(current.id);
                             })
