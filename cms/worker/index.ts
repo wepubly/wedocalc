@@ -107,6 +107,13 @@ export function snapshot(data: Record<string, unknown>): Snapshot {
     !["Person", "Organization"].includes(String(data.authorType))
   )
     throw new HttpError(400, "Tipo de autor inválido.");
+  const canonicalUrl=text(data.canonicalUrl ?? "", "Canonical", 500);
+  if(canonicalUrl){
+    let url: URL;
+    try{url=new URL(canonicalUrl);}catch{throw new HttpError(400,"Canonical precisa ser uma URL HTTPS completa.");}
+    if(url.protocol!=="https:"||url.hostname!=="metricpedia.com"||url.username||url.password||url.search||url.hash)
+      throw new HttpError(400,"Canonical deve ser uma URL HTTPS do domínio metricpedia.com, sem parâmetros.");
+  }
   const pillarId = text(data.pillarId ?? "", "Matéria raiz", 60);
   if (pillarId && !/^[a-f0-9-]{36}$/.test(pillarId))
     throw new HttpError(400, "Matéria raiz inválida.");
@@ -115,6 +122,7 @@ export function snapshot(data: Record<string, unknown>): Snapshot {
     authorType: data.authorType === "Person" ? "Person" : "Organization",
     sources: sources.map((s) => ({ title: s.title.trim(), url: s.url.trim() })),
     requiresSources: data.requiresSources === true,
+    canonicalUrl,
     faq: faqs.map((f)=>({question:f.question.trim(),answer:f.answer.trim()})),
     isPillar: data.isPillar === true,
     pillarId,
