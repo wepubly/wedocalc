@@ -33,8 +33,7 @@ export async function reviewed(env: Env, a: Article, v: number) {
     throw new HttpError(409, "Confirmação externa desta versão ausente.");
   if (v !== a.draft_version || (await review(env, a))?.status !== "approved")
     throw new HttpError(409, "A versão atual precisa da aprovação do Auditor.");
-  if(env.ENVIRONMENT==="production-lab" && !approval?.approved_by?.startsWith("Escritor: "))
-    throw new HttpError(409,"Aprovação antiga registrada sem credencial: registre novamente a aprovação recebida no Grok usando a credencial do Escritor.");
+
 }
 export function safeSource(url: string) {
   return !!safeUrl(url) && /^https?:\/\//.test(url);

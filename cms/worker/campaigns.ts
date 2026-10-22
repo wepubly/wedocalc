@@ -8,8 +8,7 @@ async function rows(env:Env,calculator:string){
  const records=(await env.DB.prepare("SELECT a.id,a.draft_version,a.published_version,v.snapshot,r.status AS review_status,p.digest,p.approved_by FROM articles a JOIN article_versions v ON v.article_id=a.id AND v.version=a.draft_version LEFT JOIN editorial_reviews r ON r.article_id=a.id AND r.version=a.draft_version LEFT JOIN external_approvals p ON p.article_id=a.id AND p.version=a.draft_version WHERE json_extract(v.snapshot,'$.calculatorId')=? ORDER BY a.created_at").bind(calculator).all<{id:string;draft_version:number;published_version:number|null;snapshot:string;review_status:string|null;digest:string|null;approved_by:string|null}>()).results;
  return Promise.all(records.map(async item=>{
  const s=JSON.parse(item.snapshot) as {title?:string;circuit?:number;articleType?:string;slug?:string};
- const valid=item.review_status==="approved"&&!!item.digest&&item.digest===await hash(item.snapshot)&&
-  (env.ENVIRONMENT!=="production-lab" || !!item.approved_by?.startsWith("Escritor: "));
+ const valid=item.review_status==="approved"&&!!item.digest&&item.digest===await hash(item.snapshot);
  return {id:item.id,version:item.draft_version,title:s.title||"",slug:s.slug||"",circuit:Number(s.circuit),articleType:s.articleType||"",approved:valid,published:item.published_version!==null};
  }));
 }

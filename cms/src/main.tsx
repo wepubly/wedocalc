@@ -804,8 +804,6 @@ function App() {
                             current.externalApproval.approved_by
                           : "Publicação bloqueada: falta confirmação da aprovação externa."}
                       </p>
-                      {location.hostname.startsWith("metricpedia-editorial-lab.") && current.externalApproval && !String(current.externalApproval.approved_by || "").startsWith("Escritor: ") &&
-                        <p className="message error">Esta aprovação foi registrada antes da exigência de credencial do Escritor. Os dados estão preservados, mas a versão deve ser revalidada antes de agendar ou publicar.</p>}
                       <label>
                         Referência da aprovação final pelo Auditor
                         <input
@@ -879,7 +877,7 @@ function App() {
                           />
                         </label>
                         <button
-                          disabled={busy || !current.externalApproval || !runAt || (location.hostname.startsWith("metricpedia-editorial-lab.") && !String(current.externalApproval.approved_by || "").startsWith("Escritor: "))}
+                          disabled={busy || !current.externalApproval || !runAt}
                           onClick={() =>
                             work(async () => {
                               await api(
