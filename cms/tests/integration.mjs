@@ -226,6 +226,7 @@ try {
     coverId: media.id,
     coverAlt: "Test illustration",
     sources: [],
+    faq: [{ question: "How is paint estimated?", answer: "Use the real Paint Calculator and verify the formula." }],
     relatedIds: [],
     pillarId: "",
     isPillar: true,
@@ -340,6 +341,8 @@ try {
   assert.match(published, /TEST ONLY – Paint calculation integration/);
   assert.match(published, /BlogPosting/);
   assert.match(published, /BreadcrumbList/);
+  assert.match(published, /FAQPage/);
+  assert.match(published, /How is paint estimated\?/);
   assert.match(published, /name="robots" content="noindex,nofollow"/);
   assert.match(
     published,
