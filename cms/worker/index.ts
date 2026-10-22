@@ -87,6 +87,12 @@ export function snapshot(data: Record<string, unknown>): Snapshot {
     )
   )
     throw new HttpError(400, "Fontes inválidas; use URLs HTTP/HTTPS.");
+  const faqs = data.faq ?? [];
+  if (!Array.isArray(faqs) || faqs.length > 12 || faqs.some((f) =>
+    !f || typeof f !== "object" || typeof f.question !== "string" ||
+    !f.question.trim() || f.question.length > 250 ||
+    typeof f.answer !== "string" || !f.answer.trim() || f.answer.length > 1800
+  )) throw new HttpError(400,"FAQ inválido.");
   const relatedIds = data.relatedIds ?? [];
   if (
     !Array.isArray(relatedIds) ||
@@ -109,6 +115,7 @@ export function snapshot(data: Record<string, unknown>): Snapshot {
     authorType: data.authorType === "Person" ? "Person" : "Organization",
     sources: sources.map((s) => ({ title: s.title.trim(), url: s.url.trim() })),
     requiresSources: data.requiresSources === true,
+    faq: faqs.map((f)=>({question:f.question.trim(),answer:f.answer.trim()})),
     isPillar: data.isPillar === true,
     pillarId,
     relatedIds: [...new Set(relatedIds as string[])],
