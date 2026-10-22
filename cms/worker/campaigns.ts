@@ -5,10 +5,11 @@ const out=(v:unknown,status=200)=>Response.json(v,{status,headers:{"Cache-Contro
 const txt=(x:unknown,max:number,name:string)=>{if(typeof x!=="string"||!x.trim()||x.length>max)throw new HttpError(400,name+" inválido.");return x.trim()};
 const slots=["08:15","11:40","09:05","13:25","10:20","14:10","07:50","12:05","09:30","15:15","08:45","11:10","13:55","10:05"];
 async function rows(env:Env,calculator:string){
- const records=(await env.DB.prepare("SELECT a.id,a.draft_version,a.published_version,v.snapshot,r.status AS review_status,p.digest FROM articles a JOIN article_versions v ON v.article_id=a.id AND v.version=a.draft_version LEFT JOIN editorial_reviews r ON r.article_id=a.id AND r.version=a.draft_version LEFT JOIN external_approvals p ON p.article_id=a.id AND p.version=a.draft_version WHERE json_extract(v.snapshot,'$.calculatorId')=? ORDER BY a.created_at").bind(calculator).all<{id:string;draft_version:number;published_version:number|null;snapshot:string;review_status:string|null;digest:string|null}>()).results;
+ const records=(await env.DB.prepare("SELECT a.id,a.draft_version,a.published_version,v.snapshot,r.status AS review_status,p.digest,p.approved_by FROM articles a JOIN article_versions v ON v.article_id=a.id AND v.version=a.draft_version LEFT JOIN editorial_reviews r ON r.article_id=a.id AND r.version=a.draft_version LEFT JOIN external_approvals p ON p.article_id=a.id AND p.version=a.draft_version WHERE json_extract(v.snapshot,'$.calculatorId')=? ORDER BY a.created_at").bind(calculator).all<{id:string;draft_version:number;published_version:number|null;snapshot:string;review_status:string|null;digest:string|null;approved_by:string|null}>()).results;
  return Promise.all(records.map(async item=>{
  const s=JSON.parse(item.snapshot) as {title?:string;circuit?:number;articleType?:string;slug?:string};
- const valid=item.review_status==="approved"&&!!item.digest&&item.digest===await hash(item.snapshot);
+ const valid=item.review_status==="approved"&&!!item.digest&&item.digest===await hash(item.snapshot)&&
+  (env.ENVIRONMENT!=="production-lab" || !!item.approved_by?.startsWith("Auditor: "));
  return {id:item.id,version:item.draft_version,title:s.title||"",slug:s.slug||"",circuit:Number(s.circuit),articleType:s.articleType||"",approved:valid,published:item.published_version!==null};
  }));
 }
