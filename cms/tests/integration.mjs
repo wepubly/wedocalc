@@ -197,14 +197,33 @@ try {
       Authorization: "Bearer " + writer.token,
       "Content-Type": "image/png",
       "X-File-Name": "test-image.png",
-      "X-Image-Alt": "Test illustration",
-      "X-Image-Source": "Metricpedia test fixture",
-      "X-Image-License": "Owner-provided fixture, test only",
+      "X-Image-Alt": "utf8-b64:" + Buffer.from("Capa — cálculo de pintura", "utf8").toString("base64"),
+      "X-Image-Source": "utf8-b64:" + Buffer.from("Arquivo do laboratório — São Paulo", "utf8").toString("base64"),
+      "X-Image-License": "utf8-b64:" + Buffer.from("Direitos próprios — teste", "utf8").toString("base64"),
     },
     body: image,
   });
   assert.equal(upload.status, 201);
   const media = await upload.json();
+  assert.equal(media.alt,"Capa — cálculo de pintura");
+  const list=(await req("/api/editorial/media")).data;
+  assert.equal(list.find((x)=>x.id===media.id).source,"Arquivo do laboratório — São Paulo");
+  const repeated=await fetch(origin+"/api/integration/media",{
+    method:"POST",
+    headers:{
+      Authorization:"Bearer "+writer.token,
+      "Content-Type":"image/png",
+      "X-File-Name":"test-image.png",
+      "X-Image-Alt":"utf8-b64:"+Buffer.from("Outra descrição — mesmo arquivo","utf8").toString("base64"),
+      "X-Image-Source":"Reused media test",
+      "X-Image-License":"Test fixture"
+    },
+    body:image
+  });
+  assert.equal(repeated.status,200);
+  const reused=await repeated.json();
+  assert.equal(reused.id,media.id);
+  assert.equal((await req("/api/editorial/media")).data.length,1);
   const payload = {
     ...brief,
     externalId: "test-external-1",
