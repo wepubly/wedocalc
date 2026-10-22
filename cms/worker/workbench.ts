@@ -9,6 +9,7 @@ function guardOrigin(req:Request){
  if(site && !["same-origin","none"].includes(site))throw new HttpError(403,"Requisição de outro site bloqueada.");
 }
 async function key(req:Request,env:Env){
+ if(env.ENVIRONMENT==="production-lab")return;
  if(env.ENVIRONMENT!=="staging")throw new HttpError(404,"Indisponível.");
  const secret=env.SETUP_TOKEN;
  if(!secret||secret.length<24)throw new HttpError(503,"Chave temporária ainda não está configurada.");
@@ -19,6 +20,18 @@ async function key(req:Request,env:Env){
  if(diff!==0||supplied.length<24)throw new HttpError(403,"Chave temporária incorreta.");
 }
 const limit=100000;
+async function boundedPublicTest(req:Request,env:Env){
+ if(env.ENVIRONMENT!=="production-lab")return;
+ // Per-IP/hour throttling keeps unauthenticated tests independent of the real blog.
+ const ip=(req.headers.get("CF-Connecting-IP")||"unknown").slice(0,64);
+ const id=Array.from(new Uint8Array(await crypto.subtle.digest("SHA-256",new TextEncoder().encode(ip)))).map(b=>b.toString(16).padStart(2,"0")).join("");
+ const bucket=new Date().toISOString().slice(0,13);
+ const r=await env.DB.prepare("INSERT INTO staging_test_rate(visitor_id,hour_bucket,requests) VALUES(?,?,1) ON CONFLICT(visitor_id,hour_bucket) DO UPDATE SET requests=requests+1 RETURNING requests").bind(id,bucket).first<{requests:number}>();
+ if((r?.requests||0)>20)throw new HttpError(429,"Limite de 20 operações de teste por hora atingido.");
+ const count=await env.DB.prepare("SELECT COUNT(*) AS n FROM staging_test_articles").first<{n:number}>();
+ if((count?.n||0)>=200&&req.url.endsWith("/article"))throw new HttpError(429,"Limite de matérias experimentais atingido.");
+}
+
 function validate(obj:Record<string,unknown>){
  const out:Record<string,string>={};
  for(const [field,max] of Object.entries({title:180,excerpt:500,body:60000,seoTitle:180,meta:320,slug:110,keyword:180,tags:600,secondary:1000,coverAlt:250,category:80,subcategory:80,calculator:80,articleType:20,circuit:3,author:100})){
@@ -41,13 +54,13 @@ function articleMarkup(d:Record<string,string>){
  }).join("");
 }
 export async function workbench(req:Request,env:Env,path:string):Promise<Response>{
- if(env.ENVIRONMENT!=="staging")throw new HttpError(404,"Não encontrado.");
- if(["POST","PUT"].includes(req.method))guardOrigin(req);
+ if(!["staging","production-lab"].includes(env.ENVIRONMENT))throw new HttpError(404,"Não encontrado.");
+ if(["POST","PUT"].includes(req.method)){guardOrigin(req);await boundedPublicTest(req,env);}
  const imageRoute=/^\/api\/workbench\/image\/([a-f0-9-]{36})$/.exec(path);
  if(imageRoute&&req.method==="GET"){
   const img=await env.DB.prepare("SELECT object_key,mime FROM staging_test_images WHERE id=?").bind(imageRoute[1]).first<{object_key:string;mime:string}>();
   if(!img)throw new HttpError(404,"Imagem não encontrada.");
-  // Do not expose unpublished covers publicly. Key required for image preview.
+  // In the public laboratory, unguessable media identifiers can be previewed without credentials.
   await key(req,env);
   const data=await env.MEDIA.get(img.object_key);if(!data)throw new HttpError(404,"Imagem não encontrada.");
   return new Response(data.body,{headers:{"Content-Type":img.mime,"Cache-Control":"no-store","X-Robots-Tag":"noindex,nofollow","X-Content-Type-Options":"nosniff"}});
@@ -96,7 +109,7 @@ export async function workbench(req:Request,env:Env,path:string):Promise<Respons
  throw new HttpError(405,"Método não permitido.");
 }
 export async function testArticle(req:Request,env:Env,path:string):Promise<Response>{
- if(env.ENVIRONMENT!=="staging"||!["GET","HEAD"].includes(req.method))throw new HttpError(404,"Não encontrado.");
+ if(!["staging","production-lab"].includes(env.ENVIRONMENT)||!["GET","HEAD"].includes(req.method))throw new HttpError(404,"Não encontrado.");
  const img=/^\/test-blog\/cover\/([a-f0-9-]{36})$/.exec(path);
  if(img){
  const row=await env.DB.prepare("SELECT i.object_key,i.mime FROM staging_test_images i JOIN staging_test_articles a ON a.image_id=i.id WHERE i.id=? AND a.status='test_published' LIMIT 1").bind(img[1]).first<{object_key:string;mime:string}>();
