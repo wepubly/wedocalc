@@ -8,6 +8,6 @@ if(pages.name!=="wedocalc"||pages.production_branch!=="main"||!sub.subdomain)thr
 let db=dbs.find(x=>x.name===dbName);if(!db)db=await api("/d1/database","POST",{name:dbName});
 if(!(buckets.buckets||buckets).some(x=>x.name===bucket))await api("/r2/buckets","POST",{name:bucket});
 const origin="https://"+name+"."+sub.subdomain+".workers.dev";
-writeFileSync("wrangler.lab.json",JSON.stringify({name,main:"worker/public-lab.ts",compatibility_date:"2026-10-01",account_id:account,workers_dev:true,preview_urls:false,assets:{directory:"./dist",binding:"ASSETS",run_worker_first:true},d1_databases:[{binding:"DB",database_name:dbName,database_id:db.uuid,migrations_dir:"lab-migrations"}],r2_buckets:[{binding:"MEDIA",bucket_name:bucket}],vars:{ENVIRONMENT:"production-lab",PUBLIC_ORIGIN:origin},observability:{enabled:false}},null,2));
+writeFileSync("wrangler.lab.json",JSON.stringify({name,main:"worker/index.ts",compatibility_date:"2026-10-01",account_id:account,workers_dev:true,preview_urls:false,assets:{directory:"./dist",binding:"ASSETS",run_worker_first:true},d1_databases:[{binding:"DB",database_name:dbName,database_id:db.uuid,migrations_dir:"lab-migrations"}],r2_buckets:[{binding:"MEDIA",bucket_name:bucket}],vars:{ENVIRONMENT:"production-lab",PUBLIC_ORIGIN:origin},triggers:{crons:["* * * * *"]},observability:{enabled:false}},null,2));
 console.log("Metricpedia production lab: "+origin+"/admin");
 writeFileSync("lab-origin.txt",origin+"\n");
