@@ -85,6 +85,10 @@ export async function requireAuditorCredential(request: Request, env: Env) {
   scope(actor,"authorize");
   if(actor.scopes.includes("submit")||actor.scopes.includes("schedule")||actor.scopes.includes("publish"))
     throw new HttpError(403,"A aprovação exige credencial exclusiva do Auditor.");
+  if(env.ENVIRONMENT==="production-lab"){
+    const trust=await env.DB.prepare("SELECT agent_id FROM lab_trusted_auditors WHERE agent_id=?").bind(actor.id).first();
+    if(!trust)throw new HttpError(403,"Credencial antiga ou não cadastrada pelo responsável. Gere uma credencial de Auditor autorizada.");
+  }
   return actor;
 }
 function scope(p: Principal, s: string) {
@@ -272,11 +276,15 @@ export async function integration(r: Request, e: Env, path: string) {
         await transition(e, a, m[2], actor, typeof d.notes === "string" ? d.notes.slice(0,2000) : "");
         return json({ok:true,version:a.draft_version});
       }
-      if (m[2] === "authorize") return authorize(e, id, d, "agent:" + p.id);
+      if (m[2] === "authorize") {
+        if(e.ENVIRONMENT==="production-lab")await requireAuditorCredential(r,e);
+        return authorize(e,id,d,"Auditor: "+p.name);
+      }
       const a = await article(e, id);
       if (d.version !== a.draft_version)
         throw new HttpError(409, "Versão alterada.");
       if (m[2] === "publish") {
+        if(e.ENVIRONMENT==="production-lab")throw new HttpError(403,"Publicação manual desativada no laboratório. Use o agendamento aprovado.");
         await publish(e, a, a.draft_version);
         return json({ ok: true });
       }
@@ -437,6 +445,8 @@ export async function extraAdmin(r: Request, e: Env, path: string) {
       await e.DB.prepare("INSERT INTO agents VALUES(?,?,?,?,1,?)")
         .bind(id, txt(d.name), await hash(token), JSON.stringify(scopes), now())
         .run();
+      if(e.ENVIRONMENT==="production-lab"&&scopes.includes("authorize"))
+        await e.DB.prepare("INSERT INTO lab_trusted_auditors(agent_id,created_at) VALUES(?,?)").bind(id,now()).run();
       await event(e, "create-agent", "owner", { id, scopes });
       return json({ id, token, scopes }, 201);
     }
