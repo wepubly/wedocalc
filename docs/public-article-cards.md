@@ -46,3 +46,7 @@ Live production may have zero articles or articles from only one calculator; fix
 - `.gitignore`: generated build/dependency files only.
 
 CMS code, database schemas, data, article snapshots, approvals, schedules, cron, administrative layout and production deployment are not modified.
+
+## Verification record — 22 October 2026
+
+Initial preview pipeline passed native renderer tests and Chromium checks at 1440px/390px, followed by a live preview check and an unchanged production deployment ID. No editorial API calls or CMS mutations were made. A follow-up test covers zero/two/seven articles: invisible empty grid cells preserve the original ad position without inventing editorial content. Production publication and merging remain unauthorized.

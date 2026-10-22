@@ -19,6 +19,7 @@ for(const cat of ['home-garden','cooking','finance']){const group=home.filter(a=
 assert.deepEqual(select(fixtures,{kind:'home'},123),home);assert.notDeepEqual(select(fixtures,{kind:'home'},124),home);
 assert.equal(rotationDay(Date.UTC(2026,9,23,2,59)),rotationDay(Date.UTC(2026,9,22,12)));assert.notEqual(rotationDay(Date.UTC(2026,9,23,3)),rotationDay(Date.UTC(2026,9,22,12)));
 const html=readFileSync(root+'index.html','utf8');const ad=html.match(/data-ad-html="([^"]*)"/)[1].replaceAll('&lt;','<').replaceAll('&gt;','>').replaceAll('&quot;','"').replaceAll('&#x27;',"'").replaceAll('&amp;','&');
+for(const n of [0,2,7]){const sparse=homeColumns(home.slice(0,n),ad);assert.equal((sparse.match(/data-empty-guide-slot/g)||[]).length,9-n);assert.equal((sparse.match(/data-ad-slot="HOME-GUIDES-01"/g)||[]).length,1);}
 const columns=homeColumns(home,ad);assert.equal((columns.match(/<article/g)||[]).length,10);assert.equal((columns.match(/data-ad-slot="HOME-GUIDES-01"/g)||[]).length,1);assert.equal(columns.indexOf(ad)>columns.lastIndexOf('guide-column'),true);
 console.log('PASS filtering, limits, diversity, stable daily rotation, escaping and unchanged advertising slot.');
 if(process.env.CARDS_UNIT_ONLY==='1')process.exit(0);
