@@ -103,6 +103,9 @@ function App() {
   const [reviewNotes, setReviewNotes] = useState("");
   const [qualityResult, setQualityResult] = useState<any>(null);
   const [agentRole, setAgentRole] = useState("writer");
+  const [auditorToken, setAuditorToken] = useState("");
+  const [internalLinkTarget, setInternalLinkTarget] = useState("");
+  const [internalLinkText, setInternalLinkText] = useState("");
   const [campaignCalculator, setCampaignCalculator] = useState("paint-calculator");
   const [campaignInfo, setCampaignInfo] = useState<any>(null);
   const [campaignStart, setCampaignStart] = useState("");
@@ -177,7 +180,6 @@ function App() {
     setVersions(v);
     setEvents(e);
     setTab("articles");
-    setEvidence("");
     setQualityResult(null);
     setReviewNotes("");
   }
@@ -631,8 +633,8 @@ function App() {
                     <div className="grid">
                       {input("title", "Título")}
                       {input("slug", "Slug")}
-                      {input("externalId", "ID externo do trabalho")}
-                      {input("finalVersion", "Identificador da versão final")}
+                      {input("externalId", "ID externo do trabalho (obrigatório)")}
+                      {input("finalVersion", "Identificador da versão final (obrigatório)")}
                       <label>
                         Tipo
                         <select
@@ -651,7 +653,7 @@ function App() {
                       </label>
                       {input(
                         "approvalReference",
-                        "Referência da aprovação no Grok",
+                        "Referência da aprovação no Grok (informativa)",
                       )}
                     </div>
                     <label>
@@ -661,6 +663,24 @@ function App() {
                         onChange={(e) => field("excerpt", e.target.value)}
                       />
                     </label>
+                    <section className="panel">
+                      <h3>Inserir links internos</h3>
+                      <p>Selecione uma calculadora, categoria ou artigo para adicionar o link ao Markdown.</p>
+                      <label>Destino
+                        <select value={internalLinkTarget} onChange={e=>setInternalLinkTarget(e.target.value)}>
+                          <option value="">Selecione</option>
+                          {routes.filter((r:any)=>r.state==="live").map((r:any)=><option key={r.id} value={r.path}>{r.name} · {r.path}</option>)}
+                          {rows.filter((r:any)=>r.id!==current?.id).map((r:any)=><option key={r.id} value={"/blog/"+r.snapshot.slug+"/"}>{r.snapshot.title}</option>)}
+                        </select>
+                      </label>
+                      <label>Texto do link
+                        <input value={internalLinkText} onChange={e=>setInternalLinkText(e.target.value)} placeholder="Ex.: Paint Calculator" />
+                      </label>
+                      <button type="button" disabled={!internalLinkTarget || !internalLinkText.trim()} onClick={()=>{
+                        field("body",draft.body + "\n\n[" + internalLinkText.replace(/[\[\]]/g,"") + "](" + internalLinkTarget + ")");
+                        setNotice("Link inserido no Markdown. Confira o texto antes de salvar.");
+                      }}>Inserir link</button>
+                    </section>
                     <label>
                       Conteúdo Markdown
                       <textarea
@@ -788,6 +808,9 @@ function App() {
                           placeholder="ID/mensagem de aprovação do Auditor no grupo"
                         />
                       </label>
+                      <label>Credencial exclusiva do Auditor (obrigatória para aprovar)
+                        <input type="password" autoComplete="off" value={auditorToken} onChange={e=>setAuditorToken(e.target.value)} placeholder="Cole a credencial gerada em Acesso e agentes" />
+                      </label>
                       <section className="panel">
                         <h3>Revisão editorial · versão {current.draft_version}</h3>
                         <p>Status: <strong>{current.review?.status === "review" ? "Aguardando Auditor" : current.review?.status === "changes" ? "Correções solicitadas" : current.review?.status === "approved" ? "Aprovada pelo Auditor" : "Rascunho"}</strong></p>
@@ -819,20 +842,20 @@ function App() {
                       </section>
                       <div className="actions">
                         <button
-                          disabled={busy || !evidence}
+                          disabled={busy || !evidence || !auditorToken.trim()}
                           onClick={() =>
                             work(async () => {
-                              await api(
-                                "/articles/" + current.id + "/authorize",
-                                "POST",
-                                {
-                                  version: current.draft_version,
-                                  digest: current.digest,
-                                  evidence,
-                                },
-                              );
+                              if(!auditorToken.trim()) throw new Error("Informe a credencial exclusiva do Auditor.");
+                              const response = await fetch(base + "/articles/" + current.id + "/authorize", {
+                                method:"POST",
+                                headers:{"Content-Type":"application/json","Authorization":"Bearer "+auditorToken.trim()},
+                                body:JSON.stringify({version:current.draft_version,digest:current.digest,evidence})
+                              });
+                              const result = await response.json();
+                              if(!response.ok) throw new Error(result.error || "Aprovação não autorizada.");
                               await refresh();
                               await open(current.id);
+                              setEvidence("");
                               setNotice(
                                 "Aprovação externa confirmada para esta versão exata.",
                               );
