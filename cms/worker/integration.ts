@@ -406,6 +406,15 @@ export async function extraAdmin(r: Request, e: Env, path: string) {
     if (r.method === "POST") {
       const d = await jsonBody(r),
         scopes = strings(d.scopes, 5);
+      if(e.ENVIRONMENT==="production-lab" && scopes.includes("authorize")){
+        const ownerKey=r.headers.get("X-Metricpedia-Owner-Key")||"";
+        if(!e.SETUP_TOKEN || e.SETUP_TOKEN.length<24)
+          throw new HttpError(503,"Configure a chave de administração do laboratório no GitHub antes de criar credenciais de Auditor.");
+        const a=new Uint8Array(await crypto.subtle.digest("SHA-256",new TextEncoder().encode(ownerKey)));
+        const b=new Uint8Array(await crypto.subtle.digest("SHA-256",new TextEncoder().encode(e.SETUP_TOKEN)));
+        let diff=0;for(let i=0;i<a.length;i++)diff|=a[i]^b[i];
+        if(!ownerKey||diff!==0)throw new HttpError(403,"A chave do responsável é necessária para credenciais de Auditor.");
+      }
       if (
         !scopes.length ||
         scopes.some(
