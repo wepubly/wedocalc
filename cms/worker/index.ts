@@ -714,6 +714,8 @@ async function handle(request: Request, env: Env): Promise<Response> {
       throw new HttpError(404, "Arquivo não encontrado.");
     return asset;
   }
+  if (path === "/admin/test-article" && env.ENVIRONMENT === "staging" && ["GET","HEAD"].includes(request.method))
+    return env.ASSETS.fetch(new Request(new URL("/admin-assets/test-article.html", request.url)));
   if (
     path === "/admin/login" ||
     path === "/admin/setup" ||
