@@ -73,7 +73,9 @@ function App() {
     [media, setMedia] = useState<any[]>([]),
     [schedules, setSchedules] = useState<any[]>([]),
     [logs, setLogs] = useState<any[]>([]),
-    [agents, setAgents] = useState<any[]>([]);
+    [agents, setAgents] = useState<any[]>([]),
+    [terms, setTerms] = useState<any[]>([]),
+    [pitches, setPitches] = useState<any[]>([]);
   const [query, setQuery] = useState(""),
     [filter, setFilter] = useState(""),
     [calcFilter, setCalcFilter] = useState(""),
@@ -103,7 +105,7 @@ function App() {
   const [campaignInfo, setCampaignInfo] = useState<any>(null);
   const [campaignStart, setCampaignStart] = useState("");
   async function refresh() {
-    const [a, b, r, m, s, l, g] = await Promise.all(
+    const [a, b, r, m, s, l, g, t, p] = await Promise.all(
       [
         "/articles",
         "/briefs",
@@ -112,6 +114,8 @@ function App() {
         "/schedules",
         "/logs",
         "/agents",
+        "/terms",
+        "/pitches",
       ].map((p) => api(p)),
     );
     setRows(a);
@@ -121,6 +125,8 @@ function App() {
     setSchedules(s);
     setLogs(l);
     setAgents(g);
+    setTerms(t);
+    setPitches(p);
   }
   async function loadCampaign(id: string) {
     setCampaignInfo(await api("/campaigns?calculatorId=" + encodeURIComponent(id)));
@@ -1208,6 +1214,46 @@ function App() {
                     </small>
                   </section>
                 ))}
+                <section className="panel">
+                  <h2>Categorias e tags</h2>
+                  <p>Cadastre a categoria antes de usá-la em um artigo. Subcategorias e calculadoras são criadas em “Cadastro de rotas”.</p>
+                  <form onSubmit={e=>{
+                    e.preventDefault();
+                    const node=e.currentTarget;
+                    void work(async()=>{
+                      await api("/terms","POST",Object.fromEntries(new FormData(node).entries()));
+                      await refresh();node.reset();setNotice("Termo editorial cadastrado.");
+                    });
+                  }}>
+                    <label>Tipo
+                      <select name="kind"><option value="tag">Tag</option><option value="category">Categoria</option></select>
+                    </label>
+                    <label>Nome<input name="name" required maxLength={80} /></label>
+                    <button disabled={busy}>Cadastrar categoria ou tag</button>
+                  </form>
+                  {terms.length===0 ? <p>Nenhuma categoria ou tag cadastrada.</p> : <div className="actions">
+                    {terms.map((t:any)=><span className="badge" key={t.id}>{t.kind==="tag" ? "Tag" : "Categoria"}: {t.name}</span>)}
+                  </div>}
+                </section>
+                <section className="panel">
+                  <h2>Pautas editoriais</h2>
+                  <p>Planejamento feito com pesquisa SEO, antes de enviar os briefings aos bots.</p>
+                  <form onSubmit={e=>{
+                    e.preventDefault();const node=e.currentTarget;
+                    void work(async()=>{await api("/pitches","POST",Object.fromEntries(new FormData(node).entries()));await refresh();node.reset();});
+                  }}>
+                    <label>Título<input name="title" required /></label>
+                    <label>Notas<textarea name="notes" /></label>
+                    <button disabled={busy}>Registrar pauta</button>
+                  </form>
+                  {pitches.map((p:any)=><div key={p.id} className="panel">
+                    <strong>{p.title}</strong><p>{p.notes}</p>
+                    <small>Status: {p.status}</small>
+                    <div className="actions">
+                      {["planned","approved","archived"].map(status=><button type="button" key={status} disabled={busy||p.status===status} onClick={()=>void work(async()=>{await api("/pitches/"+p.id,"POST",{status});await refresh();})}>{status==="approved"?"Aprovar pauta":status==="archived"?"Arquivar":"Planejar"}</button>)}
+                    </div>
+                  </div>)}
+                </section>
                 <details className="panel">
                   <summary>Cadastro de rotas reais e previstas</summary>
                   <p>Uma rota marcada como prevista não gera links públicos.</p>
