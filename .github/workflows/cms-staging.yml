@@ -1,0 +1,30 @@
+name: Metricpedia CMS staging
+on:
+  push:
+    branches: [work/metricpedia-cms-blog-v1]
+permissions:
+  contents: read
+concurrency:
+  group: metricpedia-cms-staging
+  cancel-in-progress: true
+jobs:
+  inventory:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    env:
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      CLOUDFLARE_ACCOUNT_ID: b81896777d206a2239625d9cf2e8a40b
+    steps:
+      - uses: actions/checkout@v4
+      - name: Inspect existing resources (read only)
+        run: |
+          node --input-type=module <<'NODE'
+          const base='https://api.cloudflare.com/client/v4/accounts/'+process.env.CLOUDFLARE_ACCOUNT_ID;
+          for(const [name,path] of [['pages','/pages/projects'],['workers','/workers/scripts'],['d1','/d1/database'],['r2','/r2/buckets']]){
+            const r=await fetch(base+path,{headers:{Authorization:'Bearer '+process.env.CLOUDFLARE_API_TOKEN}});
+            const d=await r.json();
+            if(!r.ok||!d.success){console.log(name,JSON.stringify({status:r.status,errors:d.errors}));continue;}
+            const items=d.result?.buckets||d.result;
+            console.log(name,JSON.stringify(items.map(x=>({name:x.name||x.id,uuid:x.uuid,production_branch:x.production_branch,subdomain:x.subdomain}))));
+          }
+          NODE
