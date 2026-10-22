@@ -72,6 +72,9 @@ jobs:
           node --input-type=module <<'NODE'
           import {readFileSync,appendFileSync} from 'node:fs';
           const {origin}=JSON.parse(readFileSync('staging-resources.json'));
+          const visual=await fetch(origin+'/admin');
+          const visualHtml=await visual.text();
+          if(!visual.ok||!visualHtml.includes('Visão geral do Editorial Center')||!visual.headers.get('x-robots-tag')?.includes('noindex'))throw Error('Visual-only staging admin missing or not protected against indexing');
           const r=await fetch(origin+'/admin/setup');
           if(!r.ok||!r.headers.get('x-robots-tag')?.includes('noindex'))throw Error('Staging setup/noindex check failed');
           const api=await fetch(origin+'/api/editorial/articles');if(api.status!==401)throw Error('Administrative API must require authentication');
