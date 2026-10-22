@@ -88,6 +88,14 @@ export function articleHtml(
           { "@type": "ListItem", position: 3, name: s.title, item: url },
         ],
       },
+      ...(s.faq?.length ? [{
+        "@type": "FAQPage",
+        mainEntity: s.faq.map((f) => ({
+          "@type": "Question",
+          name: f.question,
+          acceptedAnswer: { "@type": "Answer", text: f.answer },
+        })),
+      }] : []),
     ],
   };
   const dimensions =
@@ -104,6 +112,11 @@ export function articleHtml(
         .join("") +
       "</ul></section>"
     : "";
+  const faqContent = s.faq?.length
+    ? '<section class="faq"><h2>Frequently Asked Questions</h2>' +
+      s.faq.map((f) => '<h3>'+escape(f.question)+'</h3><p>'+escape(f.answer)+'</p>').join("") +
+      '</section>'
+    : "";
   const dates = preview
     ? ""
     : ` · Published <time datetime="${escape(publishedAt)}">${escape(publishedAt.slice(0, 10))}</time>${updatedAt.slice(0, 10) !== publishedAt.slice(0, 10) ? ` · Updated <time datetime="${escape(updatedAt)}">${escape(updatedAt.slice(0, 10))}</time>` : ""}`;
@@ -111,7 +124,7 @@ export function articleHtml(
     s.seoTitle || s.title,
     s.description || s.excerpt,
     url,
-    `<nav class="breadcrumb" aria-label="Breadcrumb"><a href="https://metricpedia.com/">Home</a><span>›</span><a href="/blog">Blog</a><span>›</span><span aria-current="page">${escape(s.title)}</span></nav><article><p class="meta">${escape(s.category)}</p><h1>${escape(s.title)}</h1><p class="meta">By ${escape(s.author)}${dates}</p>${image ? `<img class="cover" src="${image}" alt="${escape(s.coverAlt)}"${dimensions} fetchpriority="high" decoding="async">` : ""}${bodyHtml(s.body)}${context.calculator ? `<p><a href="${escape(context.calculator.path)}">${escape(context.calculator.name)}</a></p>` : ""}${sourceHtml(s)}${related}<p class="meta">${s.tags.map((t) => `<a href="/blog?tag=${encodeURIComponent(t)}">${escape(t)}</a>`).join(" · ")}</p></article>`,
+    `<nav class="breadcrumb" aria-label="Breadcrumb"><a href="https://metricpedia.com/">Home</a><span>›</span><a href="/blog">Blog</a><span>›</span><span aria-current="page">${escape(s.title)}</span></nav><article><p class="meta">${escape(s.category)}</p><h1>${escape(s.title)}</h1><p class="meta">By ${escape(s.author)}${dates}</p>${image ? `<img class="cover" src="${image}" alt="${escape(s.coverAlt)}"${dimensions} fetchpriority="high" decoding="async">` : ""}${bodyHtml(s.body)}${context.calculator ? `<p><a href="${escape(context.calculator.path)}">${escape(context.calculator.name)}</a></p>` : ""}${faqContent}${sourceHtml(s)}${related}<p class="meta">${s.tags.map((t) => `<a href="/blog?tag=${encodeURIComponent(t)}">${escape(t)}</a>`).join(" · ")}</p></article>`,
     preview
       ? ""
       : `<meta property="og:type" content="article"><meta property="article:published_time" content="${escape(publishedAt)}"><meta property="article:modified_time" content="${escape(updatedAt)}">${image ? `<meta property="og:image" content="${escape(origin + image)}"><meta property="og:image:alt" content="${escape(s.coverAlt)}"><meta name="twitter:image" content="${escape(origin + image)}">` : ""}<link rel="alternate" type="text/markdown" href="${escape(url)}.md"><script type="application/ld+json">${jsonLd(ld)}</script>`,
