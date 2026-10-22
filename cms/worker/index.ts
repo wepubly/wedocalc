@@ -321,7 +321,7 @@ export async function upload(request: Request, env: Env) {
   );
   const checksum = Array.from(new Uint8Array(await crypto.subtle.digest("SHA-256", data)),x=>x.toString(16).padStart(2,"0")).join("");
   const existing = await env.DB.prepare("SELECT id,name,alt,width,height FROM media WHERE content_sha256=?").bind(checksum).first<{id:string;name:string;alt:string;width:number;height:number}>();
-  if(existing) return json({...existing, duplicate:true},200);
+  if(existing) return json({...existing, duplicate:true, metadataPreserved:true, message:"Imagem idêntica reutilizada. Alt, origem e licença existentes foram preservados; os novos metadados não foram aplicados."},200);
   // Backfill duplicate detection for older image records created before checksums existed.
   const legacy=(await env.DB.prepare("SELECT id,object_key,name,alt,width,height FROM media WHERE content_sha256 IS NULL AND mime=? AND size=? LIMIT 30").bind(mime,data.length).all<{id:string;object_key:string;name:string;alt:string;width:number;height:number}>()).results;
   for(const item of legacy){
@@ -331,7 +331,7 @@ export async function upload(request: Request, env: Env) {
     const oldHash=Array.from(new Uint8Array(await crypto.subtle.digest("SHA-256",bytes)),x=>x.toString(16).padStart(2,"0")).join("");
     if(oldHash===checksum){
       await env.DB.prepare("UPDATE media SET content_sha256=? WHERE id=? AND content_sha256 IS NULL").bind(checksum,item.id).run();
-      return json({id:item.id,name:item.name,alt:item.alt,width:item.width,height:item.height,duplicate:true},200);
+      return json({id:item.id,name:item.name,alt:item.alt,width:item.width,height:item.height,duplicate:true, metadataPreserved:true, message:"Imagem idêntica reutilizada. Alt, origem e licença existentes foram preservados; os novos metadados não foram aplicados."},200);
     }
   }
   const id = crypto.randomUUID(),
@@ -360,7 +360,7 @@ export async function upload(request: Request, env: Env) {
     await env.MEDIA.delete(key);
     if(e instanceof Error && /UNIQUE constraint/i.test(e.message)){
       const row=await env.DB.prepare("SELECT id,name,alt,width,height FROM media WHERE content_sha256=?").bind(checksum).first();
-      if(row)return json({...row,duplicate:true},200);
+      if(row)return json({...row,duplicate:true, metadataPreserved:true, message:"Imagem idêntica reutilizada. Alt, origem e licença existentes foram preservados; os novos metadados não foram aplicados."},200);
     }
     throw e;
   }
@@ -717,7 +717,7 @@ async function api(request: Request, env: Env, path: string) {
     return json(
       (
         await env.DB.prepare(
-          "SELECT * FROM schedules ORDER BY run_at DESC",
+          "SELECT s.*,v.snapshot FROM schedules s JOIN article_versions v ON v.article_id=s.article_id AND v.version=s.version ORDER BY s.run_at DESC",
         ).all()
       ).results,
     );

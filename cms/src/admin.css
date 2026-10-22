@@ -371,3 +371,5 @@ select[multiple] {
     margin: 20px auto;
   }
 }
+
+[aria-invalid="true"]{border:2px solid #b42318;background:#fff6f5}.field-error{display:block;color:#b42318;margin-top:4px}.approval-notice{font-size:.85rem;color:#667085}

@@ -51,6 +51,7 @@ const tabs = [
   ["dashboard", "Visão geral"],
   ["articles", "Artigos"],
   ["schedules", "Agendamentos"],
+  ["publications", "Central de Publicações"],
   ["campaigns", "Campanhas de 14 dias"],
   ["media", "Biblioteca de mídia"],
   ["briefs", "Briefings e rotas"],
@@ -104,6 +105,10 @@ function App() {
   const [reviewNotes, setReviewNotes] = useState("");
   const [qualityResult, setQualityResult] = useState<any>(null);
   const [writerToken, setWriterToken] = useState("");
+  const [fieldErrors, setFieldErrors] = useState<Record<string,string>>({});
+  const [linkQuery, setLinkQuery] = useState("");
+  const [editingLink, setEditingLink] = useState<number | null>(null);
+  const [publicationFilter, setPublicationFilter] = useState("");
   const [internalLinkTarget, setInternalLinkTarget] = useState("");
   const [internalLinkText, setInternalLinkText] = useState("");
   const [campaignCalculator, setCampaignCalculator] = useState("paint-calculator");
@@ -167,14 +172,35 @@ function App() {
       }
     })();
   }, []);
-  const field = (key: string, value: unknown) =>
+  const field = (key: string, value: unknown) => {
     setDraft({ ...draft, [key]: value });
+    setFieldErrors(prev => { const next={...prev}; delete next[key]; return next; });
+  };
+  const invalid = (key: string) => ({"aria-invalid": !!fieldErrors[key], "aria-describedby": fieldErrors[key] ? "error-"+key : undefined});
+  const feedback = (key: string) => fieldErrors[key] ? <small className="field-error" id={"error-"+key}>{fieldErrors[key]}</small> : null;
+  const bodyLinks = Array.from(String(draft.body || "").matchAll(/(?<!!)\[([^\]\n]+)\]\(([^\s)]+)\)/g)).filter(m => {
+    try { const u=new URL(m[2], "https://metricpedia.com"); return u.origin === "https://metricpedia.com"; } catch { return false; }
+  });
+  function changeLink(index: number, replacement: string) {
+    const m=bodyLinks[index]; if(!m || m.index===undefined)return;
+    field("body",draft.body.slice(0,m.index)+replacement+draft.body.slice(m.index+m[0].length));
+    setEditingLink(null);
+  }
+  const withdrawn = (r: any) => !r.published_version && !!r.published_at;
+  const scheduleStatus = (s: any) => {
+    const r=rows.find(r=>r.id===s.article_id);
+    return s.status === "published" && r && withdrawn(r) && s.version === Math.max(...schedules.filter(x=>x.article_id===r.id && x.status==="published").map(x=>x.version)) ? "withdrawn" : s.status;
+  };
+  const publicationLabel = (value: string) => ({queued:"Agendado",published:"Publicado",cancelled:"Cancelado",withdrawn:"Retirado de publicação"}[value] || value);
+
   async function open(id: string) {
     const [d, v, e] = await Promise.all([
       api("/articles/" + id + "/details"),
       api("/articles/" + id + "/versions"),
       api("/articles/" + id + "/events"),
     ]);
+    setFieldErrors({});
+    setEditingLink(null);
     setCurrent(d);
     setDraft(d.snapshot);
     setVersions(v);
@@ -203,6 +229,7 @@ function App() {
     const queued = schedules.find(
       (s) => s.article_id === r.id && s.status === "queued",
     );
+    if (withdrawn(r)) return "Retirado de publicação";
     return queued?.last_error
       ? "Erro"
       : queued
@@ -241,9 +268,12 @@ function App() {
       {label}
       <input
         type={type}
+        name={key}
+        {...invalid(key)}
         value={draft[key] || ""}
         onChange={(e) => field(key, e.target.value)}
       />
+      {feedback(key)}
     </label>
   );
   if (loading)
@@ -444,6 +474,8 @@ function App() {
                     onClick={() => {
                       setCurrent(null);
                       setDraft(blank());
+                      setFieldErrors({});
+                      setEditingLink(null);
                       setVersions([]);
                       setEvents([]);
                     }}
@@ -493,6 +525,7 @@ function App() {
                       "Autorizado",
                       "Agendado",
                       "Publicado",
+                      "Retirado de publicação",
                       "Erro",
                     ].map((s) => (
                       <option key={s}>{s}</option>
@@ -591,13 +624,19 @@ function App() {
                     Salvar cria uma versão sem autorização; a versão pública
                     permanece intacta.
                   </p>
-                  <form
+                  <form noValidate
                     onSubmit={(e) => {
                       e.preventDefault();
                       void work(async () => {
-                        for(const [field,label] of [["externalId","ID externo do trabalho"],["finalVersion","Identificador da versão final"],["title","Título"],["slug","Slug"]] as const){
-                          if(!String(draft[field]||"").trim())throw new Error("Preencha o campo obrigatório: "+label+".");
+                        const errors: Record<string,string> = {};
+                        for(const [key,label] of [["externalId","ID externo do trabalho"],["finalVersion","Identificador da versão final"],["title","Título"],["slug","Slug"],["briefId","Briefing aprovado"]]) {
+                          if(!String(draft[key]||"").trim())errors[key]="Preencha o campo obrigatório: "+label+".";
                         }
+                        if(draft.slug && !/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(draft.slug))errors.slug="Use letras minúsculas, números e hífens.";
+                        if(draft.canonicalUrl) { try { const u=new URL(draft.canonicalUrl); if(u.protocol!=="https:" || u.hostname!=="metricpedia.com" || u.username || u.password || u.search || u.hash)throw Error(); } catch { errors.canonicalUrl="Canonical deve ser uma URL HTTPS de metricpedia.com, sem parâmetros."; } }
+                        setFieldErrors(errors);
+                        if(Object.keys(errors).length)throw Error(Object.values(errors)[0]);
+                        try {
                         const result = await api(
                           current ? "/articles/" + current.id : "/articles",
                           current ? "PUT" : "POST",
@@ -610,6 +649,12 @@ function App() {
                         );
                         await refresh();
                         await open(result.id);
+                        } catch(err) {
+                          const message=err instanceof Error ? err.message : "Erro ao salvar";
+                          const key=/Canonical/i.test(message)?"canonicalUrl":/Briefing|Pacote diverge/i.test(message)?"briefId":/Título SEO/i.test(message)?"seoTitle":/Título/i.test(message)?"title":/URL|Slug/i.test(message)?"slug":/Resumo/i.test(message)?"excerpt":/Texto|conteúdo/i.test(message)?"body":/Fontes/i.test(message)?"sources":/Descrição da imagem/i.test(message)?"coverAlt":/Imagem/i.test(message)?"coverId":/Descrição/i.test(message)?"description":null;
+                          if(key)setFieldErrors({[key]:message});
+                          throw err;
+                        }
                         setNotice(
                           "Versão salva. Confirme externamente antes de publicar.",
                         );
@@ -620,6 +665,7 @@ function App() {
                       Briefing aprovado
                       <select
                         required
+                        {...invalid("briefId")}
                         value={draft.briefId}
                         onChange={(e) => applyBrief(e.target.value)}
                       >
@@ -632,6 +678,7 @@ function App() {
                             </option>
                           ))}
                       </select>
+                      {feedback("briefId")}
                     </label>
                     <div className="grid">
                       {input("title", "Título")}
@@ -669,28 +716,35 @@ function App() {
                     <section className="panel">
                       <h3>Inserir links internos</h3>
                       <p>Selecione uma calculadora, categoria ou artigo para adicionar o link ao Markdown.</p>
+                      <label>Buscar página interna<input value={linkQuery} onChange={e=>setLinkQuery(e.target.value)} placeholder="Nome ou endereço" /></label>
                       <label>Destino
                         <select value={internalLinkTarget} onChange={e=>setInternalLinkTarget(e.target.value)}>
                           <option value="">Selecione</option>
-                          {routes.filter((r:any)=>r.state==="live").map((r:any)=><option key={r.id} value={r.path}>{r.name} · {r.path}</option>)}
-                          {rows.filter((r:any)=>r.id!==current?.id).map((r:any)=><option key={r.id} value={"/blog/"+r.snapshot.slug+"/"}>{r.snapshot.title}</option>)}
+                          {routes.filter((r:any)=>r.state==="live" && (r.name+" "+r.path).toLowerCase().includes(linkQuery.toLowerCase())).map((r:any)=><option key={r.id} value={r.path}>{r.name} · {r.path}</option>)}
+                          {rows.filter((r:any)=>r.id!==current?.id && r.published_version && (r.snapshot.title+" "+r.published_slug).toLowerCase().includes(linkQuery.toLowerCase())).map((r:any)=><option key={r.id} value={"/blog/"+r.published_slug+"/"}>{r.snapshot.title}</option>)}
                         </select>
                       </label>
                       <label>Texto do link
                         <input value={internalLinkText} onChange={e=>setInternalLinkText(e.target.value)} placeholder="Ex.: Paint Calculator" />
                       </label>
+                      {internalLinkTarget && <small>Destino selecionado: {internalLinkTarget}</small>}
                       <button type="button" disabled={!internalLinkTarget || !internalLinkText.trim()} onClick={()=>{
-                        field("body",draft.body + "\n\n[" + internalLinkText.replace(/[\[\]]/g,"") + "](" + internalLinkTarget + ")");
-                        setNotice("Link inserido no Markdown. Confira o texto antes de salvar.");
-                      }}>Inserir link</button>
+                        const markdown="[" + internalLinkText.replace(/[\[\]\\]/g,"") + "](" + internalLinkTarget + ")";
+                        if(editingLink===null)field("body",draft.body + "\n\n"+markdown);
+                        else changeLink(editingLink,markdown);
+                        setNotice("Link atualizado no Markdown. Salve a versão para gravar.");
+                      }}>{editingLink===null ? "Inserir link" : "Substituir link"}</button>
+                      {editingLink!==null && <button type="button" onClick={()=>setEditingLink(null)}>Cancelar substituição</button>}
+                      <ul>{bodyLinks.map((m,i)=><li key={String(m.index)}>{m[1]} · {m[2]} <button type="button" onClick={()=>{setEditingLink(i);setInternalLinkTarget(m[2]);setInternalLinkText(m[1]);setLinkQuery("");}}>Editar / substituir</button> <button type="button" onClick={()=>changeLink(i,m[1])}>Remover link</button></li>)}</ul>
                     </section>
                     <label>
                       Conteúdo Markdown
                       <textarea
                         className="body"
+                        {...invalid("body")}
                         value={draft.body}
                         onChange={(e) => field("body", e.target.value)}
-                      />
+                      />{feedback("body")}
                     </label>
                     <div className="grid">
                       {input("seoTitle", "SEO title")}
@@ -804,6 +858,7 @@ function App() {
                             current.externalApproval.approved_by
                           : "Publicação bloqueada: falta confirmação da aprovação externa."}
                       </p>
+                      <p className="approval-notice">A referência registra a aprovação editorial recebida fora do CMS; não verifica a identidade do Auditor. Somente o Escritor registra essa referência e realiza o agendamento.</p>
                       <label>
                         Referência da aprovação final pelo Auditor
                         <input
@@ -962,22 +1017,25 @@ function App() {
                 </section>
               </>
             )}
-            {tab === "schedules" && (
+            {(tab === "schedules" || tab === "publications") && (
               <>
-                <h1>Agendamentos</h1>
+                <h1>{tab === "publications" ? "Central de Publicações" : "Agendamentos"}</h1>
+                <label>Filtrar publicações<select value={publicationFilter} onChange={e=>setPublicationFilter(e.target.value)}><option value="">Todos os estados</option>{["queued","published","cancelled","withdrawn"].map(st=><option key={st} value={st}>{publicationLabel(st)}</option>)}</select></label>
                 <p>
                   Horários de Brasília. As versões sem autorização não podem ser
                   agendadas.
                 </p>
+                {rows.filter(r=>(r.published_version || withdrawn(r)) && !schedules.some(s=>s.article_id===r.id && s.status==="published") && (!publicationFilter || publicationFilter===(withdrawn(r)?"withdrawn":"published"))).map(r=><section className="panel" key={r.id}><h2>{r.snapshot.title}</h2><p>{publicationLabel(withdrawn(r)?"withdrawn":"published")} · {brasiliaDisplay(r.published_at)} · v{r.published_version || "—"}</p><p>{categoryName(r.snapshot.calculatorId)} · Circuito {r.snapshot.circuit}</p><button onClick={()=>void work(()=>open(r.id))}>Abrir</button></section>)}
                 {schedules.length === 0 && <section className="panel"><p>Nenhuma matéria agendada. Abra um artigo aprovado ou use Campanhas de 14 dias.</p></section>}
-              {schedules.map((s) => (
+              {schedules.filter(s=>!publicationFilter || scheduleStatus(s)===publicationFilter).map((s) => (
                   <section className="panel" key={s.id}>
                     <h2>
                       {rows.find((r) => r.id === s.article_id)?.snapshot.title}
                     </h2>
                     <p>
-                      {brasiliaDisplay(s.run_at)} · v{s.version} · {s.status}
+                      {brasiliaDisplay(s.run_at)} · v{s.version} · {publicationLabel(scheduleStatus(s))}
                     </p>
+                    <p>{categoryName(JSON.parse(s.snapshot || "{}").calculatorId || rows.find(r=>r.id===s.article_id)?.snapshot.calculatorId)} · Circuito {JSON.parse(s.snapshot || "{}").circuit || rows.find(r=>r.id===s.article_id)?.snapshot.circuit}</p>
                     {s.last_error && <p className="error">{s.last_error}</p>}
                     {schedules.some(
                       (x) =>
@@ -1110,9 +1168,11 @@ function App() {
                         });
                         const d: any = await r.json();
                         if (!r.ok) throw Error(d.error);
-                        await refresh();
+                        setMedia(previous => [d, ...previous.filter(item=>item.id!==d.id)]);
+                        setNotice(d.duplicate ? d.message : "Imagem enviada com sucesso e biblioteca atualizada.");
                         form.reset();
-                        setNotice(d.duplicate ? "Imagem idêntica já existia: reutilizada da biblioteca sem gerar outra cópia." : "Imagem armazenada com origem e licença.");
+                        const updated=await api("/media");
+                        setMedia(updated);
                       });
                     }}
                   >

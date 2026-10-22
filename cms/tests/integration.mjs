@@ -52,6 +52,8 @@ const server = spawn(
     "dev",
     "--config",
     "wrangler.local.json",
+    "--ip",
+    "127.0.0.1",
     "--port",
     "8791",
     "--persist-to",
@@ -223,6 +225,11 @@ try {
   assert.equal(repeated.status,200);
   const reused=await repeated.json();
   assert.equal(reused.id,media.id);
+  assert.equal(reused.metadataPreserved,true);
+  assert.match(reused.message,/metadados não foram aplicados/);
+  const preserved=(await req("/api/editorial/media")).data.find(x=>x.id===media.id);
+  assert.equal(preserved.alt,"Capa — cálculo de pintura");
+  assert.equal(preserved.source,"Arquivo do laboratório — São Paulo");
   assert.equal((await req("/api/editorial/media")).data.length,1);
   const payload = {
     ...brief,
