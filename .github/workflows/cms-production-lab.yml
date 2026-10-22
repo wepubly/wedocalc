@@ -54,6 +54,20 @@ jobs:
           }
           const campaign=await fetch(origin+'/api/editorial/campaigns?calculatorId=paint-calculator');const campaignJson=await campaign.json();
           if(!campaign.ok||campaignJson.calculatorId!=='paint-calculator'||!Array.isArray(campaignJson.articles)||typeof campaignJson.ready!=='boolean')throw Error('14-day campaign API not available');
+          const unauthorized=await fetch(origin+'/api/editorial/agents',{
+            method:'POST',
+            headers:{'Content-Type':'application/json','Origin':origin},
+            body:JSON.stringify({name:'Forbidden test Auditor',scopes:['status','authorize']})
+          });
+          if(unauthorized.status!==403)throw Error('Unauthorized public Auditor enrollment must be rejected, got '+unauthorized.status);
+          const current=await fetch(origin+'/api/editorial/articles').then(r=>r.json());
+          if(Array.isArray(current)&&current[0]?.id){
+            const articleId=current[0].id;
+            const noAuth=await fetch(origin+'/api/editorial/articles/'+articleId+'/authorize',{method:'POST',headers:{'Content-Type':'application/json','Origin':origin},body:'{}'});
+            if(noAuth.status!==401)throw Error('Uncredentialed approval was not rejected: '+noAuth.status);
+            const unsafePublish=await fetch(origin+'/api/editorial/articles/'+articleId+'/publish',{method:'POST',headers:{'Content-Type':'application/json','Origin':origin},body:'{}'});
+            if(unsafePublish.status!==403)throw Error('Manual publication must be blocked in lab: '+unsafePublish.status);
+          }
           const old=await fetch(origin+'/admin/test-article');if(!old.ok)throw Error('Legacy test form unavailable');
           const robots=await fetch(origin+'/robots.txt');if(!(await robots.text()).includes('Disallow: /'))throw Error('Laboratory must remain noindex');
           appendFileSync(process.env.GITHUB_STEP_SUMMARY,'\\nMetricpedia editorial CMS (production test): '+origin+'/admin\\nComplete functional UI and protected-from-indexing blog; official Pages and blog unchanged.\\n');
