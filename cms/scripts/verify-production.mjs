@@ -15,3 +15,9 @@ for(const p of ['/','/paint-calculator/','/home-garden/','/paint-calculators/'])
 const legacy=await fetch('https://metricpedia-editorial-lab.alex-b81.workers.dev/admin',{redirect:'manual'});assert.equal(legacy.status,308);assert.equal(legacy.headers.get('location'),origin+'/admin');
 if(process.env.CLOUDFLARE_API_TOKEN){const r=await fetch(`https://api.cloudflare.com/client/v4/accounts/${process.env.CLOUDFLARE_ACCOUNT_ID}/pages/projects/wedocalc`,{headers:{Authorization:'Bearer '+process.env.CLOUDFLARE_API_TOKEN}});const d=await r.json();assert.ok(d.success);assert.ok(!d.result.source||d.result.source.config.production_deployments_enabled===false,'Static auto-deploy disabled');if(process.env.GITHUB_SHA)assert.equal(d.result.canonical_deployment.deployment_trigger.metadata.commit_hash,process.env.GITHUB_SHA,'Production alias belongs to this verified CMS deployment');}
 console.log('PASS official production CMS, public blog, original site routes and old URL redirect.');
+
+for(const [path,target] of [['/home-garden/paint-calculators/','/paint-calculators/'],['/home-garden/paint-calculators/paint-calculator/','/paint-calculator/']]){
+ const redirect=await fetch(origin+path,{redirect:'manual'});assert.equal(redirect.status,308);assert.equal(redirect.headers.get('location'),origin+target);
+ const result=await fetch(origin+path);assert.equal(result.status,200);const body=await result.text();assert.match(body,/<title>Paint Calculator/);assert.ok(!/<title>Metricpedia — Smart Calculators/.test(body));
+}
+console.log('PASS article calculator links reach the existing calculator rather than the home.');
