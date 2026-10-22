@@ -35,3 +35,12 @@
 .teste2 .search-heading h1{font-size:clamp(23px,3vw,40px)}
 .teste2 .project-benefits{justify-content:space-around;margin-top:20px;text-align:left}
 @media(max-width:700px){.teste2 .project-hero{gap:20px;margin:22px auto 24px}.teste2 .hero-copy .new-logo{width:min(290px,80%);margin:0 auto}.teste2 .search-heading h1{font-size:clamp(18px,5vw,30px)}.teste2 .search-heading{margin-bottom:20px}}
+
+/* Dark gray footer in both themes, with the official white wordmark. */
+html body.teste2 footer{background:#292b2f;color:#f5f5f5;border-color:#414349}
+.teste2 footer .teste2-footer-logo{display:block;width:260px;max-width:100%;height:auto;margin-bottom:16px;object-fit:contain}
+.teste2 footer .identity p,.teste2 footer .footer-column h3,.teste2 footer .footer-bottom,.teste2 footer .signature,.teste2 footer .signature strong,.teste2 footer .signature strong span{color:#f5f5f5}
+.teste2 footer .footer-link,.teste2 footer .footer-column button,.teste2 footer small{color:#c8cbd1}
+.teste2 footer .social-button{color:#f5f5f5;background:#383b40;border-color:#50535a}
+.teste2 footer .social-button:hover{background:#50535a;color:white}
+.teste2 footer .footer-bottom{border-color:#50535a}
