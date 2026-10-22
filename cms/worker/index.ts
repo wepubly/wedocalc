@@ -1,5 +1,6 @@
 import { Article, Env, HttpError, Snapshot, now, slugPattern } from "./types";
 import { workbench, testArticle } from "./workbench";
+import { campaigns } from "./campaigns";
 import {
   checkOrigin,
   configured,
@@ -342,6 +343,8 @@ async function api(request: Request, env: Env, path: string) {
   if (lab && path === "/api/editorial/password") throw new HttpError(403,"Senha desativada no laboratório.");
   if (path === "/api/editorial/password" && request.method === "POST")
     return changePassword(request, env);
+  const campaign = await campaigns(request,env,path);
+  if(campaign)return campaign;
   const extra = await extraAdmin(request, env, path);
   if (extra) return extra;
   if (path === "/api/editorial/session" && request.method === "GET")
@@ -942,6 +945,9 @@ export async function scheduled(env: Env) {
         .bind(message, item.id)
         .run();
     }
+  }
+  if(env.ENVIRONMENT==="production-lab"){
+    await env.DB.prepare("UPDATE editorial_campaigns SET status='completed' WHERE status='scheduled' AND NOT EXISTS(SELECT 1 FROM editorial_campaign_items i JOIN schedules s ON s.id=i.schedule_id WHERE i.campaign_id=editorial_campaigns.id AND s.status<>'published')").run();
   }
 }
 export default {
