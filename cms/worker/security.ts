@@ -12,7 +12,7 @@ export const randomToken = () =>
     b.toString(16).padStart(2, "0"),
   ).join("");
 export function configured(env: Env, url: URL) {
-  if (!env.DB || !env.MEDIA || !["staging", "local"].includes(env.ENVIRONMENT))
+  if (!env.DB || !env.MEDIA || !["staging", "local", "production-lab"].includes(env.ENVIRONMENT))
     throw new HttpError(503, "Ambiente editorial não configurado.");
   if (
     env.ENVIRONMENT === "staging" &&
@@ -20,6 +20,10 @@ export function configured(env: Env, url: URL) {
       !/^metricpedia-cms-staging\.[a-z0-9-]+\.workers\.dev$/.test(url.hostname))
   )
     throw new HttpError(503, "Origem de homologação inválida.");
+  if (
+    env.ENVIRONMENT === "production-lab" &&
+    (url.protocol !== "https:" || !/^metricpedia-editorial-lab\.[a-z0-9-]+\.workers\.dev$/.test(url.hostname))
+  ) throw new HttpError(503,"Origem do laboratório inválida.");
   if (
     env.ENVIRONMENT === "local" &&
     !["localhost", "127.0.0.1"].includes(url.hostname)
