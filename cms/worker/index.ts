@@ -329,14 +329,24 @@ async function api(request: Request, env: Env, path: string) {
     return setup(request, env);
   if (path === "/api/editorial/setup-status" && request.method === "GET")
     return json({ configured: !!(await owner(env)) });
-  const token = await session(request, env);
+  const lab = env.ENVIRONMENT === "production-lab";
+  if (lab && !["GET", "HEAD"].includes(request.method)) {
+    const ip=request.headers.get("CF-Connecting-IP")||"anonymous";
+    const hashId=await hash(ip);
+    const hour=new Date().toISOString().slice(0,13);
+    const rate=await env.DB.prepare("INSERT INTO staging_test_rate(visitor_id,hour_bucket,requests) VALUES(?,?,1) ON CONFLICT(visitor_id,hour_bucket) DO UPDATE SET requests=requests+1 RETURNING requests").bind(hashId,hour).first<{requests:number}>();
+    if ((rate?.requests||0)>60) throw new HttpError(429,"Limite de operações editoriais de teste atingido.");
+  }
+  const token = lab ? "lab-test-session" : await session(request, env);
   if (!token) throw new HttpError(401, "Entre no painel para continuar.");
+  if (lab && path === "/api/editorial/password") throw new HttpError(403,"Senha desativada no laboratório.");
   if (path === "/api/editorial/password" && request.method === "POST")
     return changePassword(request, env);
   const extra = await extraAdmin(request, env, path);
   if (extra) return extra;
   if (path === "/api/editorial/session" && request.method === "GET")
     return json({ authenticated: true });
+  if (lab && path === "/api/editorial/logout" && request.method === "POST") return json({ok:true});
   if (path === "/api/editorial/logout" && request.method === "POST") {
     await env.DB.prepare("DELETE FROM sessions WHERE token_hash=?")
       .bind(token)
@@ -716,7 +726,7 @@ async function handle(request: Request, env: Env): Promise<Response> {
       throw new HttpError(404, "Arquivo não encontrado.");
     return asset;
   }
-  if (path === "/admin/test-article" && env.ENVIRONMENT === "staging" && ["GET","HEAD"].includes(request.method))
+  if (path === "/admin/test-article" && ["staging","production-lab"].includes(env.ENVIRONMENT) && ["GET","HEAD"].includes(request.method))
     return env.ASSETS.fetch(new Request(new URL("/admin-assets/test-article.html", request.url)));
   if (
     path === "/admin/login" ||
@@ -726,7 +736,7 @@ async function handle(request: Request, env: Env): Promise<Response> {
   ) {
     if (path === "/admin" && env.ENVIRONMENT === "staging")
       return env.ASSETS.fetch(new Request(new URL("/admin-assets/visual.html", request.url)));
-    if (path === "/admin" && !(await session(request, env)))
+    if (path === "/admin" && env.ENVIRONMENT !== "production-lab" && !(await session(request, env)))
       return Response.redirect(url.origin + "/admin/login", 302);
     return env.ASSETS.fetch(
       new Request(new URL("/admin-assets/", request.url)),
@@ -755,7 +765,7 @@ async function handle(request: Request, env: Env): Promise<Response> {
   }
   const preview = /^\/admin\/preview\/([a-f0-9-]+)$/.exec(path);
   if (preview && request.method === "GET") {
-    if (!(await session(request, env)))
+    if (env.ENVIRONMENT !== "production-lab" && !(await session(request, env)))
       throw new HttpError(401, "Pré-visualização privada.");
     const a = await article(env, preview[1]);
     const n = url.searchParams.get("version");
