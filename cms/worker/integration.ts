@@ -1,7 +1,7 @@
 import { Env, Snapshot, HttpError, now } from "./types";
 import { hash, jsonBody, randomToken, readBody } from "./security";
 import { article, version, snapshot, publish, upload } from "./index";
-import { requireQuality } from "./editorial";
+import { requireQuality, transition } from "./editorial";
 const json = (v: unknown, status = 200) =>
   Response.json(v, { status, headers: { "Cache-Control": "no-store" } });
 const fail = (m: string): never => {
@@ -231,7 +231,7 @@ export async function integration(r: Request, e: Env, path: string) {
     return upload(r, e);
   }
   const m =
-    /^\/api\/integration\/articles\/([a-f0-9-]+)(?:\/(authorize|schedule|publish))?$/.exec(
+    /^\/api\/integration\/articles\/([a-f0-9-]+)(?:\/(authorize|schedule|publish|submit-review|request-changes))?$/.exec(
       path,
     );
   if (m) {
@@ -248,8 +248,17 @@ export async function integration(r: Request, e: Env, path: string) {
       return json(await details(e, id));
     }
     if (r.method === "POST" && m[2]) {
-      scope(p, m[2]);
+      const requiredScope = m[2] === "submit-review" ? "submit"
+        : m[2] === "request-changes" ? "authorize" : m[2];
+      scope(p, requiredScope);
       const d = await jsonBody(r);
+      if (m[2] === "submit-review" || m[2] === "request-changes") {
+        const a = await article(e, id);
+        if (d.version !== a.draft_version) throw new HttpError(409, "Versão alterada.");
+        const actor = (m[2] === "submit-review" ? "Escritor: " : "Auditor: ") + p.name;
+        await transition(e, a, m[2], actor, typeof d.notes === "string" ? d.notes.slice(0,2000) : "");
+        return json({ok:true,version:a.draft_version});
+      }
       if (m[2] === "authorize") return authorize(e, id, d, "agent:" + p.id);
       const a = await article(e, id);
       if (d.version !== a.draft_version)
@@ -398,9 +407,9 @@ export async function extraAdmin(r: Request, e: Env, path: string) {
             ),
         ) ||
         (scopes.includes("submit") &&
-          scopes.some((s) => ["authorize", "schedule", "publish"].includes(s)))
+          scopes.some((s) => ["authorize", "publish"].includes(s)))
       )
-        fail("Separe a credencial do escritor da credencial do Supervisor.");
+        fail("O Escritor pode enviar e agendar, mas não pode aprovar nem publicar diretamente.");
       const token = randomToken(),
         id = crypto.randomUUID();
       await e.DB.prepare("INSERT INTO agents VALUES(?,?,?,?,1,?)")
