@@ -48,6 +48,7 @@ const tabs = [
   ["dashboard", "Visão geral"],
   ["articles", "Artigos"],
   ["schedules", "Agendamentos"],
+  ["campaigns", "Campanhas de 14 dias"],
   ["media", "Biblioteca de mídia"],
   ["briefs", "Briefings e rotas"],
   ["logs", "Histórico"],
@@ -79,6 +80,9 @@ function App() {
     [versions, setVersions] = useState<any[]>([]),
     [events, setEvents] = useState<any[]>([]);
   const [credential, setCredential] = useState("");
+  const [campaignCalculator, setCampaignCalculator] = useState("paint-calculator");
+  const [campaignInfo, setCampaignInfo] = useState<any>(null);
+  const [campaignStart, setCampaignStart] = useState("");
   async function refresh() {
     const [a, b, r, m, s, l, g] = await Promise.all(
       [
@@ -99,6 +103,14 @@ function App() {
     setLogs(l);
     setAgents(g);
   }
+  async function loadCampaign(id: string) {
+    setCampaignInfo(await api("/campaigns?calculatorId=" + encodeURIComponent(id)));
+  }
+  useEffect(() => {
+    if (auth && tab === "campaigns") {
+      void loadCampaign(campaignCalculator).catch((err) => setError(String(err)));
+    }
+  }, [auth, tab, campaignCalculator]);
   async function work(fn: () => Promise<void>) {
     setBusy(true);
     setError("");
@@ -320,7 +332,7 @@ function App() {
               </button>
             ))}
             <a href="/blog/" target="_blank">
-              Ver blog de homologação ↗
+              Ver blog do laboratório ↗
             </a>
             <small>Horários: America/Sao_Paulo</small>
           </nav>
@@ -897,6 +909,74 @@ function App() {
                     </div>
                   </section>
                 ))}
+              </>
+            )}
+
+            {tab === "campaigns" && (
+              <>
+                <h1>Campanhas de 14 dias por calculadora</h1>
+                <p>Sete artigos em cada circuito. A fila só é ativada quando todas as versões estiverem aprovadas e a calculadora tiver auditoria aprovada.</p>
+                <section className="panel">
+                  <h2>Selecione a calculadora</h2>
+                  <select value={campaignCalculator} onChange={(e) => setCampaignCalculator(e.target.value)}>
+                    {routes.filter((r) => r.kind === "calculator").map((r) => <option key={r.id} value={r.id}>{r.name}</option>)}
+                  </select>
+                  <div className="metrics">
+                    <div><strong>{campaignInfo?.counts?.circuit1 ?? "—"}/7</strong><p>Circuito 1 aprovado</p></div>
+                    <div><strong>{campaignInfo?.counts?.circuit2 ?? "—"}/7</strong><p>Circuito 2 aprovado</p></div>
+                    <div><strong>{campaignInfo?.audit?.verdict === "passed" ? "Aprovada" : "Pendente"}</strong><p>Auditoria da calculadora</p></div>
+                  </div>
+                  {campaignInfo?.articles?.map((a: any) => (
+                    <p key={a.id}>{a.approved ? "✓" : "○"} Circuito {a.circuit} · {a.title} · versão {a.version} {a.published ? "· já publicado" : ""}</p>
+                  ))}
+                </section>
+                <section className="panel">
+                  <h2>Auditoria da calculadora real</h2>
+                  <p>Registre a fórmula conferida, os valores de entrada, o resultado esperado e o observado antes de liberar a fila.</p>
+                  <form onSubmit={(e) => {
+                    e.preventDefault();
+                    const data = Object.fromEntries(new FormData(e.currentTarget).entries());
+                    void work(async () => {
+                      await api("/calculator-audits", "POST", { ...data, calculatorId: campaignCalculator });
+                      await loadCampaign(campaignCalculator);
+                      setNotice("Auditoria registrada.");
+                    });
+                  }}>
+                    <label>Fórmula conferida<input name="formulaChecked" required maxLength={2000} /></label>
+                    <label>Entradas de teste<textarea name="testInputs" required /></label>
+                    <label>Resultado esperado<input name="expectedResult" required /></label>
+                    <label>Resultado observado<input name="observedResult" required /></label>
+                    <label>Nome do Auditor<input name="auditor" required /></label>
+                    <label>Conclusão<select name="verdict"><option value="passed">Aprovado — resultados conferem</option><option value="failed">Reprovado — resultados divergentes</option></select></label>
+                    <label>Observações<textarea name="notes" /></label>
+                    <button disabled={busy}>Registrar auditoria</button>
+                  </form>
+                </section>
+                <section className="panel">
+                  <h2>Ativar publicação diária</h2>
+                  <p>Distribuição automática: 1 artigo por dia, durante 14 dias, com horários variados de Brasília.</p>
+                  <label>Data do primeiro artigo<input type="date" value={campaignStart} onChange={(e) => setCampaignStart(e.target.value)} /></label>
+                  <button className="primary" disabled={busy || !campaignInfo?.ready || !campaignStart} onClick={() => void work(async () => {
+                    if (!confirm("Agendar os 14 artigos aprovados desta calculadora?")) return;
+                    const result = await api("/campaigns/activate", "POST", {calculatorId:campaignCalculator,startDate:campaignStart});
+                    setNotice(result.scheduled + " artigos agendados em horários de Brasília.");
+                    await loadCampaign(campaignCalculator);
+                    await refresh();
+                  })}>Ativar fila de 14 dias</button>
+                  {!campaignInfo?.ready && <p>Aguardando os 14 artigos aprovados, a auditoria válida ou a conclusão de uma campanha existente.</p>}
+                  {(campaignInfo?.campaigns || []).map((c: any) => (
+                    <div className="panel" key={c.id}>
+                      <strong>Campanha iniciada em {c.start_date}</strong>
+                      <p>Status: {c.status}</p>
+                      {c.status === "scheduled" && <button disabled={busy} onClick={() => void work(async () => {
+                        if (!confirm("Cancelar os agendamentos futuros da campanha?")) return;
+                        await api("/campaigns/cancel", "POST", {id:c.id});
+                        await loadCampaign(campaignCalculator);
+                        await refresh();
+                      })}>Cancelar campanha</button>}
+                    </div>
+                  ))}
+                </section>
               </>
             )}
             {tab === "media" && (
