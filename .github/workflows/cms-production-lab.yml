@@ -32,6 +32,15 @@ jobs:
       - run: node scripts/provision-production-lab.mjs
       - run: npx wrangler d1 migrations apply metricpedia-editorial-lab-db --remote --config wrangler.lab.json
       - run: npx wrangler deploy --config wrangler.lab.json
+      - name: Configure optional restricted Auditor enrollment secret
+        env:
+          SETUP_KEY: ${{ secrets.METRICPEDIA_SETUP_TOKEN }}
+        run: |
+          if [ -n "$SETUP_KEY" ]; then
+            printf '%s' "$SETUP_KEY" | npx wrangler secret put SETUP_TOKEN --config wrangler.lab.json
+          else
+            echo 'Auditor enrollment locked: repository secret METRICPEDIA_SETUP_TOKEN missing.' >> "$GITHUB_STEP_SUMMARY"
+          fi
       - name: Verify real editorial CMS is available without login
         run: |
           node --input-type=module <<'NODE'
