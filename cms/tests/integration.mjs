@@ -183,6 +183,10 @@ try {
     undefined,
     400,
   );
+  const writerScheduler = (await req("/api/editorial/agents","POST",{name:"TEST ONLY Writer + Scheduler",scopes:["submit","status","schedule"]},undefined,201)).data;
+  assert.ok(writerScheduler.token);
+  const auditor = (await req("/api/editorial/agents","POST",{name:"TEST ONLY Auditor",scopes:["status","authorize"]},undefined,201)).data;
+  const watcher = (await req("/api/editorial/agents","POST",{name:"TEST ONLY Supervisor Observer",scopes:["status"]},undefined,201)).data;
   await req("/api/editorial/articles", "GET", undefined, writer.token, 401);
   const image = await import("node:fs").then((fs) =>
     fs.readFileSync(cms + "../assets/icons/category-0.png"),
@@ -261,6 +265,15 @@ try {
   ).data;
   assert.equal(duplicate.version, 1);
   assert.equal(duplicate.id, id);
+  await req("/api/integration/articles/" + id + "/submit-review","POST",{version:1,notes:"Writer sent to Auditor"},writer.token);
+  const submitted=(await req("/api/editorial/articles/" + id)).data;
+  assert.equal(submitted.review_status,"review");
+  await req("/api/integration/articles/" + id + "/request-changes","POST",{version:1,notes:"Fix source details"},auditor.token);
+  const corrections=(await req("/api/editorial/articles/" + id)).data;
+  assert.equal(corrections.review_status,"changes");
+  await req("/api/integration/articles/" + id + "/submit-review","POST",{version:1,notes:"Resubmitted after corrections"},writer.token);
+  await req("/api/integration/articles/" + id + "/authorize","POST",{version:1,digest:first.digest,evidence:"watcher cannot approve"},watcher.token,403);
+
   await req(
     "/api/integration/packages",
     "POST",
