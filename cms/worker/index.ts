@@ -721,7 +721,7 @@ async function handle(request: Request, env: Env): Promise<Response> {
     path === "/admin/"
   ) {
     if (path === "/admin" && env.ENVIRONMENT === "staging")
-      return env.ASSETS.fetch(new Request(new URL("/visual.html", request.url)));
+      return env.ASSETS.fetch(new Request(new URL("/admin-assets/visual.html", request.url)));
     if (path === "/admin" && !(await session(request, env)))
       return Response.redirect(url.origin + "/admin/login", 302);
     return env.ASSETS.fetch(
