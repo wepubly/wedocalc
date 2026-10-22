@@ -857,7 +857,7 @@ function App() {
                                 headers:{"Content-Type":"application/json","Authorization":"Bearer "+auditorToken.trim()},
                                 body:JSON.stringify({version:current.draft_version,digest:current.digest,evidence})
                               });
-                              const result = await response.json();
+                              const result:any = await response.json();
                               if(!response.ok) throw new Error(result.error || "Aprovação não autorizada.");
                               await refresh();
                               await open(current.id);
