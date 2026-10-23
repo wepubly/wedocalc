@@ -87,3 +87,9 @@ html body.teste2{background-color:#292b2f}
 [data-theme=dark] .teste2 .hero-print-preview{opacity:.15}
 @media(max-width:1100px){.teste2 .hero-print-preview{left:1%;width:230px;opacity:.15}}
 @media(max-width:700px){.teste2 .hero-print-preview{display:none}}
+
+/* Solid light gray page background; decorative calculator and print sheet remain. */
+html body.teste2>main{background:#f2f3f5;background-image:none;background-attachment:scroll}
+html body.teste2 .first-fold{background:transparent;background-image:none}
+html[data-theme=dark] body.teste2>main{background:#0e1116;background-image:none;background-attachment:scroll}
+html[data-theme=dark] body.teste2 .first-fold{background:transparent;background-image:none}
