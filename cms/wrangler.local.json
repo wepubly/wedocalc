@@ -1,0 +1,22 @@
+{
+  "name": "metricpedia-cms-local",
+  "main": "worker/index.ts",
+  "compatibility_date": "2026-10-01",
+  "assets": {
+    "directory": "./dist",
+    "binding": "ASSETS",
+    "run_worker_first": true
+  },
+  "vars": { "ENVIRONMENT": "local", "PUBLIC_ORIGIN": "http://127.0.0.1:8791" },
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "metricpedia-cms-local-db",
+      "database_id": "00000000-0000-0000-0000-000000000001",
+      "migrations_dir": "migrations"
+    }
+  ],
+  "r2_buckets": [
+    { "binding": "MEDIA", "bucket_name": "metricpedia-cms-local-assets" }
+  ]
+}

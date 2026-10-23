@@ -1,0 +1,48 @@
+name: Metricpedia CMS production — Ublong blog clone
+on:
+  push:
+    branches: [work/metricpedia-cms-blog-v1]
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: metricpedia-editorial-production-lab
+  cancel-in-progress: true
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    defaults:
+      run:
+        working-directory: cms
+    env:
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      CLOUDFLARE_ACCOUNT_ID: b81896777d206a2239625d9cf2e8a40b
+      WRANGLER_SEND_METRICS: "false"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: cms/package-lock.json
+      - run: npm ci
+      - run: npm run check
+      - run: npm run build
+      - run: node tests/author-profile.mjs
+      - run: node tests/production.mjs
+      - run: node scripts/configure-production.mjs
+      - run: npx wrangler deploy --config wrangler.production.json
+      - name: Prepare existing production site and cloned CMS
+        run: |
+          git fetch origin main --depth=1
+          mkdir -p ../public-dist
+          git -C .. archive FETCH_HEAD index.html teste2 css assets home-garden paint-calculators paint-calculator print _headers | tar -x -C ../public-dist
+          cp -R dist/admin-assets ../public-dist/
+          cp pages-routes.json ../public-dist/_routes.json
+          npx esbuild worker/pages.ts --bundle --format=esm --platform=browser --target=es2022 --outfile=../public-dist/_worker.js
+      - run: npx wrangler pages deploy ../public-dist --project-name wedocalc --branch main --commit-hash "$GITHUB_SHA"
+      - run: node scripts/verify-production.mjs
+      - name: Remove only named Grok test records after production verification
+        if: contains(github.event.head_commit.message, '[cleanup-grok-tests]')
+        run: node scripts/cleanup-grok-tests.mjs
