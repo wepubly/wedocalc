@@ -143,3 +143,28 @@ html[data-theme=dark] body.teste2 .first-fold{background:transparent;background-
 [data-theme=dark] .teste2 .showcase-card,[data-theme=dark] .teste2 .showcase-preview{background:transparent;border:0}
 @media(max-width:1100px){.teste2 .tools-showcase{max-width:780px;padding:16px 30px}.teste2 .showcase-grid{flex-wrap:wrap;gap:40px}.teste2 .showcase-card{flex:0 1 calc(50% - 30px)}}
 @media(max-width:600px){.teste2 .tools-showcase{padding:12px 28px;margin:28px auto 36px}.teste2 .showcase-grid{gap:30px}.teste2 .showcase-card{flex:0 1 285px}.teste2 .showcase-preview{height:auto}}
+
+/* Open Pinterest-style category mosaic, using generous Ublong card spacing. */
+html body.teste2 .project-categories{max-width:1400px;margin:30px auto 0;padding:0 24px 30px;background:transparent;border:0;border-radius:0;box-shadow:none}
+.teste2 .project-heading{margin:0 0 28px;align-items:center}
+.teste2 .project-heading h2{font-size:30px}
+.teste2 .project-heading p{margin-left:0;margin-top:8px}
+.teste2 .project-heading>a{display:block;background:#ffffff80}
+.teste2 .project-grid{display:block;column-count:5;column-gap:18px}
+.teste2 .project-card{display:inline-block;width:100%;margin:0 0 18px;break-inside:avoid;vertical-align:top;border-radius:18px;overflow:hidden;border:0;background:#fff;box-shadow:0 5px 16px #17324d10;transition:transform .2s,box-shadow .2s}
+.teste2 .project-card:hover{transform:translateY(-4px);box-shadow:0 9px 24px #17324d26}
+.teste2 .project-card>img{width:100%;height:240px;object-fit:cover}
+.teste2 .project-card:nth-child(6n+2)>img{height:315px}
+.teste2 .project-card:nth-child(6n+3)>img{height:205px}
+.teste2 .project-card:nth-child(6n+4)>img{height:280px}
+.teste2 .project-card:nth-child(6n+5)>img{height:350px}
+.teste2 .project-card:nth-child(6n)>img{height:260px}
+.teste2 .project-icon{top:auto;bottom:47px;left:14px;padding:5px 9px;border-radius:11px;font-size:27px;box-shadow:0 3px 12px #142c4820}
+.teste2 .project-name{font-size:16px;font-weight:700;white-space:normal;line-height:1.35;letter-spacing:-.2px;padding:21px 16px 17px;min-height:66px}
+.teste2 .project-name b{flex:none;font-size:25px;margin-left:8px}
+[data-theme=dark] .teste2 .project-categories{background:transparent;border:0;box-shadow:none}
+[data-theme=dark] .teste2 .project-card{background:#1b202a;color:#f3f7fc}
+[data-theme=dark] .teste2 .project-heading>a{background:#1b202a;border-color:#344156}
+@media(max-width:1200px){.teste2 .project-grid{column-count:4}}
+@media(max-width:950px){.teste2 .project-grid{column-count:3}.teste2 .project-heading h2{font-size:27px}}
+@media(max-width:700px){html body.teste2 .project-categories{padding:0 16px 24px}.teste2 .project-grid{column-count:2;column-gap:14px}.teste2 .project-card{margin-bottom:14px;border-radius:15px}.teste2 .project-heading{gap:14px;align-items:flex-start}.teste2 .project-heading h2{font-size:23px}.teste2 .project-heading p{font-size:13px}.teste2 .project-heading>a{font-size:12px;padding:9px 12px;white-space:normal;min-width:100px;text-align:center}.teste2 .project-name{font-size:14px;padding:18px 12px 14px;min-height:65px}.teste2 .project-card>img{height:200px}.teste2 .project-card:nth-child(6n+2)>img{height:260px}.teste2 .project-card:nth-child(6n+3)>img{height:175px}.teste2 .project-card:nth-child(6n+4)>img{height:230px}.teste2 .project-card:nth-child(6n+5)>img{height:285px}.teste2 .project-card:nth-child(6n)>img{height:215px}.teste2 .project-icon{bottom:49px;font-size:23px}}
