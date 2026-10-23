@@ -44,3 +44,7 @@ html body.teste2 footer{background:#292b2f;color:#f5f5f5;border-color:#414349}
 .teste2 footer .social-button{color:#f5f5f5;background:#383b40;border-color:#50535a}
 .teste2 footer .social-button:hover{background:#50535a;color:white}
 .teste2 footer .footer-bottom{border-color:#50535a}
+
+/* Join the page backdrop directly to the footer without a light separator. */
+html body.teste2 footer{margin-top:0;border-top:0}
+html body.teste2{background-color:#292b2f}
