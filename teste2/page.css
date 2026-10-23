@@ -125,3 +125,21 @@ html[data-theme=dark] body.teste2 .first-fold{background:transparent;background-
 [data-theme=dark] .teste2 .showcase-preview .preview-fields strong,[data-theme=dark] .teste2 .showcase-preview .preview-result{background:#eff4fa}
 @media(max-width:1100px){.teste2 .showcase-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.teste2 .showcase-preview{height:430px}}
 @media(max-width:600px){.teste2 .tools-showcase{padding:0 12px;margin-top:30px}.teste2 .showcase-grid{grid-template-columns:1fr;gap:16px}.teste2 .showcase-preview{height:420px}.teste2 .showcase-heading h2{font-size:25px}}
+
+/* Free-standing tilted previews, centered without outer cards or captions. */
+.teste2 .tools-showcase{max-width:1280px;margin:48px auto 44px;padding:16px 30px 22px}
+.teste2 .showcase-heading,.teste2 .showcase-caption{display:none}
+.teste2 .showcase-grid{display:flex;justify-content:center;align-items:center;gap:26px}
+.teste2 .showcase-card{flex:0 1 285px;display:block;overflow:visible;border:0;border-radius:0;background:transparent;box-shadow:none;transform:rotate(-7deg);color:#173252}
+.teste2 .showcase-card:nth-child(2){transform:rotate(5deg)}
+.teste2 .showcase-card:nth-child(3){transform:rotate(-5deg)}
+.teste2 .showcase-card:nth-child(4){transform:rotate(7deg)}
+.teste2 .showcase-card:hover{transform:rotate(-7deg) translateY(-5px);border:0}
+.teste2 .showcase-card:nth-child(2):hover{transform:rotate(5deg) translateY(-5px)}
+.teste2 .showcase-card:nth-child(3):hover{transform:rotate(-5deg) translateY(-5px)}
+.teste2 .showcase-card:nth-child(4):hover{transform:rotate(7deg) translateY(-5px)}
+.teste2 .showcase-preview{height:auto;padding:0;background:transparent;overflow:visible;display:block}
+.teste2 .showcase-preview .hero-calculator-preview,.teste2 .showcase-preview .hero-print-preview{opacity:1;filter:none;box-shadow:0 14px 28px #1b2f4c22}
+[data-theme=dark] .teste2 .showcase-card,[data-theme=dark] .teste2 .showcase-preview{background:transparent;border:0}
+@media(max-width:1100px){.teste2 .tools-showcase{max-width:780px;padding:16px 30px}.teste2 .showcase-grid{flex-wrap:wrap;gap:40px}.teste2 .showcase-card{flex:0 1 calc(50% - 30px)}}
+@media(max-width:600px){.teste2 .tools-showcase{padding:12px 28px;margin:28px auto 36px}.teste2 .showcase-grid{gap:30px}.teste2 .showcase-card{flex:0 1 285px}.teste2 .showcase-preview{height:auto}}
