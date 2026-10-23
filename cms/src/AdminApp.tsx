@@ -1,3 +1,4 @@
+import { AUTHOR_PROFILE } from "./author-profile";
 import { useEffect, useState } from "react";
 import type { Snapshot } from "./editorial-types";
 import "./admin.css";
@@ -31,14 +32,14 @@ const empty = (): Snapshot => ({
   body: "",
   seoTitle: "",
   description: "",
-  author: "Metricpedia Editorial",
+  author: AUTHOR_PROFILE.name,
   categoryId:"", subcategoryId:"", calculatorId:"",
   language: "en-US",
   category: "",
   tags: [],
   coverId: "",
   coverAlt: "",
-  authorType: "Organization",
+  authorType: AUTHOR_PROFILE.type,
   sources: [],
   relatedIds: [],
   pillarId: "",
@@ -305,21 +306,18 @@ export default function AdminApp() {
                         onChange={(e) => change("body", e.target.value)}
                       />
                     </label>
-                    <div className="cms-grid">
-                      <label>
-                        Autor
-                        <input
-                          value={draft.author}
-                          maxLength={100}
-                          onChange={(e) => change("author", e.target.value)}
-                        />
-                      </label>
-                      <label>Tipo de autoria
-                        <select value={draft.authorType || "Organization"} onChange={e=>change("authorType",e.target.value as "Person"|"Organization")}>
-                          <option value="Organization">Organização / equipe editorial</option><option value="Person">Pessoa real</option>
-                        </select>
-                      </label>
-                    </div>
+                    <fieldset className="cms-fixed-author">
+                      <legend>Autor fixo da Metricpedia</legend>
+                      <div className="cms-grid">
+                        <label>Autor<input value={AUTHOR_PROFILE.name} readOnly /></label>
+                        <label>Tipo de autoria<input value="Pessoa real" readOnly /></label>
+                      </div>
+                      <p>{AUTHOR_PROFILE.title}</p>
+                      {AUTHOR_PROFILE.bio.map(paragraph=><p key={paragraph}>{paragraph}</p>)}
+                      <p>Areas of expertise: {AUTHOR_PROFILE.expertise.join(", ")}.</p>
+                      <p>Contact: <a href={"mailto:"+AUTHOR_PROFILE.email}>{AUTHOR_PROFILE.email}</a></p>
+                      <small>Perfil aplicado automaticamente às matérias publicadas, agendadas e futuras. O histórico das versões e as aprovações são preservados.</small>
+                    </fieldset>
                     <fieldset>
                       <legend>Tags</legend>
                       {terms

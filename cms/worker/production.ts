@@ -1,3 +1,4 @@
+import { AUTHOR_PROFILE } from "../src/author-profile";
 import { Article, Env, HttpError, Snapshot, now, slugPattern } from "./types";
 import {checkOrigin,jsonBody,readBody,hash} from "./security";
 import {articlePath} from "../src/destination";
@@ -52,7 +53,7 @@ export function snapshot(data: Record<string, unknown>): Snapshot {
     subcategoryId: text(data.subcategoryId,"Tipo de calculadora",100,true),
     calculatorId: text(data.calculatorId,"Calculadora",100,true),
     destination: data.destination as Snapshot["destination"],
-    authorType: data.authorType === 'Person' ? 'Person' : 'Organization',
+    authorType: AUTHOR_PROFILE.type,
     sources: sources.map(s => ({title: s.title.trim(), url: s.url.trim()})),
     requiresSources: data.requiresSources === true,
     isPillar: data.isPillar === true,
@@ -64,7 +65,7 @@ export function snapshot(data: Record<string, unknown>): Snapshot {
     excerpt: text(data.excerpt, "Resumo", 500),
     seoTitle: text(data.seoTitle, "Título SEO", 180),
     description: text(data.description, "Descrição", 320),
-    author: text(data.author, "Autor", 100),
+    author: AUTHOR_PROFILE.name,
     language: "en-US",
     category: text(data.category, "Categoria", 80),
     tags: [...new Set(data.tags as string[])],
@@ -217,6 +218,7 @@ async function upload(request: Request, env: Env) {
   return json({ id, name, alt, ...dimensions }, 201);
 }
 async function api(request: Request, env: Env, path: string) {
+  if(path === "/api/editorial/author-profile" && request.method === "GET") return json(AUTHOR_PROFILE);
   if (!["GET", "HEAD"].includes(request.method)) checkOrigin(request);
   if(path==="/api/editorial/session"&&request.method==="GET")return json({authenticated:true,mode:"production"});
   if(path==="/api/editorial/routes"&&request.method==="GET")return json((await env.DB.prepare("SELECT * FROM routes ORDER BY kind,name").all()).results);

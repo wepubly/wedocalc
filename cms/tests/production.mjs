@@ -15,6 +15,7 @@ async function req(path,method='GET',data,expected=200){const r=await fetch(orig
 try{
  let ready=false;for(let i=0;i<100;i++){try{await req('/api/editorial/session');ready=true;break;}catch{if(server.exitCode!==null)break;await pause(200);}}
  if(!ready)throw Error('Production entry point did not start '+output.slice(-2000));
+ const authorProfile=(await req('/api/editorial/author-profile')).json();assert.equal(authorProfile.name,'Alexandro M. Braga');assert.equal(authorProfile.type,'Person');
  const routes=(await req('/api/editorial/routes')).json();assert.equal(routes.length,3);
  const blank=selectDestination(routes,{slug:'example'});
  for(const field of ['categoryId','subcategoryId','calculatorId'])assert.equal(blank[field],'');
@@ -28,7 +29,7 @@ try{
  await req('/api/editorial/media/'+media.id,'PUT',{alt:'Updated image description'});
  assert.equal((await req('/api/editorial/media')).json().find(m=>m.id===media.id).alt,'Updated image description');
  const created=(await req('/api/editorial/articles','POST',payload,201)).json();const id=created.id;
- const saved=(await req('/api/editorial/articles/'+id)).json();assert.equal(saved.snapshot.destination.calculator.name,'Paint Calculator');assert.equal(saved.digest,createHash('sha256').update(JSON.stringify(saved.snapshot)).digest('hex'));
+ const saved=(await req('/api/editorial/articles/'+id)).json();assert.equal(saved.snapshot.destination.calculator.name,'Paint Calculator');assert.equal(saved.snapshot.author,'Alexandro M. Braga');assert.equal(saved.snapshot.authorType,'Person');assert.equal(saved.digest,createHash('sha256').update(JSON.stringify(saved.snapshot)).digest('hex'));
  assert.match((await req('/admin/preview/'+id)).raw,/Home &amp; Garden/);
  const path='/home-garden/paint-calculators/paint-calculator/ci-paint-guide/';
  await req(path,'GET',undefined,404);
@@ -39,7 +40,7 @@ try{
  await req('/api/editorial/articles/'+id+'/schedule','POST',{version:1,runAt:new Date(Date.now()+7200000).toISOString()});
  cmd(['d1','execute','metricpedia-cms-local-db','--local','--command',`UPDATE schedules SET run_at='2000-01-01T00:00:00.000Z' WHERE article_id='${id}' AND status='queued'`]);
  const scheduled=await fetch(origin+'/__scheduled?cron=*+*+*+*+*');assert.equal(scheduled.status,200);
- const published=await req(path);assert.match(published.raw,/<title>Paint Guide \| Metricpedia<\/title>/);assert.match(published.raw,/img\.cover\{display:block;height:auto;width:100%;aspect-ratio:16\/9/);assert.match(published.raw,new RegExp(origin+path));assert.match(published.raw,/Paint Calculator/);assert.match(published.raw,/canonical/);assert.match((await req('/blog/')).raw,new RegExp(path));assert.match((await req('/sitemap-blog.xml')).raw,new RegExp(path));assert.match((await req(path+'.md')).raw,new RegExp(path));
+ const published=await req(path);assert.match(published.raw,/By <a[^>]+>Alexandro M\. Braga<\/a>/);assert.match(published.raw,/About the author/);assert.match(published.raw,/alex@avantybrands.com/);assert.match(published.raw,/<title>Paint Guide \| Metricpedia<\/title>/);assert.match(published.raw,/img\.cover\{display:block;height:auto;width:100%;aspect-ratio:16\/9/);assert.match(published.raw,new RegExp(origin+path));assert.match(published.raw,/Paint Calculator/);assert.match(published.raw,/canonical/);assert.match((await req('/blog/')).raw,new RegExp(path));assert.match((await req('/sitemap-blog.xml')).raw,new RegExp(path));assert.match((await req(path+'.md')).raw,new RegExp(path));
  assert.equal((await req('/api/editorial/schedules')).json().filter(s=>s.status==='published').length,1);
  await req('/api/editorial/articles/'+id,'PUT',{...saved.snapshot,title:'CI updated guide',version:1});assert.equal((await req('/api/editorial/articles/'+id+'/versions')).json().length,2);
  assert.equal((await req(path)).raw,published.raw);

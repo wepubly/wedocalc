@@ -29,6 +29,7 @@ jobs:
       - run: npm ci
       - run: npm run check
       - run: npm run build
+      - run: node tests/author-profile.mjs
       - run: node tests/production.mjs
       - run: node scripts/configure-production.mjs
       - run: npx wrangler deploy --config wrangler.production.json
@@ -36,7 +37,7 @@ jobs:
         run: |
           git fetch origin main --depth=1
           mkdir -p ../public-dist
-          git -C .. archive FETCH_HEAD index.html css assets home-garden paint-calculators paint-calculator print _headers | tar -x -C ../public-dist
+          git -C .. archive FETCH_HEAD index.html teste2 css assets home-garden paint-calculators paint-calculator print _headers | tar -x -C ../public-dist
           cp -R dist/admin-assets ../public-dist/
           cp pages-routes.json ../public-dist/_routes.json
           npx esbuild worker/pages.ts --bundle --format=esm --platform=browser --target=es2022 --outfile=../public-dist/_worker.js
