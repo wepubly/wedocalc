@@ -24,7 +24,14 @@
   }
 }
 </style><link rel="stylesheet" href="../css/results-sharing.css">
-</head>
+<style>
+/* Match the approved Paint Calculators background and yellow calculation action. */
+html:not([data-theme="dark"]) body.calculator-page{--mp-page-bg:#e5e7eb;background:#e5e7eb}
+html:not([data-theme="dark"]) body.calculator-page main{background-color:#e5e7eb}
+html body.calculator-page footer{background:var(--mp-page-bg)}
+html body.calculator-page .calc-submit{background:#ffcc00;color:#111827;border-color:#ffcc00}
+html body.calculator-page .calc-submit:hover{background:#f2c200;color:#111827;border-color:#f2c200}
+</style></head>
 <body class="category-page calculator-page">
 <div id="shared-header" data-variant="inner"></div>
 <main>
