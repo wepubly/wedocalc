@@ -69,3 +69,21 @@ html body.teste2{background-color:#292b2f}
 [data-theme=dark] .teste2 .preview-fields strong,[data-theme=dark] .teste2 .preview-result{background:#344c6d}
 @media(max-width:1100px){.teste2 .hero-calculator-preview{right:1%;width:260px;opacity:.15}}
 @media(max-width:700px){.teste2 .hero-calculator-preview{display:none}.teste2 .search-heading h1{white-space:normal;font-size:28px}}
+
+/* Printed results sheet balances the soft calculator preview on the right. */
+.teste2 .hero-print-preview{position:absolute;left:2.5%;top:95px;width:280px;min-height:370px;padding:25px 23px 18px;background:#fffdf9;color:#20344f;box-shadow:0 12px 35px #24384c25;border:1px solid #d9dde2;transform:rotate(-8deg);opacity:.25;filter:blur(1.5px);pointer-events:none;z-index:0;text-align:left}
+.teste2 .hero-print-preview>img{display:block;width:150px;height:auto;margin:0 auto 17px}
+.teste2 .print-preview-rule{height:2px;background:#e4b927;margin-bottom:18px}
+.teste2 .print-preview-title{font-size:19px;font-weight:750}
+.teste2 .hero-print-preview>p{font-size:9px;letter-spacing:1.5px;margin:7px 0 16px}
+.teste2 .print-preview-total{padding:14px;background:#eff4fa;margin-bottom:16px}
+.teste2 .print-preview-total small,.teste2 .print-preview-total strong{display:block}
+.teste2 .print-preview-total strong{font-size:28px;margin-top:5px}
+.teste2 .print-preview-row{display:flex;justify-content:space-between;font-size:11px;padding:10px 0;border-bottom:1px solid #d5dde5}
+.teste2 .print-preview-notes{font-size:11px;margin-top:17px}
+.teste2 .print-preview-notes div{border-bottom:1px solid #d5dde5;height:14px}
+.teste2 .print-preview-disclaimer{display:block;font-size:8px;line-height:1.6;margin-top:16px}
+.teste2 .print-preview-footer{border-top:1px solid #d5dde5;padding-top:10px;margin-top:13px;font-size:8px;text-align:center}
+[data-theme=dark] .teste2 .hero-print-preview{opacity:.15}
+@media(max-width:1100px){.teste2 .hero-print-preview{left:1%;width:230px;opacity:.15}}
+@media(max-width:700px){.teste2 .hero-print-preview{display:none}}
