@@ -1,0 +1,15 @@
+/* Brand-only preview: preserve production structure and destinations. */
+.teste2 .first-fold{background:linear-gradient(90deg,rgba(241,247,255,.85),rgba(241,247,255,.49)),url('/teste2/assets/house.webp') center/cover no-repeat}
+.teste2 .new-header{height:66px;max-width:1440px}
+.teste2 .project-hero{max-width:1050px;margin:12px auto 48px;gap:5px}
+.teste2 .hero-copy .new-logo{display:block;width:min(520px,84vw);margin:auto}
+.teste2 .hero-copy .new-logo img{display:block;width:100%;height:auto;max-height:none}
+.teste2 .search-heading h1{font-size:clamp(30px,4vw,52px);line-height:1.06;white-space:normal;max-width:800px;margin:auto auto 16px;font-weight:850;letter-spacing:-1.6px}
+.teste2 .search-heading p{font-size:clamp(15px,1.5vw,18px);line-height:1.55;max-width:690px;margin:auto}
+.teste2 .project-search{max-width:850px;margin:22px auto 0;border-radius:22px;background:#fff}
+.teste2 .tools-showcase,.teste2 .project-categories{max-width:1400px}
+.teste2 .project-card:hover{transform:translateY(-4px)}
+[data-theme=dark] .teste2>main{background:linear-gradient(90deg,#0e1116ef,#0e1116c7),url('/teste2/assets/house.webp') center top/cover no-repeat}
+[data-theme=dark] .teste2 .first-fold{background:transparent}
+[data-theme=dark] .teste2 .project-search{background:#1b202a}
+@media(max-width:700px){.teste2 .new-header{height:auto}.teste2 .project-hero{margin:16px auto 25px;padding:0 15px}.teste2 .hero-copy .new-logo{width:min(345px,88vw)}.teste2 .search-heading h1{font-size:clamp(27px,7vw,37px);letter-spacing:-1px}.teste2 .search-heading p{font-size:14px}.teste2 .project-search{margin-top:12px}.teste2 .suggestions{flex-wrap:wrap}}
