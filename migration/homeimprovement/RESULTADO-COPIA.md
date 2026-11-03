@@ -2,14 +2,14 @@
 
 Autorização do proprietário: mensagem “autorizados”, após a conclusão da Fase 1B em 03/11/2026.
 
-Estado: infraestrutura independente criada; backup e cópia dos dados concluídos; Worker e Pages publicados em modo de validação. Domínio principal respondendo com HTTP 200 e certificado HTTPS válido, verificado em 03/11/2026 às 22:26 UTC. A API Pages ainda informa associação pending; a verificação funcional do domínio foi concluída.
+Estado atualizado: CMS manual liberado ao Escritor em 03/11/2026 às 22:38 UTC; infraestrutura independente criada; backup e cópia dos dados concluídos; Worker e Pages publicados em modo de validação. Domínio principal respondendo com HTTP 200 e certificado HTTPS válido, verificado em 03/11/2026 às 22:26 UTC. A API Pages ainda informa associação pending; a verificação funcional do domínio foi concluída.
 
 ## Recursos existentes do destino
 
 | Recurso | Identificação |
 | --- | --- |
 | Pages | homeimprovement-tools |
-| Deploy Pages validado | c0cfcec1-78dd-4402-9e2d-d97de29a2f57 |
+| Deploy Pages validado | 1955fad9-6cad-4176-bc26-275b1a1bf640 |
 | Endereço temporário | https://homeimprovement-tools.pages.dev |
 | CMS temporário | https://homeimprovement-tools.pages.dev/admin |
 | Worker | homeimprovement-editorial |
@@ -53,7 +53,7 @@ A recuperação deverá usar esse SQL e o manifesto exclusivamente em recursos d
 
 - noindex, nofollow, noarchive no runtime de validação.
 - robots.txt retorna duas linhas corretas: User-agent: * e Disallow: /.
-- Gravações editoriais POST/PUT/PATCH/DELETE bloqueadas; POST foi verificado remotamente com resposta 423 nos dois runtimes.
+- Operação editorial manual liberada apenas em https://homeimprovement.tools/api/editorial/. Endereços pages.dev e workers.dev permanecem sem gravação (423). Proteção de origem permanece ativa (403 para origem diferente).
 - Sem cron e sem publicação automática no destino.
 - Bots não transferidos; endpoints e credenciais originais preservados.
 - Sem indexação liberada e sem redirecionamentos da Metricpedia.
@@ -98,4 +98,22 @@ Links:
 
 ## Próxima decisão operacional
 
-DNS e HTTPS principal validados; ambiente pronto para avaliação do proprietário. A ativação das gravações editoriais, transferência do Escritor, cron/publicação automática, indexação e redirecionamentos continuam aguardando autorização específica. Como os bots seguem na origem, qualquer conteúdo novo criado depois desta cópia deverá ser reconciliado por IDs e versões antes da transferência operacional.
+DNS e HTTPS principal validados; ambiente pronto para avaliação do proprietário. A operação manual do Escritor foi autorizada e liberada. A transferência operacional dos bots, cron/publicação automática, indexação e redirecionamentos continuam aguardando autorização específica. Como os bots seguem na origem, qualquer conteúdo novo criado depois desta cópia deverá ser reconciliado por IDs e versões antes da transferência operacional.
+
+## CMS manual liberado em 03/11/2026
+
+Autorização: proprietário pediu deixar o CMS operante para o fluxo Escritor/Auditor. Mantida a divisão aprovada: Escritor opera o CMS e registra a revisão externa; Auditor não precisa acessar o CMS; Supervisor não opera o painel.
+
+- Acesso: https://homeimprovement.tools/admin, sem login/senha, preservando o comportamento existente.
+- Listas HTTP 200 confirmadas: sessão, artigos (15), imagens (15), rotas e agendamentos.
+- Antes da liberação, todas as 26 tabelas foram comparadas por contagem e hash integral: sem diferenças. Nenhuma reconciliação ou cópia adicional foi necessária.
+- As 15 mídias cadastradas foram conferidas no bucket independente.
+- Testes locais descartáveis cobriram rascunho, edição, digest SHA-256 do snapshot, revisão externa registrada pelo Escritor, aprovação da versão, agendamento, cancelamento após edição, rejeição de publicação de versão antiga/não aprovada, publicação manual e retirada.
+- Checagem remota de escrita usou payload vazio inválido e recebeu 400 da validação existente, sem criar artigo. O fingerprint do destino permaneceu idêntico após a checagem.
+- Aviso no painel informa operação manual, auditoria externa, noindex e ausência de execução automática de agendas.
+- Publicação automática permanece desligada. O Escritor pode cadastrar/agendar, mas horários não serão executados até habilitação posterior do cron. Para publicar agora, usar a ação manual depois da aprovação externa da versão atual.
+- Não foi criada autenticação nem alterada qualquer credencial de bot. O link do novo CMS ainda precisa ser comunicado pelo proprietário ao Escritor; nenhum bot foi reconfigurado nesta execução.
+
+Evidência: editorial-release.snapshot.json; https://github.com/wepubly/wedocalc/actions/runs/41732558737.
+
+Recuperação desta liberação: se necessário, bloquear novas gravações no destino definindo HI_EDITORIAL_WRITES como disabled e publicar o wrapper; para rollback do código Pages, deployment anterior c0cfcec1-78dd-4402-9e2d-d97de29a2f57. Não restaurar banco para desfazer uma liberação de código, pois isso perderia trabalho novo. A versão anterior do Worker está registrada no snapshot desta execução. Nenhuma operação de recuperação foi executada.
