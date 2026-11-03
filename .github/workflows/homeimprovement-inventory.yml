@@ -7,6 +7,7 @@ permissions:
   contents: read
 jobs:
   inventory:
+    if: contains(github.event.head_commit.message, '[metadata-audit]')
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
@@ -23,3 +24,38 @@ jobs:
           name: homeimprovement-readonly-inventory
           path: inventory.json
           retention-days: 7
+
+  local-validation:
+    if: contains(github.event.head_commit.message, '[local-validation]')
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Prepare independent local fixture runtime
+        run: python migration/homeimprovement/prepare.py /tmp/homeimprovement-validation
+      - name: Install and build CMS locally
+        working-directory: /tmp/homeimprovement-validation/cms
+        run: |
+          npm ci --ignore-scripts
+          node build-local.mjs
+      - name: Install local test dependencies
+        working-directory: migration/homeimprovement/tests
+        run: |
+          npm install --ignore-scripts
+          npx playwright install --with-deps chromium
+      - name: Verify calculator and print data flow
+        run: node migration/homeimprovement/tests/calculator-dom.mjs /tmp/homeimprovement-validation/site
+      - name: Verify isolated runtime and native Letter/A4 PDF
+        env:
+          BROWSER_TEST: '1'
+          WRANGLER_SEND_METRICS: 'false'
+        run: node migration/homeimprovement/tests/validation.mjs /tmp/homeimprovement-validation/cms

@@ -1,0 +1,34 @@
+{
+  "A": {
+    "status": 0,
+    "answers": []
+  },
+  "AAAA": {
+    "status": 0,
+    "answers": []
+  },
+  "NS": {
+    "status": 0,
+    "answers": [
+      {
+        "name": "homeimprovement.tools",
+        "type": 2,
+        "TTL": 86400,
+        "data": "asa.ns.cloudflare.com."
+      },
+      {
+        "name": "homeimprovement.tools",
+        "type": 2,
+        "TTL": 86400,
+        "data": "josh.ns.cloudflare.com."
+      }
+    ]
+  },
+  "CNAME": {
+    "status": 0,
+    "answers": []
+  },
+  "https": {
+    "error": "HTTP Error 503: Service Unavailable"
+  }
+}

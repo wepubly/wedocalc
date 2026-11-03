@@ -1,0 +1,16 @@
+{
+  "name":"homeimprovement-tools",
+  "production_branch":"main",
+  "deployment_configs":{
+    "production":{
+      "compatibility_date":"2026-10-01",
+      "d1_databases":{"DB":{"id":"REPLACE_WITH_NEW_DATABASE_UUID_ONLY"}},
+      "r2_buckets":{"MEDIA":{"name":"homeimprovement-editorial-media"}},
+      "env_vars":{"ENVIRONMENT":{"type":"plain_text","value":"staging"},"PUBLIC_ORIGIN":{"type":"plain_text","value":"https://homeimprovement.tools"}}
+    },
+    "preview":{
+      "compatibility_date":"2026-10-01",
+      "env_vars":{"ENVIRONMENT":{"type":"plain_text","value":"staging"},"PUBLIC_ORIGIN":{"type":"plain_text","value":"https://homeimprovement.tools"}}
+    }
+  }
+}
