@@ -3,6 +3,12 @@ import {writeFileSync} from 'node:fs';
 const token=process.env.CLOUDFLARE_API_TOKEN,base='https://api.cloudflare.com/client/v4/accounts/b81896777d206a2239625d9cf2e8a40b';
 const sha=v=>createHash('sha256').update(v).digest('hex');
 async function get(path){const r=await fetch(base+path,{headers:{Authorization:'Bearer '+token}});const d=await r.json();if(!r.ok||!d.success)throw Error('Read failed: '+r.status);return d;}
+if(process.argv.includes('--pages-only')){
+ const p=(await get('/pages/projects/wedocalc')).result;
+ const d=await get('/pages/projects/wedocalc/deployments?per_page=20');
+ const out={at:new Date().toISOString(),production:p.canonical_deployment?.id,deployments:d.result.map(x=>({id:x.id,environment:x.environment,created_on:x.created_on,trigger:x.deployment_trigger,latest_stage:x.latest_stage,stages:x.stages}))};
+ writeFileSync('inventory.json',JSON.stringify(out,null,2));console.log(JSON.stringify(out,null,2));process.exit(0);
+}
 const out={at:new Date().toISOString(),objects:[],versions:[]};let cursor='';
 do{const d=await get('/r2/buckets/metricpedia-editorial-lab-media/objects?limit=1000'+(cursor?'&cursor='+encodeURIComponent(cursor):''));const rows=Array.isArray(d.result)?d.result:d.result.objects;for(const o of rows)out.objects.push({key:o.key,size:o.size,etag:o.etag,uploaded:o.uploaded,http_metadata:o.http_metadata,custom_metadata_sha256:sha(JSON.stringify(o.custom_metadata||{}))});const next=d.result_info?.cursor||d.result.cursor||'';if(next&&next===cursor)throw Error('Cursor repeated');cursor=next;}while(cursor);
 const path='/d1/database/1c9862e9-9824-4dbb-9d42-0c2a52ed1ae5/query';

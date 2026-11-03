@@ -18,7 +18,7 @@ jobs:
       - name: Inspect existing resources without mutations
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-        run: node migration/homeimprovement/metadata-only.mjs
+        run: node migration/homeimprovement/metadata-only.mjs --pages-only
       - uses: actions/upload-artifact@v4
         with:
           name: homeimprovement-readonly-inventory
