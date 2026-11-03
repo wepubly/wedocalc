@@ -2,7 +2,7 @@ name: HomeImprovement migration read-only inventory
 on:
   push:
     branches: [work/homeimprovement-copy-prep-20261103]
-    paths: [migration/homeimprovement/inventory.mjs, .github/workflows/homeimprovement-inventory.yml]
+    paths: [migration/homeimprovement/metadata-only.mjs, migration/homeimprovement/inventory.mjs, .github/workflows/homeimprovement-inventory.yml]
 permissions:
   contents: read
 jobs:
