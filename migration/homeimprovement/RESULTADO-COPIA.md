@@ -2,7 +2,7 @@
 
 Autorização do proprietário: mensagem “autorizados”, após a conclusão da Fase 1B em 03/11/2026.
 
-Estado: infraestrutura independente criada; backup e cópia dos dados concluídos; Worker e Pages publicados em modo de validação. O domínio principal ainda aguarda o CNAME no DNS. Não considerar a conexão HTTPS de homeimprovement.tools concluída até essa validação.
+Estado: infraestrutura independente criada; backup e cópia dos dados concluídos; Worker e Pages publicados em modo de validação. Domínio principal respondendo com HTTP 200 e certificado HTTPS válido, verificado em 03/11/2026 às 22:26 UTC. A API Pages ainda informa associação pending; a verificação funcional do domínio foi concluída.
 
 ## Recursos existentes do destino
 
@@ -17,7 +17,7 @@ Estado: infraestrutura independente criada; backup e cópia dos dados concluído
 | D1 | homeimprovement-editorial-db |
 | UUID D1 novo | 4674c99c-cb26-47af-a557-19f097678ec6 |
 | R2 privado | homeimprovement-editorial-media |
-| Domínio associado ao Pages | homeimprovement.tools, pendente DNS |
+| Domínio associado ao Pages | homeimprovement.tools; HTTP 200/HTTPS válido, API ainda pending |
 
 Os bindings reais do Pages e Worker foram consultados e apontam exclusivamente ao novo D1 e ao novo bucket. Pages foi criado sem integração Git, por Direct Upload. O novo Worker não possui cron.
 
@@ -63,31 +63,33 @@ O pacote Workers Assets é separado do pacote Pages. O arquivo _worker.js necess
 
 ## Evidência de produção da origem
 
-Na verificação final de 03/11/2026, 19:20 Brasília:
+Na verificação final de 03/11/2026, 19:26 Brasília:
 
 - Pages wedocalc permanece no deployment 08983672-ebdc-47a3-b4b7-f246cb9d22be.
 - Worker metricpedia-editorial-lab permanece na versão dda5078a-3413-4f91-9f02-e39ad362df43.
 - Não houve merge na main nem execução dos workflows de produção da Metricpedia.
 - Não foram alterados banco, bucket, cron ou credenciais editoriais da origem. A exportação autorizada foi a única operação de backup no banco de origem e pode bloquear consultas brevemente durante sua execução.
 
-## Pendência de DNS
+## DNS e HTTPS validados
 
-A associação do domínio no Pages foi criada. A Cloudflare retornou status pending e verification_data.error_message “CNAME record not set”. As consultas DNS públicas ainda não encontraram A/CNAME na raiz. O acesso do token ao DNS dessa zona permanece restrito.
+O proprietário salvou CNAME @ → homeimprovement-tools.pages.dev, proxy ativo e TTL Auto. DNS público passou a responder A e AAAA. Em 03/11/2026 às 22:26 UTC, a verificação externa confirmou:
 
-Registro necessário no painel DNS de homeimprovement.tools:
+- https://homeimprovement.tools responde HTTP 200 com noindex, nofollow, noarchive.
+- Certificado autorizado pela validação padrão de hostname e cadeia; TLS 1.3, emissor Let's Encrypt, validade de 03/11/2026 a 01/02/2027, cobrindo raiz e wildcard.
+- Os sete artigos publicados, canonicals e bytes das sete capas passaram também no domínio principal.
+- Gravações permanecem bloqueadas com 423; bindings independentes e ausência de cron confirmados.
+- Produção original permanece nos mesmos deployments.
 
-| Tipo | Nome | Destino | Proxy | TTL |
-| --- | --- | --- | --- | --- |
-| CNAME | @ | homeimprovement-tools.pages.dev | Ativado | Auto |
+A API Pages ainda retorna status pending, verification_data.status active e validation_data.status pending. Essa pendência administrativa não impediu a resposta HTTPS validada; acompanhar sua convergência sem novo deploy. O www permanece sem configuração. Não foram alteradas opções SSL/TLS, criados redirecionamentos ou transferidos bots.
 
-Depois de salvar, verificar novamente a associação do Pages, DNS público, certificado real e resposta HTTPS de homeimprovement.tools, incluindo noindex, imagens e links. Não adicionar redirecionamentos ou transferir bots nessa etapa. O www continua sem configuração nesta fase.
+Evidência: domain-verification.snapshot.json e execução https://github.com/wepubly/wedocalc/actions/runs/41730786951.
 
 ## Execuções e incidentes contidos
 
 1. Execução 41728113194: criou D1/R2, exportou/validou backup, importou o D1 e copiou os bytes R2. Parou antes do deploy ao detectar Content-Type implícito em arquivos que não tinham metadata explícita na origem.
 2. Execução 41728615571: retomou os recursos existentes, sem repetir export/import, corrigiu metadata R2 e validou os 22 objetos. Criou Pages e parou porque o Wrangler recusou _worker.js dentro da pasta pública de Workers Assets. Não houve exposição desse arquivo: a proteção interrompeu a publicação.
 3. Execução 41729206951: reutilizou dados e manifesto, separou os pacotes, publicou o Worker e o Pages e verificou oito rotas 200/noindex e bloqueio de gravação. Concluída com sucesso.
-4. Execução 41729835358: verificação independente, somente leitura da infraestrutura e do conteúdo copiado; verificou todos os artigos, imagens, bindings, CMS e estado preservado da produção original. Identificou a única pendência atual de CNAME. Concluída com sucesso.
+4. Execução 41729835358: verificação independente, somente leitura da infraestrutura e do conteúdo copiado; verificou todos os artigos, imagens, bindings, CMS e estado preservado da produção original. Identificou a pendência de CNAME posteriormente resolvida pelo proprietário. Concluída com sucesso.
 
 Links:
 
@@ -96,4 +98,4 @@ Links:
 
 ## Próxima decisão operacional
 
-Após concluir o DNS e a validação do domínio, apresentar o ambiente ao proprietário. A ativação das gravações editoriais, transferência do Escritor, cron/publicação automática, indexação e redirecionamentos continuam aguardando autorização específica. Como os bots seguem na origem, qualquer conteúdo novo criado depois desta cópia deverá ser reconciliado por IDs e versões antes da transferência operacional.
+DNS e HTTPS principal validados; ambiente pronto para avaliação do proprietário. A ativação das gravações editoriais, transferência do Escritor, cron/publicação automática, indexação e redirecionamentos continuam aguardando autorização específica. Como os bots seguem na origem, qualquer conteúdo novo criado depois desta cópia deverá ser reconciliado por IDs e versões antes da transferência operacional.

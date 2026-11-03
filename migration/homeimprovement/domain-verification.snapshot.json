@@ -1,0 +1,79 @@
+{
+  "at": "2026-11-03T22:26:23.268Z",
+  "checks": [
+    "Pages independent bindings and direct-upload configuration",
+    "Worker independent bindings; no cron",
+    "All published articles, canonical URLs and cover image bytes verified",
+    "CMS read access and blocked writes on Pages and Worker",
+    "Main domain HTTPS with authorized certificate and noindex"
+  ],
+  "domain": {
+    "id": "5e69e38d-b577-4809-b551-57cd969d5119",
+    "domain_id": "5e69e38d-b577-4809-b551-57cd969d5119",
+    "name": "homeimprovement.tools",
+    "status": "pending",
+    "verification_data": {
+      "status": "active"
+    },
+    "validation_data": {
+      "status": "pending",
+      "method": "http"
+    },
+    "certificate_authority": "google",
+    "zone_tag": "073f0a447d0b8f87ca17fe20ceed2eb0",
+    "created_on": "2026-11-03T22:16:33.66772Z"
+  },
+  "tls": {
+    "authorized": true,
+    "protocol": "TLSv1.3",
+    "issuer": "Let's Encrypt",
+    "validFrom": "Nov  3 20:10:23 2026 GMT",
+    "validTo": "Feb  1 20:10:22 2027 GMT",
+    "subjectAlternativeNames": "DNS:*.homeimprovement.tools, DNS:homeimprovement.tools"
+  },
+  "pagesDeployment": "c0cfcec1-78dd-4402-9e2d-d97de29a2f57",
+  "articles": [
+    {
+      "path": "/home-garden/paint-calculators/paint-calculator/how-to-paint-a-room/",
+      "media": true,
+      "ok": true
+    },
+    {
+      "path": "/home-garden/paint-calculators/paint-calculator/gallon-of-paint-coverage/",
+      "media": true,
+      "ok": true
+    },
+    {
+      "path": "/home-garden/paint-calculators/paint-calculator/wall-square-footage/",
+      "media": true,
+      "ok": true
+    },
+    {
+      "path": "/home-garden/paint-calculators/paint-calculator/measure-walls-for-painting/",
+      "media": true,
+      "ok": true
+    },
+    {
+      "path": "/home-garden/paint-calculators/paint-calculator/coats-of-paint/",
+      "media": true,
+      "ok": true
+    },
+    {
+      "path": "/home-garden/paint-calculators/paint-calculator/paint-for-a-bedroom/",
+      "media": true,
+      "ok": true
+    },
+    {
+      "path": "/home-garden/paint-calculators/paint-calculator/paint-for-one-wall/",
+      "media": true,
+      "ok": true
+    }
+  ],
+  "workerUrl": "https://homeimprovement-editorial.alex-b81.workers.dev",
+  "apex": {
+    "status": 200,
+    "noindex": "noindex, nofollow, noarchive"
+  },
+  "sourceUnchanged": true,
+  "success": true
+}
