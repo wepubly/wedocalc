@@ -20,6 +20,7 @@ jobs:
       - name: Inspect copied runtime, media, bindings and domain
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          HI_VERIFY_ORIGIN: 'https://homeimprovement.tools'
         run: node migration/homeimprovement/verify-copy.mjs
       - uses: actions/upload-artifact@v4
         if: always()
