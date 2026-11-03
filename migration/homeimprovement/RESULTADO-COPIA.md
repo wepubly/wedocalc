@@ -1,15 +1,15 @@
-# HomeImprovement.tools: infraestrutura e cópia publicadas
+# HomeImprovement.tools: infraestrutura, CMS e cron ativos
 
 Autorização do proprietário: mensagem “autorizados”, após a conclusão da Fase 1B em 03/11/2026.
 
-Estado atualizado: CMS manual liberado ao Escritor em 03/11/2026 às 22:38 UTC; infraestrutura independente criada; backup e cópia dos dados concluídos; Worker e Pages publicados em modo de validação. Domínio principal respondendo com HTTP 200 e certificado HTTPS válido, verificado em 03/11/2026 às 22:26 UTC. A API Pages ainda informa associação pending; a verificação funcional do domínio foi concluída.
+Estado atualizado: CMS e execução automática dos agendamentos liberados em 03/11/2026 às 20:05 de Brasília; infraestrutura independente criada; backup e cópia dos dados concluídos; Worker e Pages publicados em modo de validação. Domínio principal respondendo com HTTP 200 e certificado HTTPS válido, verificado em 03/11/2026 às 22:26 UTC. A API Pages ainda informa associação pending; a verificação funcional do domínio foi concluída.
 
 ## Recursos existentes do destino
 
 | Recurso | Identificação |
 | --- | --- |
 | Pages | homeimprovement-tools |
-| Deploy Pages validado | 1955fad9-6cad-4176-bc26-275b1a1bf640 |
+| Deploy Pages validado | e02136ee-c5f8-4b56-9ca4-2f71fbfd0f4b |
 | Endereço temporário | https://homeimprovement-tools.pages.dev |
 | CMS temporário | https://homeimprovement-tools.pages.dev/admin |
 | Worker | homeimprovement-editorial |
@@ -19,7 +19,7 @@ Estado atualizado: CMS manual liberado ao Escritor em 03/11/2026 às 22:38 UTC; 
 | R2 privado | homeimprovement-editorial-media |
 | Domínio associado ao Pages | homeimprovement.tools; HTTP 200/HTTPS válido, API ainda pending |
 
-Os bindings reais do Pages e Worker foram consultados e apontam exclusivamente ao novo D1 e ao novo bucket. Pages foi criado sem integração Git, por Direct Upload. O novo Worker não possui cron.
+Os bindings reais do Pages e Worker foram consultados e apontam exclusivamente ao novo D1 e ao novo bucket. Pages foi criado sem integração Git, por Direct Upload. O novo Worker possui cron * * * * *, ativado após autorização específica do proprietário.
 
 ## Conteúdo preservado e validado
 
@@ -54,7 +54,7 @@ A recuperação deverá usar esse SQL e o manifesto exclusivamente em recursos d
 - noindex, nofollow, noarchive no runtime de validação.
 - robots.txt retorna duas linhas corretas: User-agent: * e Disallow: /.
 - Operação editorial manual liberada apenas em https://homeimprovement.tools/api/editorial/. Endereços pages.dev e workers.dev permanecem sem gravação (423). Proteção de origem permanece ativa (403 para origem diferente).
-- Sem cron e sem publicação automática no destino.
+- Cron * * * * * ativo no destino após autorização específica; publica apenas agendas vencidas aprovadas na versão atual, conforme executor existente.
 - Bots não transferidos; endpoints e credenciais originais preservados.
 - Sem indexação liberada e sem redirecionamentos da Metricpedia.
 - Sem mudança das opções de SSL/TLS da zona: os estados observados na Fase 1B permanecem como referência.
@@ -98,9 +98,9 @@ Links:
 
 ## Próxima decisão operacional
 
-DNS e HTTPS principal validados; ambiente pronto para avaliação do proprietário. A operação manual do Escritor foi autorizada e liberada. A transferência operacional dos bots, cron/publicação automática, indexação e redirecionamentos continuam aguardando autorização específica. Como os bots seguem na origem, qualquer conteúdo novo criado depois desta cópia deverá ser reconciliado por IDs e versões antes da transferência operacional.
+DNS e HTTPS principal validados; ambiente pronto para avaliação do proprietário. A operação manual do Escritor foi autorizada e liberada. Cron/publicação automática dos agendamentos foi autorizado e ativado. Transferência operacional dos bots, indexação e redirecionamentos permanecem separados desta ativação. Como os bots seguem na origem, qualquer conteúdo novo criado depois desta cópia deverá ser reconciliado por IDs e versões antes da transferência operacional.
 
-## CMS manual liberado em 03/11/2026
+## Histórico: CMS manual liberado em 03/11/2026
 
 Autorização: proprietário pediu deixar o CMS operante para o fluxo Escritor/Auditor. Mantida a divisão aprovada: Escritor opera o CMS e registra a revisão externa; Auditor não precisa acessar o CMS; Supervisor não opera o painel.
 
@@ -117,3 +117,21 @@ Autorização: proprietário pediu deixar o CMS operante para o fluxo Escritor/A
 Evidência: editorial-release.snapshot.json; https://github.com/wepubly/wedocalc/actions/runs/41732558737.
 
 Recuperação desta liberação: se necessário, bloquear novas gravações no destino definindo HI_EDITORIAL_WRITES como disabled e publicar o wrapper; para rollback do código Pages, deployment anterior c0cfcec1-78dd-4402-9e2d-d97de29a2f57. Não restaurar banco para desfazer uma liberação de código, pois isso perderia trabalho novo. A versão anterior do Worker está registrada no snapshot desta execução. Nenhuma operação de recuperação foi executada.
+
+## Cron ativado em 03/11/2026, 20:05 de Brasília
+
+Autorização expressa do proprietário: “sim, quero q ative o cron”. A ativação atualiza o estado histórico da liberação manual acima.
+
+- Worker: homeimprovement-editorial; cron * * * * * (verificação a cada minuto).
+- D1: homeimprovement-editorial-db, UUID 4674c99c-cb26-47af-a557-19f097678ec6; R2 homeimprovement-editorial-media. Bindings reais confirmados antes e depois.
+- Executor original preservado, com ativação explícita HI_EDITORIAL_CRON=enabled e guarda obrigatória de ambiente/origem independentes. Nenhuma migração de schema ou dados.
+- Fila antes da ativação: zero queued. Conteúdo: 15 artigos, 7 publicados e 42 versões. Nenhuma publicação foi causada pela ativação.
+- Teste local do handler scheduled exportado: versão aprovada e vencida publicada uma vez; agenda futura retida; versão sem aprovação bloqueada com erro registrado; reexecução sem duplicação; flag desativada não publica; origem errada rejeitada.
+- Build, TypeScript, testes de leitura/noindex e ciclo editorial passaram no Actions antes do deploy.
+- API Cloudflare confirmou o cron ativo; páginas, listas de artigos/agendamentos, calculadora e robots retornaram 200/noindex. Aviso do CMS atualizado para agendas automáticas ativas.
+- Metricpedia: mesmo Pages, mesma versão do Worker e mesmo cron com timestamps originais. Não foram alterados bots, credenciais ou endpoints da origem.
+- Nenhum artigo de teste foi criado no destino remoto. A publicação automática real de um próximo artigo deve ser observada quando o Escritor agendar conteúdo aprovado.
+
+Evidências: cron-activation.snapshot.json; https://github.com/wepubly/wedocalc/actions/runs/41736198432.
+
+Recuperação: em caso de incidente, desativar exclusivamente o cron do Worker homeimprovement-editorial e a flag HI_EDITORIAL_CRON, sem cancelar registros da fila nem restaurar o banco. Para rollback do código, Pages anterior 1955fad9-6cad-4176-bc26-275b1a1bf640 e versão Worker e818d7fa-0b92-4fb5-b0c0-4067afb789f5. Rollback do código não substitui a remoção do cron. Nenhuma recuperação foi executada.

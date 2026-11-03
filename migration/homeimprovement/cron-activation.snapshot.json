@@ -1,0 +1,77 @@
+{
+  "at": "2026-11-03T23:05:00.764Z",
+  "run": "41736198432",
+  "mode": "scheduled-editorial-noindex",
+  "checks": [
+    "Destination bindings and queued versions/approvals verified before activation",
+    "One-minute cron active on destination Worker, noindex retained, source deployment and cron unchanged; no artificial remote article created"
+  ],
+  "sourceCronBefore": {
+    "schedules": [
+      {
+        "cron": "* * * * *",
+        "created_on": "2026-10-22T16:28:49.987118Z",
+        "modified_on": "2026-10-22T16:28:49.987118Z"
+      }
+    ]
+  },
+  "previousPagesDeployment": "1955fad9-6cad-4176-bc26-275b1a1bf640",
+  "previousWorkerDeployment": {
+    "id": "3dc86cc5-1ef5-4efb-96db-829f37c0eebe",
+    "source": "wrangler",
+    "strategy": "percentage",
+    "annotations": {
+      "workers/triggered_by": "deployment"
+    },
+    "versions": [
+      {
+        "version_id": "e818d7fa-0b92-4fb5-b0c0-4067afb789f5",
+        "percentage": 100
+      }
+    ],
+    "created_on": "2026-11-03T22:39:19.228239Z"
+  },
+  "previousCron": {
+    "schedules": []
+  },
+  "queueBefore": [],
+  "countsBefore": [
+    {
+      "articles": 15,
+      "published": 7,
+      "versions": 42
+    }
+  ],
+  "workerDeployed": true,
+  "activeCron": {
+    "schedules": [
+      {
+        "cron": "* * * * *",
+        "created_on": "2026-11-03T23:05:13.541277Z",
+        "modified_on": "2026-11-03T23:05:13.541277Z"
+      }
+    ]
+  },
+  "pagesDeployment": "e02136ee-c5f8-4b56-9ca4-2f71fbfd0f4b",
+  "sourceCronAfter": {
+    "schedules": [
+      {
+        "cron": "* * * * *",
+        "created_on": "2026-10-22T16:28:49.987118Z",
+        "modified_on": "2026-10-22T16:28:49.987118Z"
+      }
+    ]
+  },
+  "sourceUnchanged": true,
+  "queueAfter": [
+    {
+      "status": "cancelled",
+      "count": 1
+    },
+    {
+      "status": "published",
+      "count": 7
+    }
+  ],
+  "success": true
+}
