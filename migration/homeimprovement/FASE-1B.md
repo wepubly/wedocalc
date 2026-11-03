@@ -1,6 +1,6 @@
 # Fase 1B: resultado da preparação
 
-Estado: preparação técnica avançada; fase ainda não encerrada. Pendência de leitura privilegiada DNS/SSL. Nenhum recurso de destino criado, nenhuma cópia D1/R2 de destino e nenhum deploy de destino realizado.
+Estado: Fase 1B concluída para inventário e preparação. A pendência DNS/SSL foi resolvida por evidências do painel fornecidas pelo proprietário em 03/11/2026. Isso não autoriza exportação remota, provisionamento, cópia ou deploy. Nenhum recurso de destino criado, nenhuma cópia D1/R2 de destino e nenhum deploy de destino realizado.
 
 ## 1. Produção da Metricpedia
 
@@ -42,7 +42,21 @@ Consultas da zona negadas: DNS records 403/10000; SSL verification e SSL setting
 
 Alternativa pública consultada sem token: NS publicados são asa.ns.cloudflare.com e josh.ns.cloudflare.com; consultas A, AAAA e CNAME do apex não retornaram respostas. A tentativa HTTPS retornou 503 neste ambiente; isso não confirma emissão de certificado, modo SSL nem indisponibilidade para todos os clientes.
 
-Para verificar a configuração interna, é necessária sessão Cloudflare autenticada com leitura, ou autorização para conceder no token existente, exclusivamente na zona homeimprovement.tools: DNS Read, SSL and Certificates Read e Zone Settings Read. Nenhuma ampliação foi aplicada. A leitura pública não substitui essas informações internas.
+Conclusão posterior por prints do painel enviados pelo proprietário em 03/11/2026:
+
+| Configuração | Estado observado |
+| --- | --- |
+| Registros DNS da zona | 0 registros; raiz e www sem registros |
+| Universal SSL | Ativo para homeimprovement.tools e *.homeimprovement.tools |
+| Certificado backup | Emitido |
+| Validade exibida dos certificados | 01/02/2027 |
+| Modo SSL/TLS | Completo (Full) |
+| Sempre usar HTTPS | Desativado |
+| TLS mínimo | TLS 1.0 (padrão) |
+| TLS 1.3 | Ativado |
+| HSTS | Não habilitado, conforme botão Habilitar HSTS exibido |
+
+Essas são evidências visuais fornecidas pelo proprietário, e não resultados obtidos com o token. Elas concluem a pendência do inventário sem ampliar permissões. Nenhuma configuração foi alterada. Certificado ativo no painel não equivale a teste HTTPS do futuro site publicado; esse teste será necessário após conexão do domínio ao ambiente novo.
 
 ## 5. Preview: causa e mecanismo escolhido
 
@@ -100,7 +114,7 @@ Home e Paint Calculators preservam seleção pseudoaleatória com rotação diá
 
 Ainda não autorizadas automaticamente:
 
-1. Concluir leitura de configuração DNS/SSL. Revalidar o código final e gatilhos antes de push.
+1. Revalidar o código final, gatilhos e estado atualizado dos recursos antes da próxima fase autorizada. A leitura DNS/SSL está concluída por evidências do painel; alterações futuras nesses ajustes exigem escopo próprio.
 2. Aprovar uma janela para export consistente do D1 e definir armazenamento privado do SQL. Não publicar dados de agentes/sessões/proprietário no GitHub público. Registrar novo bookmark e manifestos no horário da cópia.
 3. Criar somente Pages, Worker, D1 e R2 com os quatro nomes acima, após reconfirmar inexistência; registrar o UUID novo. Sem bindings da origem.
 4. Exportar SQL, validar restauração local, copiar schema/dados uma única vez no D1 novo; não aplicar schema inicial em cima de dump completo sem conferir d1_migrations.
@@ -120,4 +134,4 @@ Ainda não autorizadas automaticamente:
 - Falha de cópia: recuperar ou refazer apenas o destino sob autorização, usando SQL e manifesto verificados; não restaurar/reverter a Metricpedia para reparar o destino.
 - Fotos com SHA válido: certifica igualdade, não qualidade visual prévia; revisar imagens relevantes no destino.
 
-Fase 2 não iniciada. Para encerrar a Fase 1B, faltam evidências privilegiadas DNS/SSL. Exportação remota permanece como procedimento preparado, a ser autorizada devido ao bloqueio temporário descrito.
+Fase 1B encerrada para inventário e preparação, com a pendência DNS/SSL resolvida pelos prints do painel. Fase 2 não iniciada. Exportação remota permanece como procedimento preparado, a ser autorizada devido ao bloqueio temporário descrito. Criação dos quatro recursos, cópia D1/R2 e deploys continuam aguardando autorização posterior. Indexação, redirecionamentos e transferência dos bots permanecem fora desta aprovação.
