@@ -15,6 +15,17 @@ archive(cms,['cms'],out)
 # Operational scripts target the old environment; exclude them from the isolated package.
 import shutil
 shutil.rmtree(out/'cms/scripts')
+# Brand only the copied CMS; preserve the uploaded PNG bytes and original CMS branch.
+admin=out/'cms/src/AdminApp.tsx'
+a=admin.read_text().replace('Metricpedia','HomeImprovement')
+old='<strong style={{fontSize:24}}>HomeImprovement</strong>'
+assert old in a,'CMS brand header changed; inspect before replacing'
+a=a.replace(old,'<span className="hi-cms-brand"><img src="/admin-assets/homeimprovement-logo.png" alt="HomeImprovement" width="1772" height="1772" /></span>',1)
+admin.write_text(a)
+with (out/'cms/src/admin.css').open('a') as f:
+ f.write('\n/* Official uploaded PNG, displayed on white in both themes. CSS trims transparent margins only. */\n.hi-cms-brand{display:block;position:relative;width:160px;height:104px;overflow:hidden;background:#fff;border-radius:6px;flex-shrink:0}\n.hi-cms-brand img{position:absolute;width:176px;height:176px;max-width:none;left:-10px;top:-34px}\n')
+shutil.copyfile(root/'migration/homeimprovement/assets/homeimprovement-logo.png',out/'cms/public/homeimprovement-logo.png')
+
 for p in (out/'site').rglob('*'):
  if p.is_file() and p.suffix in ['.html','.js','.css','.xml','.txt']:
   s=p.read_text(); s=s.replace('metricpedia.com','homeimprovement.tools').replace('Metricpedia.com','homeimprovement.tools').replace('wedocalc.com','homeimprovement.tools').replace('Metricpedia','HomeImprovement')

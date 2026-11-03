@@ -1,0 +1,43 @@
+name: HomeImprovement CMS official logo
+on:
+  push:
+    branches: [work/homeimprovement-copy-prep-20261103]
+    paths: [migration/homeimprovement/deploy-cms-brand.mjs, .github/workflows/homeimprovement-cms-brand.yml]
+permissions:
+  contents: read
+concurrency:
+  group: homeimprovement-isolated-copy
+  cancel-in-progress: false
+jobs:
+  brand:
+    if: contains(github.event.head_commit.message, '[cms-brand-authorized]')
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Assemble destination with official logo
+        run: python migration/homeimprovement/prepare.py /tmp/hi-cms-brand
+      - name: Build and typecheck
+        working-directory: /tmp/hi-cms-brand/cms
+        run: |
+          npm ci --ignore-scripts
+          node build-local.mjs
+      - name: Deploy destination Pages UI and verify preserved cron
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: b81896777d206a2239625d9cf2e8a40b
+          HI_PREPARED_CMS: /tmp/hi-cms-brand/cms
+          WRANGLER_SEND_METRICS: 'false'
+        run: node migration/homeimprovement/deploy-cms-brand.mjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: homeimprovement-cms-brand
+          path: cms-brand-result.json
+          if-no-files-found: ignore
