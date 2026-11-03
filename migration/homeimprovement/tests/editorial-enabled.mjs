@@ -7,7 +7,7 @@ import {createHash} from 'node:crypto';
 const cms=resolve(process.argv[2]),require=createRequire(cms+'/package.json');
 const {Miniflare,convertV4MiniflareOptions}=require('miniflare'),{build}=require('esbuild');
 const built=await build({entryPoints:[cms+'/worker/homeimprovement-validation.ts'],bundle:true,format:'esm',write:false});
-assert.doesNotMatch(readFileSync(cms+'/worker/homeimprovement-validation.ts','utf8'),/async scheduled/); // wrapper exports fetch only
+assert.match(readFileSync(cms+'/worker/homeimprovement-validation.ts','utf8'),/HI_EDITORIAL_CRON/); // scheduled executor remains opt-in
 const mf=new Miniflare(convertV4MiniflareOptions({modules:true,script:built.outputFiles[0].text,compatibilityDate:'2026-10-01',bindings:{ENVIRONMENT:'staging',PUBLIC_ORIGIN:'https://homeimprovement.tools',HI_EDITORIAL_WRITES:'enabled'},d1Databases:{DB:'disposable-editorial'},r2Buckets:['MEDIA'],serviceBindings:{ASSETS:()=>new Response('<html><body>CMS</body></html>',{headers:{'Content-Type':'text/html'}})}}));
 const origin='https://homeimprovement.tools';
 async function req(path,method='GET',data,expected=200,host=origin){const r=await mf.dispatchFetch(host+path,{method,headers:{Origin:host,'Content-Type':'application/json'},body:data?JSON.stringify(data):undefined});const raw=await r.text();assert.equal(r.status,expected,method+' '+path+' '+raw.slice(0,200));assert.match(r.headers.get('x-robots-tag'),/noindex/);return {raw,json:()=>JSON.parse(raw)};}

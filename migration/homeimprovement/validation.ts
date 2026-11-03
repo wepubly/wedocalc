@@ -1,6 +1,6 @@
-// Isolated editorial entry point: independent resources only, no scheduled handler.
+// Isolated editorial entry point: cron is enabled explicitly on the destination Worker only.
 import pages from './pages';
-import production from './production';
+import production, {scheduled as publishScheduled} from './production';
 // @ts-ignore: reused JavaScript catalogue is covered by its behavior tests.
 import {readCatalog,select,card,homeColumns} from './homeimprovement-cards.mjs';
 import type {Env} from './types';
@@ -8,6 +8,11 @@ function isolated(env:Env){
  if(env.PUBLIC_ORIGIN!=='https://homeimprovement.tools'||env.ENVIRONMENT!=='staging')throw Error('Invalid migration environment');
 }
 export default {
+ async scheduled(_event:ScheduledController,env:Env):Promise<void>{
+  isolated(env);
+  if((env as Env & {HI_EDITORIAL_CRON?:string}).HI_EDITORIAL_CRON!=='enabled')return;
+  await publishScheduled(env);
+ },
  async fetch(request:Request,env:Env):Promise<Response>{
   isolated(env);
   const writes=(env as Env & {HI_EDITORIAL_WRITES?:string}).HI_EDITORIAL_WRITES==='enabled';
@@ -29,7 +34,10 @@ export default {
    }}).transform(response);
   }
   if(writes&&['/admin','/admin/','/cms','/cms/'].includes(url.pathname)&&response.headers.get('Content-Type')?.includes('text/html')){
-   response=new HTMLRewriter().on('body',{element(el){el.prepend('<aside style="padding:12px;background:#fff3cd;color:#332701">HomeImprovement: operação manual liberada para o Escritor. Auditoria externa. Publicação automática desligada; agendamentos não serão executados automaticamente. Site noindex.</aside>',{html:true});}}).transform(response);
+   const notice=(env as Env & {HI_EDITORIAL_CRON?:string}).HI_EDITORIAL_CRON==='enabled'
+    ? 'HomeImprovement: CMS liberado para o Escritor. Auditoria externa. Publicação automática dos agendamentos aprovada e ativada; verificação a cada minuto em UTC. Site noindex.'
+    : 'HomeImprovement: operação manual liberada para o Escritor. Auditoria externa. Publicação automática desligada; agendamentos não serão executados automaticamente. Site noindex.';
+   response=new HTMLRewriter().on('body',{element(el){el.prepend('<aside style="padding:12px;background:#fff3cd;color:#332701">'+notice+'</aside>',{html:true});}}).transform(response);
   }
   const headers=new Headers(response.headers);
   headers.set('X-Robots-Tag','noindex, nofollow, noarchive');headers.set('Cache-Control','no-store');

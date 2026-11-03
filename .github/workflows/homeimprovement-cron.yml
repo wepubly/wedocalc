@@ -1,0 +1,50 @@
+name: HomeImprovement authorized cron activation
+on:
+  push:
+    branches: [work/homeimprovement-copy-prep-20261103]
+    paths: [migration/homeimprovement/activate-cron.mjs, .github/workflows/homeimprovement-cron.yml]
+permissions:
+  contents: read
+concurrency:
+  group: homeimprovement-isolated-copy
+  cancel-in-progress: false
+jobs:
+  release:
+    if: contains(github.event.head_commit.message, '[cron-authorized-20261103]')
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Assemble independent runtime
+        run: python migration/homeimprovement/prepare.py /tmp/hi-editorial-release
+      - name: Build
+        working-directory: /tmp/hi-editorial-release/cms
+        run: |
+          npm ci --ignore-scripts
+          node build-local.mjs
+      - name: Verify read-only default and enabled manual workflow with local fixtures
+        run: |
+          node migration/homeimprovement/tests/validation.mjs /tmp/hi-editorial-release/cms
+          node migration/homeimprovement/tests/editorial-enabled.mjs /tmp/hi-editorial-release/cms
+          node migration/homeimprovement/tests/cron.mjs /tmp/hi-editorial-release/cms
+      - name: Inspect queue and activate destination cron only
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: b81896777d206a2239625d9cf2e8a40b
+          HI_CRON_AUTHORIZED: '2026-11-03'
+          HI_PREPARED_CMS: /tmp/hi-editorial-release/cms
+          WRANGLER_SEND_METRICS: 'false'
+        run: node migration/homeimprovement/activate-cron.mjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: homeimprovement-cron-activation
+          path: cron-activation.json
+          if-no-files-found: ignore
+          retention-days: 14
