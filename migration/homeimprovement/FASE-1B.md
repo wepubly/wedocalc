@@ -1,6 +1,6 @@
 # Fase 1B: resultado da preparação
 
-Estado: preparação técnica avançada; fase ainda não encerrada. Pendências de leitura privilegiada DNS/SSL e validação visual do PDF. Nenhum recurso de destino criado, nenhuma cópia D1/R2 de destino e nenhum deploy de destino realizado.
+Estado: preparação técnica avançada; fase ainda não encerrada. Pendência de leitura privilegiada DNS/SSL. Nenhum recurso de destino criado, nenhuma cópia D1/R2 de destino e nenhum deploy de destino realizado.
 
 ## 1. Produção da Metricpedia
 
@@ -24,13 +24,13 @@ Os números permanecem: 15 artigos, 7 publicados, 42 versões, 121 eventos, 9 ve
 | Tamanhos de imagens versus D1 | 15 correspondências |
 | SHA-256 | calculado para cada um dos 22 objetos |
 
-Os 7 objetos fora do catálogo estão em editorial-maintenance-backups/2026-10-22-cms-finalization e editorial-maintenance-backups/2026-10-22-grok-corrections. São arquivos auxiliares de recuperação; preservar, não excluir como lixo. Imagens apresentam assinatura JPEG. SHA-256 permite verificar igualdade após a cópia; não é um certificado de ausência de corrupção anterior, e não foi executada decodificação visual integral das imagens. Exportação binária é viável com o token existente. Nenhuma imagem foi gravada em destino remoto nesta fase. Manifesto em r2-copy-manifest.json.
+Os 7 objetos fora do catálogo estão em editorial-maintenance-backups/2026-10-22-cms-finalization e editorial-maintenance-backups/2026-10-22-grok-corrections. São arquivos auxiliares de recuperação; preservar, não excluir como lixo. Imagens apresentam assinatura JPEG. SHA-256 permite verificar igualdade após a cópia; não é um certificado de ausência de corrupção anterior, e não foi executada decodificação visual integral das imagens. Exportação binária é viável com o token existente. Nenhuma imagem foi gravada em destino remoto nesta fase. Manifesto em r2-copy-manifest.json, incluindo HTTP metadata e fingerprint de custom metadata. O suplemento metadata-1b.snapshot.json contém hashes das 42 versões e contagens de todas as 26 tabelas de aplicação.
 
 ## 3. D1 e recuperação
 
 Bookmark de leitura obtido e registrado em BACKUP-RECOVERY.md. Procedimento oficial de export SQL e verificação local preparado, incluindo preservação de snapshots, versões, revisões, eventos, tabelas editoriais, referências e hashes.
 
-A exportação não foi executada: segundo a documentação oficial, ela bloqueia outras requisições do D1 enquanto roda. Isso conflita com manter os bots operando sem interrupção. Exige aprovação específica de uma janela de bloqueio antes de executar, mesmo sem alterar tabelas. O bookmark tem retenção limitada; não substitui um backup SQL privado validado.
+A exportação não foi executada: segundo a documentação oficial, ela bloqueia outras requisições do D1 enquanto roda. Isso conflita com manter os bots operando sem interrupção. Exige aprovação específica de uma janela de bloqueio antes de executar, mesmo sem alterar tabelas. Manifesto suplementar registrou hashes dos 42 snapshots e contagens das 26 tabelas de aplicação, além de fingerprints de metadata dos 22 objetos. Há 31 revisões no histórico, além das 9 aprovações atuais. O bookmark tem retenção limitada; não substitui um backup SQL privado validado.
 
 A tabela external_approvals tem zero linhas; as 9 aprovações atuais pertencem a editorial_reviews e são por versão. Não houve validação de hashes externos inexistentes. O endpoint de leitura calcula digest do snapshot e os testes locais confirmaram essa correspondência. A cópia deve comparar os snapshots originais sem reescrevê-los.
 
@@ -50,7 +50,7 @@ Confirmado ao vivo: Pages source.type=github, owner=wepubly, repo=wedocalc; prod
 
 No GitHub, produção do site recebe push na main e o CMS recebe push em work/metricpedia-cms-blog-v1. A rotina criada para esta missão recebe apenas alterações específicas em work/homeimprovement-copy-prep-20261103. Outros workflows antigos são de preview específico ou acionamento manual. Nenhum workflow de produção foi executado durante esta missão.
 
-Método aplicado: commits da preparação recebem prefixo oficial [CF-Pages-Skip], que impede o build do Pages sem alterar as configurações do projeto e permite executar o diagnóstico do Actions. Na execução principal desta fase, noNewPreviewDuringInspection=true e a produção permaneceu inalterada. O preview anterior não foi excluído.
+Método aplicado: commits da preparação recebem prefixo oficial [CF-Pages-Skip], que impede o build do Pages sem alterar as configurações do projeto e permite executar o diagnóstico do Actions. Na execução principal desta fase, noNewPreviewDuringInspection=true e a produção permaneceu inalterada. Essa comparação cobre somente o intervalo da inspeção; o Pages pode criar registros de preview em estado idle mesmo quando o build é omitido. A auditoria final das 18:28:50 confirmou os 5 registros de commits com [CF-Pages-Skip] em queued/idle, todos com initialize/build/deploy sem started_on. Portanto, foram criados registros, mas nenhum build/deploy novo foi iniciado por eles. O único preview concluído desta missão continua sendo o incidente anterior f729b21a. Evidência: pages-deployments-1b.snapshot.json e execução 41722133946. Não interpretar esse booleano como ausência absoluta de registros novos. O preview anterior não foi excluído.
 
 Implicação: todo commit futuro nessa branch deve preservar o prefixo; isso é proteção por commit, não exclusão permanente da branch. O destino definitivo deve preferir repositório independente sem integração a wedocalc, ou publicação Direct Upload explicitamente autorizada em projeto novo. Não criamos outro repositório nem alteramos acessos. Não abrir PR ou fazer push sem rever possíveis gatilhos.
 
@@ -73,9 +73,9 @@ Fontes: https://developers.cloudflare.com/pages/configuration/git-integration/gi
 | Aritmética | 1.000 sq ft / 400, duas demãos, 10% = 5,5 galões |
 | Entrada inválida | área negativa rejeitada |
 | Impressão | resultado entregue ao preview; Print e Save as PDF invocam window.print(), verificados em DOM simulado |
-| PDF visual nativo | pendente; Chromium baixado veio truncado e não foi instalado |
+| PDF nativo | passou no runner isolado GitHub Actions: geração Letter e A4, com o resultado da calculadora |
 
-A passagem de dados e acionamento de impressão foram testados, mas não comprovam paginação ou aparência final de PDF Letter/A4. Teste de navegador nativo está preparado em tests/validation.mjs, ativado por BROWSER_TEST=1. Não apresentar essa etapa como aprovada.
+O download local do Chromium falhou; a alternativa segura foi executá-lo no runner efêmero do GitHub Actions, sem token Cloudflare e sem deploy. O teste de navegador nativo passou, incluindo aritmética, entrada inválida, navegação para impressão e geração de PDFs Letter/A4. Evidência: https://github.com/wepubly/wedocalc/actions/runs/41721961113/job/126216775585. Não foi feita inspeção visual humana do PDF.
 
 ## 7. Recursos independentes
 
@@ -100,7 +100,7 @@ Home e Paint Calculators preservam seleção pseudoaleatória com rotação diá
 
 Ainda não autorizadas automaticamente:
 
-1. Concluir leitura de configuração DNS/SSL e teste visual PDF local com Chromium disponível. Revalidar o código final e gatilhos antes de push.
+1. Concluir leitura de configuração DNS/SSL. Revalidar o código final e gatilhos antes de push.
 2. Aprovar uma janela para export consistente do D1 e definir armazenamento privado do SQL. Não publicar dados de agentes/sessões/proprietário no GitHub público. Registrar novo bookmark e manifestos no horário da cópia.
 3. Criar somente Pages, Worker, D1 e R2 com os quatro nomes acima, após reconfirmar inexistência; registrar o UUID novo. Sem bindings da origem.
 4. Exportar SQL, validar restauração local, copiar schema/dados uma única vez no D1 novo; não aplicar schema inicial em cima de dump completo sem conferir d1_migrations.
@@ -120,4 +120,4 @@ Ainda não autorizadas automaticamente:
 - Falha de cópia: recuperar ou refazer apenas o destino sob autorização, usando SQL e manifesto verificados; não restaurar/reverter a Metricpedia para reparar o destino.
 - Fotos com SHA válido: certifica igualdade, não qualidade visual prévia; revisar imagens relevantes no destino.
 
-Fase 2 não iniciada. Para encerrar a Fase 1B, faltam evidências privilegiadas DNS/SSL e a validação visual nativa de PDF. Exportação remota permanece como procedimento preparado, a ser autorizada devido ao bloqueio temporário descrito.
+Fase 2 não iniciada. Para encerrar a Fase 1B, faltam evidências privilegiadas DNS/SSL. Exportação remota permanece como procedimento preparado, a ser autorizada devido ao bloqueio temporário descrito.

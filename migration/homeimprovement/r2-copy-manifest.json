@@ -14,7 +14,11 @@
       "sizeMatches": null,
       "magic": "ffd8ffe000104a4649460001",
       "classification": "maintenance-backup",
-      "action": "copy-preserving-key-and-metadata"
+      "action": "copy-preserving-key-and-metadata",
+      "http_metadata": {
+        "contentType": "image/jpeg"
+      },
+      "custom_metadata_sha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
     },
     {
       "key": "editorial-maintenance-backups/2026-10-22-cms-finalization/f0ea24b3-3800-4e23-a5d4-fa7a6876d1dd",
@@ -26,7 +30,11 @@
       "sizeMatches": null,
       "magic": "ffd8ffe000104a4649460001",
       "classification": "maintenance-backup",
-      "action": "copy-preserving-key-and-metadata"
+      "action": "copy-preserving-key-and-metadata",
+      "http_metadata": {
+        "contentType": "image/jpeg"
+      },
+      "custom_metadata_sha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
     },
     {
       "key": "editorial-maintenance-backups/2026-10-22-cms-finalization/f2546acd-2983-460b-90ae-3aac3d823ea0",
@@ -38,7 +46,11 @@
       "sizeMatches": null,
       "magic": "ffd8ffe000104a4649460001",
       "classification": "maintenance-backup",
-      "action": "copy-preserving-key-and-metadata"
+      "action": "copy-preserving-key-and-metadata",
+      "http_metadata": {
+        "contentType": "image/jpeg"
+      },
+      "custom_metadata_sha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
     },
     {
       "key": "editorial-maintenance-backups/2026-10-22-cms-finalization/rows.json",
@@ -50,7 +62,9 @@
       "sizeMatches": null,
       "magic": "7b0a2020226167656e747322",
       "classification": "maintenance-backup",
-      "action": "copy-preserving-key-and-metadata"
+      "action": "copy-preserving-key-and-metadata",
+      "http_metadata": {},
+      "custom_metadata_sha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
     },
     {
       "key": "editorial-maintenance-backups/2026-10-22-grok-corrections/7e636323-2c69-46a5-8995-1cf171572f8d",
@@ -62,7 +76,11 @@
       "sizeMatches": null,
       "magic": "ffd8ffe000104a4649460001",
       "classification": "maintenance-backup",
-      "action": "copy-preserving-key-and-metadata"
+      "action": "copy-preserving-key-and-metadata",
+      "http_metadata": {
+        "contentType": "image/jpeg"
+      },
+      "custom_metadata_sha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
     },
     {
       "key": "editorial-maintenance-backups/2026-10-22-grok-corrections/a2d35c1f-62ef-4abe-98a2-142daf93238e",
@@ -74,7 +92,11 @@
       "sizeMatches": null,
       "magic": "ffd8ffe000104a4649460001",
       "classification": "maintenance-backup",
-      "action": "copy-preserving-key-and-metadata"
+      "action": "copy-preserving-key-and-metadata",
+      "http_metadata": {
+        "contentType": "image/jpeg"
+      },
+      "custom_metadata_sha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
     },
     {
       "key": "editorial-maintenance-backups/2026-10-22-grok-corrections/rows.json",
@@ -86,7 +108,9 @@
       "sizeMatches": null,
       "magic": "7b0a2020226167656e747322",
       "classification": "maintenance-backup",
-      "action": "copy-preserving-key-and-metadata"
+      "action": "copy-preserving-key-and-metadata",
+      "http_metadata": {},
+      "custom_metadata_sha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
     },
     {
       "key": "editorial/03e2e35c-9ac9-4732-b5d0-ebd4c1aba512",
@@ -98,7 +122,11 @@
       "sizeMatches": true,
       "magic": "ffd8ffe000104a4649460001",
       "classification": "editorial-media",
-      "action": "copy-preserving-key-and-metadata"
+      "action": "copy-preserving-key-and-metadata",
+      "http_metadata": {
+        "contentType": "image/jpeg"
+      },
+      "custom_metadata_sha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
     },
     {
       "key": "editorial/055e1134-0382-4e8c-b417-623c419a9fb0",
@@ -110,7 +138,11 @@
       "sizeMatches": true,
       "magic": "ffd8ffe000104a4649460001",
       "classification": "editorial-media",
-      "action": "copy-preserving-key-and-metadata"
+      "action": "copy-preserving-key-and-metadata",
+      "http_metadata": {
+        "contentType": "image/jpeg"
+      },
+      "custom_metadata_sha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
     },
     {
       "key": "editorial/0695c1cf-304f-4958-970b-676ef8d81a16",
@@ -122,7 +154,11 @@
       "sizeMatches": true,
       "magic": "ffd8ffe000104a4649460001",
       "classification": "editorial-media",
-      "action": "copy-preserving-key-and-metadata"
+      "action": "copy-preserving-key-and-metadata",
+      "http_metadata": {
+        "contentType": "image/jpeg"
+      },
+      "custom_metadata_sha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
     },
     {
       "key": "editorial/0cfffcbd-ed51-49bc-b2ad-b63359a0a080",
@@ -134,7 +170,11 @@
       "sizeMatches": true,
       "magic": "ffd8ffe000104a4649460001",
       "classification": "editorial-media",
-      "action": "copy-preserving-key-and-metadata"
+      "action": "copy-preserving-key-and-metadata",
+      "http_metadata": {
+        "contentType": "image/jpeg"
+      },
+      "custom_metadata_sha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
     },
     {
       "key": "editorial/16fa9927-b9c0-4976-a4f2-b549e928262a",
@@ -146,7 +186,11 @@
       "sizeMatches": true,
       "magic": "ffd8ffe000104a4649460001",
       "classification": "editorial-media",
-      "action": "copy-preserving-key-and-metadata"
+      "action": "copy-preserving-key-and-metadata",
+      "http_metadata": {
+        "contentType": "image/jpeg"
+      },
+      "custom_metadata_sha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
     },
     {
       "key": "editorial/31cf7ec2-cf4e-468f-97c1-4f5d36dcd28d",
@@ -158,7 +202,11 @@
       "sizeMatches": true,
       "magic": "ffd8ffe000104a4649460001",
       "classification": "editorial-media",
-      "action": "copy-preserving-key-and-metadata"
+      "action": "copy-preserving-key-and-metadata",
+      "http_metadata": {
+        "contentType": "image/jpeg"
+      },
+      "custom_metadata_sha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
     },
     {
       "key": "editorial/3233e912-ac00-472c-b1dc-181692a9204b",
@@ -170,7 +218,11 @@
       "sizeMatches": true,
       "magic": "ffd8ffe000104a4649460001",
       "classification": "editorial-media",
-      "action": "copy-preserving-key-and-metadata"
+      "action": "copy-preserving-key-and-metadata",
+      "http_metadata": {
+        "contentType": "image/jpeg"
+      },
+      "custom_metadata_sha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
     },
     {
       "key": "editorial/59384c1d-bec0-4ccd-ae67-734ce8747aec",
@@ -182,7 +234,11 @@
       "sizeMatches": true,
       "magic": "ffd8ffe000104a4649460001",
       "classification": "editorial-media",
-      "action": "copy-preserving-key-and-metadata"
+      "action": "copy-preserving-key-and-metadata",
+      "http_metadata": {
+        "contentType": "image/jpeg"
+      },
+      "custom_metadata_sha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
     },
     {
       "key": "editorial/660a59f7-ba57-4956-8b04-95ed261d16a6",
@@ -194,7 +250,11 @@
       "sizeMatches": true,
       "magic": "ffd8ffe000104a4649460001",
       "classification": "editorial-media",
-      "action": "copy-preserving-key-and-metadata"
+      "action": "copy-preserving-key-and-metadata",
+      "http_metadata": {
+        "contentType": "image/jpeg"
+      },
+      "custom_metadata_sha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
     },
     {
       "key": "editorial/8c063c74-7bf1-4f39-97fd-21ff7afcef15",
@@ -206,7 +266,11 @@
       "sizeMatches": true,
       "magic": "ffd8ffe000104a4649460001",
       "classification": "editorial-media",
-      "action": "copy-preserving-key-and-metadata"
+      "action": "copy-preserving-key-and-metadata",
+      "http_metadata": {
+        "contentType": "image/jpeg"
+      },
+      "custom_metadata_sha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
     },
     {
       "key": "editorial/9a1fbb53-874b-4646-98d0-5780ed9032de",
@@ -218,7 +282,11 @@
       "sizeMatches": true,
       "magic": "ffd8ffe000104a4649460001",
       "classification": "editorial-media",
-      "action": "copy-preserving-key-and-metadata"
+      "action": "copy-preserving-key-and-metadata",
+      "http_metadata": {
+        "contentType": "image/jpeg"
+      },
+      "custom_metadata_sha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
     },
     {
       "key": "editorial/b9dd3871-e392-490f-9ea0-90d3eb248f19",
@@ -230,7 +298,11 @@
       "sizeMatches": true,
       "magic": "ffd8ffe000104a4649460001",
       "classification": "editorial-media",
-      "action": "copy-preserving-key-and-metadata"
+      "action": "copy-preserving-key-and-metadata",
+      "http_metadata": {
+        "contentType": "image/jpeg"
+      },
+      "custom_metadata_sha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
     },
     {
       "key": "editorial/d85fa768-ccbb-445e-9a81-02bfa951e4c2",
@@ -242,7 +314,11 @@
       "sizeMatches": true,
       "magic": "ffd8ffe000104a4649460001",
       "classification": "editorial-media",
-      "action": "copy-preserving-key-and-metadata"
+      "action": "copy-preserving-key-and-metadata",
+      "http_metadata": {
+        "contentType": "image/jpeg"
+      },
+      "custom_metadata_sha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
     },
     {
       "key": "editorial/e2b99138-7b3c-4900-8340-51d93150be25",
@@ -254,7 +330,11 @@
       "sizeMatches": true,
       "magic": "ffd8ffe000104a4649460001",
       "classification": "editorial-media",
-      "action": "copy-preserving-key-and-metadata"
+      "action": "copy-preserving-key-and-metadata",
+      "http_metadata": {
+        "contentType": "image/jpeg"
+      },
+      "custom_metadata_sha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
     },
     {
       "key": "editorial/f766c471-7474-4a05-a04c-0dda4bb55398",
@@ -266,7 +346,11 @@
       "sizeMatches": true,
       "magic": "ffd8ffe000104a4649460001",
       "classification": "editorial-media",
-      "action": "copy-preserving-key-and-metadata"
+      "action": "copy-preserving-key-and-metadata",
+      "http_metadata": {
+        "contentType": "image/jpeg"
+      },
+      "custom_metadata_sha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
     }
   ]
 }

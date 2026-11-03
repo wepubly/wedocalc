@@ -75,3 +75,6 @@ Esta preparação não é um pacote pronto para produção: faltam cópia D1/R2,
 - Teste existente author-profile.mjs: passou, incluindo snapshot legado imutável.
 - Configurador isolado: rejeitou ID do D1 da origem e gerou configuração sem cron para ID fictício de teste.
 - Teste existente production.mjs: bloqueado antes de iniciar pelo erro local do Wrangler uv_interface_addresses; não houve validação funcional de CMS/calculadora em runtime nem deploy de teste no destino. Não interpretar build aprovado como validação da migração.
+
+
+Continuidade: consultar FASE-1B.md para inventário físico R2, correção dos testes, PDF Letter/A4 aprovado em CI isolada e demais evidências posteriores. Este documento preserva o registro da primeira inspeção.

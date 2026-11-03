@@ -1,0 +1,1046 @@
+{
+  "at": "2026-11-03T21:28:50.506Z",
+  "production": "08983672-ebdc-47a3-b4b7-f246cb9d22be",
+  "deployments": [
+    {
+      "id": "6aee75de-0d28-4594-ad22-c9edd4dc1c38",
+      "environment": "preview",
+      "created_on": "2026-11-03T21:28:36.158893Z",
+      "trigger": {
+        "type": "github:push",
+        "metadata": {
+          "branch": "work/homeimprovement-copy-prep-20261103",
+          "commit_hash": "7bd0db587dc1e302f390f453f75762665ad67253",
+          "commit_message": "[CF-Pages-Skip] [metadata-audit] Verify skipped preview records and unchanged production",
+          "commit_dirty": false
+        }
+      },
+      "latest_stage": {
+        "name": "queued",
+        "started_on": null,
+        "ended_on": null,
+        "status": "idle"
+      },
+      "stages": [
+        {
+          "name": "queued",
+          "started_on": null,
+          "ended_on": null,
+          "status": "idle"
+        },
+        {
+          "name": "initialize",
+          "started_on": null,
+          "ended_on": null,
+          "status": "idle"
+        },
+        {
+          "name": "clone_repo",
+          "started_on": null,
+          "ended_on": null,
+          "status": "idle"
+        },
+        {
+          "name": "build",
+          "started_on": null,
+          "ended_on": null,
+          "status": "idle"
+        },
+        {
+          "name": "deploy",
+          "started_on": null,
+          "ended_on": null,
+          "status": "idle"
+        }
+      ]
+    },
+    {
+      "id": "884fc228-4620-4dc4-86d2-1d3f45ac18e7",
+      "environment": "preview",
+      "created_on": "2026-11-03T21:27:25.883369Z",
+      "trigger": {
+        "type": "github:push",
+        "metadata": {
+          "branch": "work/homeimprovement-copy-prep-20261103",
+          "commit_hash": "97c39e2f30c0ac408e7514d17a3225c06a6509dd",
+          "commit_message": "[CF-Pages-Skip] [local-validation] Test isolated copy and native PDF without Cloudflare credentials",
+          "commit_dirty": false
+        }
+      },
+      "latest_stage": {
+        "name": "queued",
+        "started_on": null,
+        "ended_on": null,
+        "status": "idle"
+      },
+      "stages": [
+        {
+          "name": "queued",
+          "started_on": null,
+          "ended_on": null,
+          "status": "idle"
+        },
+        {
+          "name": "initialize",
+          "started_on": null,
+          "ended_on": null,
+          "status": "idle"
+        },
+        {
+          "name": "clone_repo",
+          "started_on": null,
+          "ended_on": null,
+          "status": "idle"
+        },
+        {
+          "name": "build",
+          "started_on": null,
+          "ended_on": null,
+          "status": "idle"
+        },
+        {
+          "name": "deploy",
+          "started_on": null,
+          "ended_on": null,
+          "status": "idle"
+        }
+      ]
+    },
+    {
+      "id": "4818c25a-6d03-4340-8b0f-505723d18fed",
+      "environment": "preview",
+      "created_on": "2026-11-03T21:25:49.790827Z",
+      "trigger": {
+        "type": "github:push",
+        "metadata": {
+          "branch": "work/homeimprovement-copy-prep-20261103",
+          "commit_hash": "b828017e23eb47867736fa7f9ff23fe257dfcf28",
+          "commit_message": "[CF-Pages-Skip] Accept D1 table identifiers with digits in read-only audit",
+          "commit_dirty": false
+        }
+      },
+      "latest_stage": {
+        "name": "queued",
+        "started_on": null,
+        "ended_on": null,
+        "status": "idle"
+      },
+      "stages": [
+        {
+          "name": "queued",
+          "started_on": null,
+          "ended_on": null,
+          "status": "idle"
+        },
+        {
+          "name": "initialize",
+          "started_on": null,
+          "ended_on": null,
+          "status": "idle"
+        },
+        {
+          "name": "clone_repo",
+          "started_on": null,
+          "ended_on": null,
+          "status": "idle"
+        },
+        {
+          "name": "build",
+          "started_on": null,
+          "ended_on": null,
+          "status": "idle"
+        },
+        {
+          "name": "deploy",
+          "started_on": null,
+          "ended_on": null,
+          "status": "idle"
+        }
+      ]
+    },
+    {
+      "id": "8c8614a3-6ffb-4bcb-8854-bb136b0c91a9",
+      "environment": "preview",
+      "created_on": "2026-11-03T21:25:02.371364Z",
+      "trigger": {
+        "type": "github:push",
+        "metadata": {
+          "branch": "work/homeimprovement-copy-prep-20261103",
+          "commit_hash": "619aae7a96662cb8098c25b6c6ea5b6e623b1bfa",
+          "commit_message": "[CF-Pages-Skip] Read supplementary metadata and immutable version fingerprints only",
+          "commit_dirty": false
+        }
+      },
+      "latest_stage": {
+        "name": "queued",
+        "started_on": null,
+        "ended_on": null,
+        "status": "idle"
+      },
+      "stages": [
+        {
+          "name": "queued",
+          "started_on": null,
+          "ended_on": null,
+          "status": "idle"
+        },
+        {
+          "name": "initialize",
+          "started_on": null,
+          "ended_on": null,
+          "status": "idle"
+        },
+        {
+          "name": "clone_repo",
+          "started_on": null,
+          "ended_on": null,
+          "status": "idle"
+        },
+        {
+          "name": "build",
+          "started_on": null,
+          "ended_on": null,
+          "status": "idle"
+        },
+        {
+          "name": "deploy",
+          "started_on": null,
+          "ended_on": null,
+          "status": "idle"
+        }
+      ]
+    },
+    {
+      "id": "60efe69a-fee5-41fa-ab3a-06962090b139",
+      "environment": "preview",
+      "created_on": "2026-11-03T21:15:42.225442Z",
+      "trigger": {
+        "type": "github:push",
+        "metadata": {
+          "branch": "work/homeimprovement-copy-prep-20261103",
+          "commit_hash": "7d5a50be14d3e4b5e771661f19daae484e2f4dc8",
+          "commit_message": "[CF-Pages-Skip] Extend read-only migration inventory with object checksums and recovery bookmark",
+          "commit_dirty": false
+        }
+      },
+      "latest_stage": {
+        "name": "queued",
+        "started_on": null,
+        "ended_on": null,
+        "status": "idle"
+      },
+      "stages": [
+        {
+          "name": "queued",
+          "started_on": null,
+          "ended_on": null,
+          "status": "idle"
+        },
+        {
+          "name": "initialize",
+          "started_on": null,
+          "ended_on": null,
+          "status": "idle"
+        },
+        {
+          "name": "clone_repo",
+          "started_on": null,
+          "ended_on": null,
+          "status": "idle"
+        },
+        {
+          "name": "build",
+          "started_on": null,
+          "ended_on": null,
+          "status": "idle"
+        },
+        {
+          "name": "deploy",
+          "started_on": null,
+          "ended_on": null,
+          "status": "idle"
+        }
+      ]
+    },
+    {
+      "id": "f729b21a-0673-4b21-94b6-830c3ac0c874",
+      "environment": "preview",
+      "created_on": "2026-11-03T21:03:11.95225Z",
+      "trigger": {
+        "type": "github:push",
+        "metadata": {
+          "branch": "work/homeimprovement-copy-prep-20261103",
+          "commit_hash": "14573adbaae6d68126977c6271c551b337cedc2a",
+          "commit_message": "Add isolated read-only HomeImprovement migration inventory",
+          "commit_dirty": false
+        }
+      },
+      "latest_stage": {
+        "name": "deploy",
+        "started_on": "2026-11-03T21:03:20.387974Z",
+        "ended_on": "2026-11-03T21:03:27.3636Z",
+        "status": "success"
+      },
+      "stages": [
+        {
+          "name": "queued",
+          "started_on": "2026-11-03T21:03:12.233466Z",
+          "ended_on": "2026-11-03T21:03:12.24052Z",
+          "status": "success"
+        },
+        {
+          "name": "initialize",
+          "started_on": "2026-11-03T21:03:12.24052Z",
+          "ended_on": "2026-11-03T21:03:14.566986Z",
+          "status": "success"
+        },
+        {
+          "name": "clone_repo",
+          "started_on": "2026-11-03T21:03:14.566986Z",
+          "ended_on": "2026-11-03T21:03:17.629157Z",
+          "status": "success"
+        },
+        {
+          "name": "build",
+          "started_on": "2026-11-03T21:03:17.629157Z",
+          "ended_on": "2026-11-03T21:03:20.387974Z",
+          "status": "success"
+        },
+        {
+          "name": "deploy",
+          "started_on": "2026-11-03T21:03:20.387974Z",
+          "ended_on": "2026-11-03T21:03:27.3636Z",
+          "status": "success"
+        }
+      ]
+    },
+    {
+      "id": "af1ebdfa-898a-4022-8019-3750914d06f4",
+      "environment": "preview",
+      "created_on": "2026-10-26T21:33:24.594667Z",
+      "trigger": {
+        "type": "github:push",
+        "metadata": {
+          "branch": "work/home-improvement-brand-preview-20261026",
+          "commit_hash": "3ce4965d2e1dfb6b1d9a635dbc11448ca0b5712a",
+          "commit_message": "Preview Home Improvement brand and hero on existing Home",
+          "commit_dirty": false
+        }
+      },
+      "latest_stage": {
+        "name": "deploy",
+        "started_on": "2026-10-26T21:33:56.413006Z",
+        "ended_on": "2026-10-26T21:34:02.755168Z",
+        "status": "success"
+      },
+      "stages": [
+        {
+          "name": "queued",
+          "started_on": "2026-10-26T21:33:24.938234Z",
+          "ended_on": "2026-10-26T21:33:47.948518Z",
+          "status": "success"
+        },
+        {
+          "name": "initialize",
+          "started_on": "2026-10-26T21:33:47.948518Z",
+          "ended_on": "2026-10-26T21:33:50.320514Z",
+          "status": "success"
+        },
+        {
+          "name": "clone_repo",
+          "started_on": "2026-10-26T21:33:50.320514Z",
+          "ended_on": "2026-10-26T21:33:53.213445Z",
+          "status": "success"
+        },
+        {
+          "name": "build",
+          "started_on": "2026-10-26T21:33:53.213445Z",
+          "ended_on": "2026-10-26T21:33:56.413006Z",
+          "status": "success"
+        },
+        {
+          "name": "deploy",
+          "started_on": "2026-10-26T21:33:56.413006Z",
+          "ended_on": "2026-10-26T21:34:02.755168Z",
+          "status": "success"
+        }
+      ]
+    },
+    {
+      "id": "3be4ba01-4b44-4e33-9d2a-9a002ca7f0ac",
+      "environment": "preview",
+      "created_on": "2026-10-26T21:33:14.08528Z",
+      "trigger": {
+        "type": "github:push",
+        "metadata": {
+          "branch": "work/home-improvement-brand-preview-20261026",
+          "commit_hash": "153cc0950d7c0e5942c51b79fc2617c9e2ccdfe3",
+          "commit_message": "Add Home Improvement preview asset: css/home-improvement-preview.css",
+          "commit_dirty": false
+        }
+      },
+      "latest_stage": {
+        "name": "deploy",
+        "started_on": "2026-10-26T21:33:42.913293Z",
+        "ended_on": "2026-10-26T21:33:49.468538Z",
+        "status": "success"
+      },
+      "stages": [
+        {
+          "name": "queued",
+          "started_on": "2026-10-26T21:33:14.22283Z",
+          "ended_on": "2026-10-26T21:33:36.458816Z",
+          "status": "success"
+        },
+        {
+          "name": "initialize",
+          "started_on": "2026-10-26T21:33:36.458816Z",
+          "ended_on": "2026-10-26T21:33:38.487724Z",
+          "status": "success"
+        },
+        {
+          "name": "clone_repo",
+          "started_on": "2026-10-26T21:33:38.487724Z",
+          "ended_on": "2026-10-26T21:33:40.411243Z",
+          "status": "success"
+        },
+        {
+          "name": "build",
+          "started_on": "2026-10-26T21:33:40.411243Z",
+          "ended_on": "2026-10-26T21:33:42.913293Z",
+          "status": "success"
+        },
+        {
+          "name": "deploy",
+          "started_on": "2026-10-26T21:33:42.913293Z",
+          "ended_on": "2026-10-26T21:33:49.468538Z",
+          "status": "success"
+        }
+      ]
+    },
+    {
+      "id": "f296b053-87f2-4a66-98e6-54015680bef3",
+      "environment": "preview",
+      "created_on": "2026-10-26T21:33:11.028398Z",
+      "trigger": {
+        "type": "github:push",
+        "metadata": {
+          "branch": "work/home-improvement-brand-preview-20261026",
+          "commit_hash": "d9e8197ae0a313d3257a92abb6cc3c517ff91f9d",
+          "commit_message": "Add Home Improvement preview asset: assets/home-improvement-logo-dark.svg",
+          "commit_dirty": false
+        }
+      },
+      "latest_stage": {
+        "name": "deploy",
+        "started_on": "2026-10-26T21:33:29.133051Z",
+        "ended_on": "2026-10-26T21:33:38.129299Z",
+        "status": "success"
+      },
+      "stages": [
+        {
+          "name": "queued",
+          "started_on": "2026-10-26T21:33:11.677135Z",
+          "ended_on": "2026-10-26T21:33:20.849815Z",
+          "status": "success"
+        },
+        {
+          "name": "initialize",
+          "started_on": "2026-10-26T21:33:20.849815Z",
+          "ended_on": "2026-10-26T21:33:23.38284Z",
+          "status": "success"
+        },
+        {
+          "name": "clone_repo",
+          "started_on": "2026-10-26T21:33:23.38284Z",
+          "ended_on": "2026-10-26T21:33:25.842093Z",
+          "status": "success"
+        },
+        {
+          "name": "build",
+          "started_on": "2026-10-26T21:33:25.842093Z",
+          "ended_on": "2026-10-26T21:33:29.133051Z",
+          "status": "success"
+        },
+        {
+          "name": "deploy",
+          "started_on": "2026-10-26T21:33:29.133051Z",
+          "ended_on": "2026-10-26T21:33:38.129299Z",
+          "status": "success"
+        }
+      ]
+    },
+    {
+      "id": "eace57e4-503f-41a9-b593-8a92e7247e8c",
+      "environment": "preview",
+      "created_on": "2026-10-26T21:33:07.468631Z",
+      "trigger": {
+        "type": "github:push",
+        "metadata": {
+          "branch": "work/home-improvement-brand-preview-20261026",
+          "commit_hash": "6f4c86e9eeb874090896c88894158df89aa9f7c5",
+          "commit_message": "Add Home Improvement preview asset: assets/home-improvement-logo-light.svg",
+          "commit_dirty": false
+        }
+      },
+      "latest_stage": {
+        "name": "deploy",
+        "started_on": "2026-10-26T21:33:15.239036Z",
+        "ended_on": "2026-10-26T21:33:23.012931Z",
+        "status": "success"
+      },
+      "stages": [
+        {
+          "name": "queued",
+          "started_on": "2026-10-26T21:33:07.749213Z",
+          "ended_on": "2026-10-26T21:33:07.753868Z",
+          "status": "success"
+        },
+        {
+          "name": "initialize",
+          "started_on": "2026-10-26T21:33:07.753868Z",
+          "ended_on": "2026-10-26T21:33:10.247719Z",
+          "status": "success"
+        },
+        {
+          "name": "clone_repo",
+          "started_on": "2026-10-26T21:33:10.247719Z",
+          "ended_on": "2026-10-26T21:33:12.162566Z",
+          "status": "success"
+        },
+        {
+          "name": "build",
+          "started_on": "2026-10-26T21:33:12.162566Z",
+          "ended_on": "2026-10-26T21:33:15.239036Z",
+          "status": "success"
+        },
+        {
+          "name": "deploy",
+          "started_on": "2026-10-26T21:33:15.239036Z",
+          "ended_on": "2026-10-26T21:33:23.012931Z",
+          "status": "success"
+        }
+      ]
+    },
+    {
+      "id": "8b8ab772-8cc9-4363-9d1f-e7ca4d2ec178",
+      "environment": "preview",
+      "created_on": "2026-10-26T21:32:40.023481Z",
+      "trigger": {
+        "type": "github:push",
+        "metadata": {
+          "branch": "work/home-improvement-brand-preview-20261026",
+          "commit_hash": "3ba04d587568812621ead97287d0d1d98f5693f1",
+          "commit_message": "Refresh repaired driveway cover cache [frontend-only]",
+          "commit_dirty": false
+        }
+      },
+      "latest_stage": {
+        "name": "deploy",
+        "started_on": "2026-10-26T21:32:48.277025Z",
+        "ended_on": "2026-10-26T21:32:55.388978Z",
+        "status": "success"
+      },
+      "stages": [
+        {
+          "name": "queued",
+          "started_on": "2026-10-26T21:32:41.813854Z",
+          "ended_on": "2026-10-26T21:32:41.819268Z",
+          "status": "success"
+        },
+        {
+          "name": "initialize",
+          "started_on": "2026-10-26T21:32:41.819268Z",
+          "ended_on": "2026-10-26T21:32:44.050674Z",
+          "status": "success"
+        },
+        {
+          "name": "clone_repo",
+          "started_on": "2026-10-26T21:32:44.050674Z",
+          "ended_on": "2026-10-26T21:32:45.768284Z",
+          "status": "success"
+        },
+        {
+          "name": "build",
+          "started_on": "2026-10-26T21:32:45.768284Z",
+          "ended_on": "2026-10-26T21:32:48.277025Z",
+          "status": "success"
+        },
+        {
+          "name": "deploy",
+          "started_on": "2026-10-26T21:32:48.277025Z",
+          "ended_on": "2026-10-26T21:32:55.388978Z",
+          "status": "success"
+        }
+      ]
+    },
+    {
+      "id": "08983672-ebdc-47a3-b4b7-f246cb9d22be",
+      "environment": "production",
+      "created_on": "2026-10-23T13:39:16.977448Z",
+      "trigger": {
+        "type": "ad_hoc",
+        "metadata": {
+          "branch": "main",
+          "commit_hash": "7225ec0545cc4602ffec5ca3de30e8ae12ddca82",
+          "commit_message": "Set fixed Alexandro Braga author profile across editorial publishing",
+          "commit_dirty": true
+        }
+      },
+      "latest_stage": {
+        "name": "deploy",
+        "started_on": null,
+        "ended_on": "2026-10-23T13:39:18.893283Z",
+        "status": "success"
+      },
+      "stages": [
+        {
+          "name": "queued",
+          "started_on": "2026-10-23T13:39:16.977448Z",
+          "ended_on": null,
+          "status": "active"
+        },
+        {
+          "name": "initialize",
+          "started_on": null,
+          "ended_on": null,
+          "status": "idle"
+        },
+        {
+          "name": "clone_repo",
+          "started_on": null,
+          "ended_on": null,
+          "status": "idle"
+        },
+        {
+          "name": "build",
+          "started_on": null,
+          "ended_on": null,
+          "status": "idle"
+        },
+        {
+          "name": "deploy",
+          "started_on": null,
+          "ended_on": "2026-10-23T13:39:18.893283Z",
+          "status": "success"
+        }
+      ]
+    },
+    {
+      "id": "bb9ede18-a21e-4653-8ec9-e79fe514cd65",
+      "environment": "preview",
+      "created_on": "2026-10-23T13:38:30.768554Z",
+      "trigger": {
+        "type": "github:push",
+        "metadata": {
+          "branch": "work/metricpedia-cms-blog-v1",
+          "commit_hash": "7225ec0545cc4602ffec5ca3de30e8ae12ddca82",
+          "commit_message": "Set fixed Alexandro Braga author profile across editorial publishing",
+          "commit_dirty": false
+        }
+      },
+      "latest_stage": {
+        "name": "deploy",
+        "started_on": "2026-10-23T13:38:36.619048Z",
+        "ended_on": "2026-10-23T13:38:42.086891Z",
+        "status": "success"
+      },
+      "stages": [
+        {
+          "name": "queued",
+          "started_on": "2026-10-23T13:38:30.949817Z",
+          "ended_on": "2026-10-23T13:38:30.95179Z",
+          "status": "success"
+        },
+        {
+          "name": "initialize",
+          "started_on": "2026-10-23T13:38:30.95179Z",
+          "ended_on": "2026-10-23T13:38:33.346903Z",
+          "status": "success"
+        },
+        {
+          "name": "clone_repo",
+          "started_on": "2026-10-23T13:38:33.346903Z",
+          "ended_on": "2026-10-23T13:38:34.39337Z",
+          "status": "success"
+        },
+        {
+          "name": "build",
+          "started_on": "2026-10-23T13:38:34.39337Z",
+          "ended_on": "2026-10-23T13:38:36.619048Z",
+          "status": "success"
+        },
+        {
+          "name": "deploy",
+          "started_on": "2026-10-23T13:38:36.619048Z",
+          "ended_on": "2026-10-23T13:38:42.086891Z",
+          "status": "success"
+        }
+      ]
+    },
+    {
+      "id": "7f823d99-9513-45cf-a295-658b124c4c77",
+      "environment": "production",
+      "created_on": "2026-10-23T13:08:51.820605Z",
+      "trigger": {
+        "type": "ad_hoc",
+        "metadata": {
+          "branch": "main",
+          "commit_hash": "3ba04d587568812621ead97287d0d1d98f5693f1",
+          "commit_message": "Refresh repaired driveway cover cache [frontend-only]",
+          "commit_dirty": true
+        }
+      },
+      "latest_stage": {
+        "name": "deploy",
+        "started_on": null,
+        "ended_on": "2026-10-23T13:08:54.582744Z",
+        "status": "success"
+      },
+      "stages": [
+        {
+          "name": "queued",
+          "started_on": "2026-10-23T13:08:51.820605Z",
+          "ended_on": null,
+          "status": "active"
+        },
+        {
+          "name": "initialize",
+          "started_on": null,
+          "ended_on": null,
+          "status": "idle"
+        },
+        {
+          "name": "clone_repo",
+          "started_on": null,
+          "ended_on": null,
+          "status": "idle"
+        },
+        {
+          "name": "build",
+          "started_on": null,
+          "ended_on": null,
+          "status": "idle"
+        },
+        {
+          "name": "deploy",
+          "started_on": null,
+          "ended_on": "2026-10-23T13:08:54.582744Z",
+          "status": "success"
+        }
+      ]
+    },
+    {
+      "id": "aadb79c7-e1a5-4f17-ae4b-b0e302017a20",
+      "environment": "production",
+      "created_on": "2026-10-23T13:08:22.936361Z",
+      "trigger": {
+        "type": "github:push",
+        "metadata": {
+          "branch": "main",
+          "commit_hash": "3ba04d587568812621ead97287d0d1d98f5693f1",
+          "commit_message": "Refresh repaired driveway cover cache [frontend-only]",
+          "commit_dirty": false
+        }
+      },
+      "latest_stage": {
+        "name": "queued",
+        "started_on": null,
+        "ended_on": null,
+        "status": "idle"
+      },
+      "stages": [
+        {
+          "name": "queued",
+          "started_on": null,
+          "ended_on": null,
+          "status": "idle"
+        },
+        {
+          "name": "initialize",
+          "started_on": null,
+          "ended_on": null,
+          "status": "idle"
+        },
+        {
+          "name": "clone_repo",
+          "started_on": null,
+          "ended_on": null,
+          "status": "idle"
+        },
+        {
+          "name": "build",
+          "started_on": null,
+          "ended_on": null,
+          "status": "idle"
+        },
+        {
+          "name": "deploy",
+          "started_on": null,
+          "ended_on": null,
+          "status": "idle"
+        }
+      ]
+    },
+    {
+      "id": "7296f7b8-5166-4305-9486-8a9e5515c01f",
+      "environment": "production",
+      "created_on": "2026-10-23T13:07:36.576198Z",
+      "trigger": {
+        "type": "ad_hoc",
+        "metadata": {
+          "branch": "main",
+          "commit_hash": "c30879897014782a845e664d69253f35bbd07c8b",
+          "commit_message": "Repair Driveways and Garages WebP cover [frontend-only]",
+          "commit_dirty": true
+        }
+      },
+      "latest_stage": {
+        "name": "deploy",
+        "started_on": null,
+        "ended_on": "2026-10-23T13:07:40.514262Z",
+        "status": "success"
+      },
+      "stages": [
+        {
+          "name": "queued",
+          "started_on": "2026-10-23T13:07:36.576198Z",
+          "ended_on": null,
+          "status": "active"
+        },
+        {
+          "name": "initialize",
+          "started_on": null,
+          "ended_on": null,
+          "status": "idle"
+        },
+        {
+          "name": "clone_repo",
+          "started_on": null,
+          "ended_on": null,
+          "status": "idle"
+        },
+        {
+          "name": "build",
+          "started_on": null,
+          "ended_on": null,
+          "status": "idle"
+        },
+        {
+          "name": "deploy",
+          "started_on": null,
+          "ended_on": "2026-10-23T13:07:40.514262Z",
+          "status": "success"
+        }
+      ]
+    },
+    {
+      "id": "74694bee-bd3f-41e5-bc6d-9be4f88b3ff3",
+      "environment": "production",
+      "created_on": "2026-10-23T13:07:04.727542Z",
+      "trigger": {
+        "type": "github:push",
+        "metadata": {
+          "branch": "main",
+          "commit_hash": "c30879897014782a845e664d69253f35bbd07c8b",
+          "commit_message": "Repair Driveways and Garages WebP cover [frontend-only]",
+          "commit_dirty": false
+        }
+      },
+      "latest_stage": {
+        "name": "queued",
+        "started_on": null,
+        "ended_on": null,
+        "status": "idle"
+      },
+      "stages": [
+        {
+          "name": "queued",
+          "started_on": null,
+          "ended_on": null,
+          "status": "idle"
+        },
+        {
+          "name": "initialize",
+          "started_on": null,
+          "ended_on": null,
+          "status": "idle"
+        },
+        {
+          "name": "clone_repo",
+          "started_on": null,
+          "ended_on": null,
+          "status": "idle"
+        },
+        {
+          "name": "build",
+          "started_on": null,
+          "ended_on": null,
+          "status": "idle"
+        },
+        {
+          "name": "deploy",
+          "started_on": null,
+          "ended_on": null,
+          "status": "idle"
+        }
+      ]
+    },
+    {
+      "id": "b6cad483-f48f-4b53-9a34-92e910e1f9e3",
+      "environment": "production",
+      "created_on": "2026-10-23T13:05:21.577157Z",
+      "trigger": {
+        "type": "ad_hoc",
+        "metadata": {
+          "branch": "main",
+          "commit_hash": "00f239451897da777086ee7c8c4d5bc8a8b5139e",
+          "commit_message": "Publish 17 supplied category covers as optimized WebP on homepage [frontend-only]",
+          "commit_dirty": true
+        }
+      },
+      "latest_stage": {
+        "name": "deploy",
+        "started_on": null,
+        "ended_on": "2026-10-23T13:05:23.879401Z",
+        "status": "success"
+      },
+      "stages": [
+        {
+          "name": "queued",
+          "started_on": "2026-10-23T13:05:21.577157Z",
+          "ended_on": null,
+          "status": "active"
+        },
+        {
+          "name": "initialize",
+          "started_on": null,
+          "ended_on": null,
+          "status": "idle"
+        },
+        {
+          "name": "clone_repo",
+          "started_on": null,
+          "ended_on": null,
+          "status": "idle"
+        },
+        {
+          "name": "build",
+          "started_on": null,
+          "ended_on": null,
+          "status": "idle"
+        },
+        {
+          "name": "deploy",
+          "started_on": null,
+          "ended_on": "2026-10-23T13:05:23.879401Z",
+          "status": "success"
+        }
+      ]
+    },
+    {
+      "id": "9191e8d2-900c-45c3-b1ff-d305aaca883f",
+      "environment": "production",
+      "created_on": "2026-10-23T13:04:46.051674Z",
+      "trigger": {
+        "type": "github:push",
+        "metadata": {
+          "branch": "main",
+          "commit_hash": "00f239451897da777086ee7c8c4d5bc8a8b5139e",
+          "commit_message": "Publish 17 supplied category covers as optimized WebP on homepage [frontend-only]",
+          "commit_dirty": false
+        }
+      },
+      "latest_stage": {
+        "name": "queued",
+        "started_on": null,
+        "ended_on": null,
+        "status": "idle"
+      },
+      "stages": [
+        {
+          "name": "queued",
+          "started_on": null,
+          "ended_on": null,
+          "status": "idle"
+        },
+        {
+          "name": "initialize",
+          "started_on": null,
+          "ended_on": null,
+          "status": "idle"
+        },
+        {
+          "name": "clone_repo",
+          "started_on": null,
+          "ended_on": null,
+          "status": "idle"
+        },
+        {
+          "name": "build",
+          "started_on": null,
+          "ended_on": null,
+          "status": "idle"
+        },
+        {
+          "name": "deploy",
+          "started_on": null,
+          "ended_on": null,
+          "status": "idle"
+        }
+      ]
+    },
+    {
+      "id": "bec21b9e-c573-4789-b042-c9cbcab7fd3d",
+      "environment": "production",
+      "created_on": "2026-10-23T12:47:20.480138Z",
+      "trigger": {
+        "type": "ad_hoc",
+        "metadata": {
+          "branch": "main",
+          "commit_hash": "24915e218d0a851d130d00d18b111e0d72291c45",
+          "commit_message": "Replace production homepage with approved teste2 design [frontend-only]",
+          "commit_dirty": true
+        }
+      },
+      "latest_stage": {
+        "name": "deploy",
+        "started_on": null,
+        "ended_on": "2026-10-23T12:47:22.484625Z",
+        "status": "success"
+      },
+      "stages": [
+        {
+          "name": "queued",
+          "started_on": "2026-10-23T12:47:20.480138Z",
+          "ended_on": null,
+          "status": "active"
+        },
+        {
+          "name": "initialize",
+          "started_on": null,
+          "ended_on": null,
+          "status": "idle"
+        },
+        {
+          "name": "clone_repo",
+          "started_on": null,
+          "ended_on": null,
+          "status": "idle"
+        },
+        {
+          "name": "build",
+          "started_on": null,
+          "ended_on": null,
+          "status": "idle"
+        },
+        {
+          "name": "deploy",
+          "started_on": null,
+          "ended_on": "2026-10-23T12:47:22.484625Z",
+          "status": "success"
+        }
+      ]
+    }
+  ]
+}
