@@ -1,0 +1,14 @@
+{
+  "name":"homeimprovement-editorial",
+  "main":"worker/homeimprovement-validation.ts",
+  "compatibility_date":"2026-10-01",
+  "account_id":"b81896777d206a2239625d9cf2e8a40b",
+  "workers_dev":true,
+  "preview_urls":false,
+  "assets":{"directory":"./dist","binding":"ASSETS","run_worker_first":true},
+  "d1_databases":[{"binding":"DB","database_name":"homeimprovement-editorial-db","database_id":"REPLACE_WITH_NEW_DATABASE_UUID_ONLY"}],
+  "r2_buckets":[{"binding":"MEDIA","bucket_name":"homeimprovement-editorial-media"}],
+  "vars":{"ENVIRONMENT":"staging","PUBLIC_ORIGIN":"https://homeimprovement.tools"},
+  "triggers":{"crons":[]},
+  "observability":{"enabled":false}
+}

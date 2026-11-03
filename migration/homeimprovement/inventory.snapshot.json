@@ -1,0 +1,720 @@
+{
+  "at": "2026-11-03T21:03:22.875Z",
+  "secretConfigured": true,
+  "checks": {
+    "token": {
+      "ok": true,
+      "http": 200,
+      "codes": []
+    },
+    "pages": {
+      "ok": true,
+      "http": 200,
+      "codes": []
+    },
+    "workers": {
+      "ok": true,
+      "http": 200,
+      "codes": []
+    },
+    "workerSettings": {
+      "ok": true,
+      "http": 200,
+      "codes": []
+    },
+    "crons": {
+      "ok": true,
+      "http": 200,
+      "codes": []
+    },
+    "workerDeployments": {
+      "ok": true,
+      "http": 200,
+      "codes": []
+    },
+    "d1": {
+      "ok": true,
+      "http": 200,
+      "codes": []
+    },
+    "databaseInfo": {
+      "ok": true,
+      "http": 200,
+      "codes": []
+    },
+    "tables": {
+      "ok": true,
+      "http": 200,
+      "codes": []
+    },
+    "articles": {
+      "ok": true,
+      "http": 200,
+      "codes": []
+    },
+    "reviews": {
+      "ok": true,
+      "http": 200,
+      "codes": []
+    },
+    "schedules": {
+      "ok": true,
+      "http": 200,
+      "codes": []
+    },
+    "media": {
+      "ok": true,
+      "http": 200,
+      "codes": []
+    },
+    "versions": {
+      "ok": true,
+      "http": 200,
+      "codes": []
+    },
+    "routes": {
+      "ok": true,
+      "http": 200,
+      "codes": []
+    },
+    "history": {
+      "ok": true,
+      "http": 200,
+      "codes": []
+    },
+    "integrity": {
+      "ok": true,
+      "http": 200,
+      "codes": []
+    },
+    "mediaKeys": {
+      "ok": true,
+      "http": 200,
+      "codes": []
+    },
+    "r2": {
+      "ok": true,
+      "http": 200,
+      "codes": []
+    },
+    "bucketInfo": {
+      "ok": true,
+      "http": 200,
+      "codes": []
+    },
+    "destinationZone": {
+      "ok": true,
+      "http": 200,
+      "codes": []
+    },
+    "dns": {
+      "ok": false,
+      "http": 403,
+      "codes": [
+        10000
+      ]
+    },
+    "ssl": {
+      "ok": false,
+      "http": 403,
+      "codes": [
+        9109
+      ]
+    },
+    "sslSetting": {
+      "ok": false,
+      "http": 403,
+      "codes": [
+        9109
+      ]
+    }
+  },
+  "token": {
+    "status": "active"
+  },
+  "pages": {
+    "name": "wedocalc",
+    "domains": [
+      "wedocalc.pages.dev",
+      "metricpedia.com",
+      "wedocalc.com",
+      "www.wedocalc.com"
+    ],
+    "production_branch": "main",
+    "gitAutomaticProduction": false,
+    "latest": {
+      "id": "f729b21a-0673-4b21-94b6-830c3ac0c874",
+      "url": "https://f729b21a.wedocalc.pages.dev",
+      "created_on": "2026-11-03T21:03:11.95225Z",
+      "environment": "preview",
+      "stage": {
+        "name": "deploy",
+        "started_on": "2026-11-03T21:03:20.387974Z",
+        "ended_on": null,
+        "status": "active"
+      },
+      "trigger": {
+        "type": "github:push",
+        "metadata": {
+          "branch": "work/homeimprovement-copy-prep-20261103",
+          "commit_hash": "14573adbaae6d68126977c6271c551b337cedc2a",
+          "commit_message": "Add isolated read-only HomeImprovement migration inventory",
+          "commit_dirty": false
+        }
+      }
+    },
+    "canonical": {
+      "id": "08983672-ebdc-47a3-b4b7-f246cb9d22be",
+      "url": "https://08983672.wedocalc.pages.dev",
+      "created_on": "2026-10-23T13:39:16.977448Z",
+      "environment": "production",
+      "stage": {
+        "name": "deploy",
+        "started_on": null,
+        "ended_on": "2026-10-23T13:39:18.893283Z",
+        "status": "success"
+      },
+      "trigger": {
+        "type": "ad_hoc",
+        "metadata": {
+          "branch": "main",
+          "commit_hash": "7225ec0545cc4602ffec5ca3de30e8ae12ddca82",
+          "commit_message": "Set fixed Alexandro Braga author profile across editorial publishing",
+          "commit_dirty": true
+        }
+      }
+    },
+    "bindings": {
+      "production": {
+        "d1": {
+          "DB": {
+            "id": "1c9862e9-9824-4dbb-9d42-0c2a52ed1ae5"
+          }
+        },
+        "r2": {
+          "MEDIA": {
+            "name": "metricpedia-editorial-lab-media"
+          }
+        }
+      },
+      "preview": {}
+    }
+  },
+  "workers": [
+    {
+      "id": "metricpedia-cms-staging",
+      "modified_on": "2026-10-22T17:54:35.969917Z"
+    },
+    {
+      "id": "metricpedia-editorial-lab",
+      "modified_on": "2026-10-23T13:39:11.297681Z"
+    }
+  ],
+  "worker": {
+    "bindings": [
+      {
+        "name": "DB",
+        "type": "d1",
+        "id": "1c9862e9-9824-4dbb-9d42-0c2a52ed1ae5"
+      },
+      {
+        "name": "MEDIA",
+        "type": "r2_bucket",
+        "bucket_name": "metricpedia-editorial-lab-media"
+      }
+    ],
+    "vars": [
+      {
+        "name": "ENVIRONMENT",
+        "text": "production"
+      },
+      {
+        "name": "PUBLIC_ORIGIN",
+        "text": "https://metricpedia.com"
+      }
+    ]
+  },
+  "crons": {
+    "schedules": [
+      {
+        "cron": "* * * * *",
+        "created_on": "2026-10-22T16:28:49.987118Z",
+        "modified_on": "2026-10-22T16:28:49.987118Z"
+      }
+    ]
+  },
+  "workerDeployments": {
+    "deployments": [
+      {
+        "id": "cd6e1ab4-3246-40f4-980c-c96d63265fe4",
+        "source": "wrangler",
+        "strategy": "percentage",
+        "annotations": {
+          "workers/triggered_by": "deployment"
+        },
+        "versions": [
+          {
+            "version_id": "dda5078a-3413-4f91-9f02-e39ad362df43",
+            "percentage": 100
+          }
+        ],
+        "created_on": "2026-10-23T13:39:09.630812Z"
+      },
+      {
+        "id": "20b32cfc-a20a-4fd5-8f52-c418ac9f38a3",
+        "source": "wrangler",
+        "strategy": "percentage",
+        "annotations": {
+          "workers/triggered_by": "deployment"
+        },
+        "versions": [
+          {
+            "version_id": "c321b131-5920-4ee3-a651-e4a88385aacc",
+            "percentage": 100
+          }
+        ],
+        "created_on": "2026-10-22T20:19:33.055433Z"
+      },
+      {
+        "id": "a3459b95-d135-462b-8fa9-34992739be67",
+        "source": "wrangler",
+        "strategy": "percentage",
+        "annotations": {
+          "workers/triggered_by": "deployment"
+        },
+        "versions": [
+          {
+            "version_id": "387c545d-d4e5-40fc-88d8-e49fc4da637f",
+            "percentage": 100
+          }
+        ],
+        "created_on": "2026-10-22T20:17:49.67494Z"
+      },
+      {
+        "id": "46bb07da-73ff-490a-b1db-d73df2f035e2",
+        "source": "wrangler",
+        "strategy": "percentage",
+        "annotations": {
+          "workers/triggered_by": "deployment"
+        },
+        "versions": [
+          {
+            "version_id": "d85ca95d-9d5c-4787-b5f5-e7635c609662",
+            "percentage": 100
+          }
+        ],
+        "created_on": "2026-10-22T19:58:47.731896Z"
+      },
+      {
+        "id": "3b3b3726-4702-4e75-a0be-e4fd42b329d8",
+        "source": "wrangler",
+        "strategy": "percentage",
+        "annotations": {
+          "workers/triggered_by": "deployment"
+        },
+        "versions": [
+          {
+            "version_id": "9fce5ebb-45f5-4f24-ab31-21b883efd302",
+            "percentage": 100
+          }
+        ],
+        "created_on": "2026-10-22T19:47:12.789286Z"
+      },
+      {
+        "id": "8fc55796-6dfb-4d6a-aaf1-e22875a4f747",
+        "source": "wrangler",
+        "strategy": "percentage",
+        "annotations": {
+          "workers/triggered_by": "deployment"
+        },
+        "versions": [
+          {
+            "version_id": "91bfe8ae-b50d-45cc-87d3-ff7b04839aed",
+            "percentage": 100
+          }
+        ],
+        "created_on": "2026-10-22T19:41:08.998083Z"
+      },
+      {
+        "id": "05c50d87-8b13-4f83-b6bf-05da39ecc976",
+        "source": "wrangler",
+        "strategy": "percentage",
+        "annotations": {
+          "workers/triggered_by": "deployment"
+        },
+        "versions": [
+          {
+            "version_id": "e19d5bfa-7200-4f11-8727-c784bf613080",
+            "percentage": 100
+          }
+        ],
+        "created_on": "2026-10-22T19:29:16.044454Z"
+      },
+      {
+        "id": "2ded81b2-b503-44d7-ab00-51e4ef0015d0",
+        "source": "wrangler",
+        "strategy": "percentage",
+        "annotations": {
+          "workers/triggered_by": "deployment"
+        },
+        "versions": [
+          {
+            "version_id": "4eff405a-432d-400d-8ccd-8a3dff3090f0",
+            "percentage": 100
+          }
+        ],
+        "created_on": "2026-10-22T19:27:29.029075Z"
+      },
+      {
+        "id": "df17e84e-61c3-4ad5-8904-00e38df4b260",
+        "source": "wrangler",
+        "strategy": "percentage",
+        "annotations": {
+          "workers/triggered_by": "secret"
+        },
+        "versions": [
+          {
+            "version_id": "4960eeaf-9162-4b5b-b994-e42245218be2",
+            "percentage": 100
+          }
+        ],
+        "created_on": "2026-10-22T19:04:06.002059Z"
+      },
+      {
+        "id": "8fa16bf3-6652-43d7-95eb-4d23bb21e4b5",
+        "source": "wrangler",
+        "strategy": "percentage",
+        "annotations": {
+          "workers/triggered_by": "deployment"
+        },
+        "versions": [
+          {
+            "version_id": "0e7dd9db-6093-490c-95c8-3393fb57bf6d",
+            "percentage": 100
+          }
+        ],
+        "created_on": "2026-10-22T19:04:01.899379Z"
+      }
+    ]
+  },
+  "databases": [
+    {
+      "name": "metricpedia-editorial-lab-db",
+      "uuid": "1c9862e9-9824-4dbb-9d42-0c2a52ed1ae5",
+      "created_at": "2026-10-22T16:15:01.832Z"
+    },
+    {
+      "name": "metricpedia-cms-staging-db",
+      "uuid": "6a4468d1-8cd7-4d00-a89f-1f95e82113dd",
+      "created_at": "2026-10-22T15:27:04.439Z"
+    }
+  ],
+  "databaseInfo": {
+    "uuid": "1c9862e9-9824-4dbb-9d42-0c2a52ed1ae5",
+    "name": "metricpedia-editorial-lab-db",
+    "created_at": "2026-10-22T16:15:01.832Z",
+    "version": "production",
+    "num_tables": 26,
+    "file_size": 757760,
+    "running_in_region": "ENAM",
+    "read_replication": {
+      "mode": "disabled"
+    },
+    "jurisdiction": null
+  },
+  "data": {
+    "tables": [
+      [
+        {
+          "name": "_cf_KV"
+        },
+        {
+          "name": "agents"
+        },
+        {
+          "name": "article_versions"
+        },
+        {
+          "name": "articles"
+        },
+        {
+          "name": "briefs"
+        },
+        {
+          "name": "calculator_audits"
+        },
+        {
+          "name": "d1_migrations"
+        },
+        {
+          "name": "editorial_campaign_items"
+        },
+        {
+          "name": "editorial_campaigns"
+        },
+        {
+          "name": "editorial_events"
+        },
+        {
+          "name": "editorial_reviews"
+        },
+        {
+          "name": "external_approvals"
+        },
+        {
+          "name": "lab_trusted_auditors"
+        },
+        {
+          "name": "login_limits"
+        },
+        {
+          "name": "media"
+        },
+        {
+          "name": "owner"
+        },
+        {
+          "name": "pitches"
+        },
+        {
+          "name": "routes"
+        },
+        {
+          "name": "schedules"
+        },
+        {
+          "name": "sessions"
+        },
+        {
+          "name": "sqlite_sequence"
+        },
+        {
+          "name": "staging_test_articles"
+        },
+        {
+          "name": "staging_test_images"
+        },
+        {
+          "name": "staging_test_rate"
+        },
+        {
+          "name": "submission_versions"
+        },
+        {
+          "name": "submissions"
+        },
+        {
+          "name": "system_events"
+        },
+        {
+          "name": "terms"
+        }
+      ]
+    ],
+    "articles": [
+      [
+        {
+          "total": 15,
+          "published": 7
+        }
+      ]
+    ],
+    "reviews": [
+      [
+        {
+          "status": "approved",
+          "count": 9
+        },
+        {
+          "status": "draft",
+          "count": 6
+        }
+      ]
+    ],
+    "schedules": [
+      [
+        {
+          "status": "cancelled",
+          "count": 1,
+          "earliest": "2026-10-30T08:00:00.000Z",
+          "latest": "2026-10-30T08:00:00.000Z",
+          "errors": 0
+        },
+        {
+          "status": "published",
+          "count": 7,
+          "earliest": "2026-10-23T08:00:00.000Z",
+          "latest": "2026-10-29T08:00:00.000Z",
+          "errors": 0
+        }
+      ]
+    ],
+    "media": [
+      [
+        {
+          "files": 15,
+          "bytes": 3676193
+        }
+      ]
+    ],
+    "versions": [
+      [
+        {
+          "count": 42,
+          "latest": "2026-10-29T08:38:47.252Z"
+        }
+      ]
+    ],
+    "routes": [
+      [
+        {
+          "id": "paint-calculator",
+          "kind": "calculator",
+          "name": "Paint Calculator",
+          "path": "/paint-calculator/",
+          "parent_id": "paint-calculators",
+          "state": "live"
+        },
+        {
+          "id": "home-garden",
+          "kind": "category",
+          "name": "Home & Garden",
+          "path": "/home-garden/",
+          "parent_id": null,
+          "state": "live"
+        },
+        {
+          "id": "paint-calculators",
+          "kind": "subcategory",
+          "name": "Paint Calculators",
+          "path": "/paint-calculators/",
+          "parent_id": "home-garden",
+          "state": "live"
+        }
+      ]
+    ],
+    "history": [
+      [
+        {
+          "count": 121,
+          "latest": "2026-10-29T12:24:40.500Z"
+        }
+      ]
+    ],
+    "integrity": [
+      [
+        {
+          "missing_published_versions": 0
+        }
+      ]
+    ],
+    "mediaKeys": [
+      [
+        {
+          "object_key": "editorial/03e2e35c-9ac9-4732-b5d0-ebd4c1aba512",
+          "size": 275010,
+          "mime": "image/jpeg"
+        },
+        {
+          "object_key": "editorial/055e1134-0382-4e8c-b417-623c419a9fb0",
+          "size": 232003,
+          "mime": "image/jpeg"
+        },
+        {
+          "object_key": "editorial/0695c1cf-304f-4958-970b-676ef8d81a16",
+          "size": 47539,
+          "mime": "image/jpeg"
+        },
+        {
+          "object_key": "editorial/0cfffcbd-ed51-49bc-b2ad-b63359a0a080",
+          "size": 234484,
+          "mime": "image/jpeg"
+        },
+        {
+          "object_key": "editorial/16fa9927-b9c0-4976-a4f2-b549e928262a",
+          "size": 277662,
+          "mime": "image/jpeg"
+        },
+        {
+          "object_key": "editorial/31cf7ec2-cf4e-468f-97c1-4f5d36dcd28d",
+          "size": 239836,
+          "mime": "image/jpeg"
+        },
+        {
+          "object_key": "editorial/3233e912-ac00-472c-b1dc-181692a9204b",
+          "size": 194890,
+          "mime": "image/jpeg"
+        },
+        {
+          "object_key": "editorial/59384c1d-bec0-4ccd-ae67-734ce8747aec",
+          "size": 340617,
+          "mime": "image/jpeg"
+        },
+        {
+          "object_key": "editorial/660a59f7-ba57-4956-8b04-95ed261d16a6",
+          "size": 223657,
+          "mime": "image/jpeg"
+        },
+        {
+          "object_key": "editorial/8c063c74-7bf1-4f39-97fd-21ff7afcef15",
+          "size": 230527,
+          "mime": "image/jpeg"
+        },
+        {
+          "object_key": "editorial/9a1fbb53-874b-4646-98d0-5780ed9032de",
+          "size": 164216,
+          "mime": "image/jpeg"
+        },
+        {
+          "object_key": "editorial/b9dd3871-e392-490f-9ea0-90d3eb248f19",
+          "size": 509335,
+          "mime": "image/jpeg"
+        },
+        {
+          "object_key": "editorial/d85fa768-ccbb-445e-9a81-02bfa951e4c2",
+          "size": 206623,
+          "mime": "image/jpeg"
+        },
+        {
+          "object_key": "editorial/e2b99138-7b3c-4900-8340-51d93150be25",
+          "size": 220857,
+          "mime": "image/jpeg"
+        },
+        {
+          "object_key": "editorial/f766c471-7474-4a05-a04c-0dda4bb55398",
+          "size": 278937,
+          "mime": "image/jpeg"
+        }
+      ]
+    ]
+  },
+  "buckets": [
+    {
+      "name": "metricpedia-cms-staging-assets",
+      "creation_date": "2026-10-22T15:27:05.802Z"
+    },
+    {
+      "name": "metricpedia-editorial-lab-media",
+      "creation_date": "2026-10-22T16:15:04.332Z"
+    }
+  ],
+  "bucketInfo": {
+    "name": "metricpedia-editorial-lab-media",
+    "creation_date": "2026-10-22T16:15:04.332Z",
+    "location": "ENAM",
+    "storage_class": "Standard",
+    "jurisdiction": "default"
+  },
+  "zone": {
+    "id": "073f0a447d0b8f87ca17fe20ceed2eb0",
+    "name": "homeimprovement.tools",
+    "status": "active",
+    "name_servers": [
+      "asa.ns.cloudflare.com",
+      "josh.ns.cloudflare.com"
+    ],
+    "accountMatches": true
+  },
+  "ssl": null,
+  "sslSetting": null
+}
