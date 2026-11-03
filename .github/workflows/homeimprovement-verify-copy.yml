@@ -1,0 +1,28 @@
+name: HomeImprovement copied environment verification
+on:
+  push:
+    branches: [work/homeimprovement-copy-prep-20261103]
+    paths: [migration/homeimprovement/verify-copy.mjs, .github/workflows/homeimprovement-verify-copy.yml]
+permissions:
+  contents: read
+jobs:
+  verify:
+    if: contains(github.event.head_commit.message, '[verify-copy]')
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Inspect copied runtime, media, bindings and domain
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+        run: node migration/homeimprovement/verify-copy.mjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: homeimprovement-public-verification
+          path: copy-verification.json
