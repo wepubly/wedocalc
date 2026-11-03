@@ -1,0 +1,509 @@
+{
+  "at": "2026-11-03T22:15:54.874Z",
+  "run": "41729206951",
+  "target": {
+    "pages": "homeimprovement-tools",
+    "worker": "homeimprovement-editorial",
+    "database": "homeimprovement-editorial-db",
+    "bucket": "homeimprovement-editorial-media"
+  },
+  "steps": [
+    "Existing resources and private backup verified; resume without new export or D1 import",
+    "D1 copied; all application table counts and fingerprints match",
+    "Validated copy manifest reused; no new export, D1 import or R2 copy",
+    "Independent Worker deployed without cron",
+    "Independent Pages deployed noindex"
+  ],
+  "failures": [],
+  "sourceProduction": "08983672-ebdc-47a3-b4b7-f246cb9d22be",
+  "database_id": "4674c99c-cb26-47af-a557-19f097678ec6",
+  "sql": {
+    "bytes": 472540,
+    "sha256": "cb1545a389e613d528d5a4d029be8175cd38ac770eff7ebdc08d81c8e2773c52",
+    "privateBackupKey": "_migration/source-backup.sql"
+  },
+  "resumedFrom": "41728113194",
+  "privateBucketConfirmed": true,
+  "localRestore": {
+    "articles": 15,
+    "versions": 42
+  },
+  "tableFingerprints": {
+    "source": {
+      "agents": {
+        "count": 1,
+        "sha256": "1ebd39633a2e9ba6ccc30d2e99cd90d0ae6c12235193e709f9ba5c43b3d11661"
+      },
+      "article_versions": {
+        "count": 42,
+        "sha256": "c468184e677d67ef5de8d439d5374da137d180144241671a609cd93fd5618db1"
+      },
+      "articles": {
+        "count": 15,
+        "sha256": "c60848fa982ba2baaf7b8b401d15c6001f98d0aebd0dcc46575997c0b5faae40"
+      },
+      "briefs": {
+        "count": 1,
+        "sha256": "f8f41254fef6c74db677596ef3975e1973de36a2e4ebd41355f6224a7bb00ab4"
+      },
+      "calculator_audits": {
+        "count": 0,
+        "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+      },
+      "d1_migrations": {
+        "count": 6,
+        "sha256": "77fa82c44b5a0b1b1ebde381e5cf82b63ac6f9acc2bea5476a19ce5c838719af"
+      },
+      "editorial_campaign_items": {
+        "count": 0,
+        "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+      },
+      "editorial_campaigns": {
+        "count": 0,
+        "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+      },
+      "editorial_events": {
+        "count": 121,
+        "sha256": "3c351074d5977b0d07b5185fd8e8f44a2399be781c09f1b299b7c45f5db286a0"
+      },
+      "editorial_reviews": {
+        "count": 31,
+        "sha256": "256df7e1f22792aa1a8fa2deca5f0ef808869ba16a0701c4e65430303c1a7c43"
+      },
+      "external_approvals": {
+        "count": 0,
+        "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+      },
+      "lab_trusted_auditors": {
+        "count": 0,
+        "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+      },
+      "login_limits": {
+        "count": 0,
+        "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+      },
+      "media": {
+        "count": 15,
+        "sha256": "7f99c4f5a923d51bc6ec16cc520540f102adc7934a4323f2ea573393cfd1d4b1"
+      },
+      "owner": {
+        "count": 0,
+        "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+      },
+      "pitches": {
+        "count": 0,
+        "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+      },
+      "routes": {
+        "count": 3,
+        "sha256": "34e54aaa7ede8cffa47e5ed535efcbf577ad474970339f9d667e21d4ec3d89b4"
+      },
+      "schedules": {
+        "count": 8,
+        "sha256": "d683d4034140f027f03c3f0e0f2f019becf554ebecac59ecbd49f8f2c175c1c9"
+      },
+      "sessions": {
+        "count": 0,
+        "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+      },
+      "staging_test_articles": {
+        "count": 0,
+        "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+      },
+      "staging_test_images": {
+        "count": 0,
+        "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+      },
+      "staging_test_rate": {
+        "count": 17,
+        "sha256": "74256feac36dee047665382cc5393a567c79b294f94aa4b76ee0c985629db283"
+      },
+      "submission_versions": {
+        "count": 0,
+        "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+      },
+      "submissions": {
+        "count": 0,
+        "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+      },
+      "system_events": {
+        "count": 3,
+        "sha256": "6a3e18a20c58f640cf08e43dd65f549d792b075b16fc2fe735a5b42222a65c51"
+      },
+      "terms": {
+        "count": 52,
+        "sha256": "91027c07982caf0fcfcfa22b25a25e45a1b92c7d4fc4b2f51c56d24f0a9ef94d"
+      }
+    },
+    "destination": {
+      "agents": {
+        "count": 1,
+        "sha256": "1ebd39633a2e9ba6ccc30d2e99cd90d0ae6c12235193e709f9ba5c43b3d11661"
+      },
+      "article_versions": {
+        "count": 42,
+        "sha256": "c468184e677d67ef5de8d439d5374da137d180144241671a609cd93fd5618db1"
+      },
+      "articles": {
+        "count": 15,
+        "sha256": "c60848fa982ba2baaf7b8b401d15c6001f98d0aebd0dcc46575997c0b5faae40"
+      },
+      "briefs": {
+        "count": 1,
+        "sha256": "f8f41254fef6c74db677596ef3975e1973de36a2e4ebd41355f6224a7bb00ab4"
+      },
+      "calculator_audits": {
+        "count": 0,
+        "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+      },
+      "d1_migrations": {
+        "count": 6,
+        "sha256": "77fa82c44b5a0b1b1ebde381e5cf82b63ac6f9acc2bea5476a19ce5c838719af"
+      },
+      "editorial_campaign_items": {
+        "count": 0,
+        "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+      },
+      "editorial_campaigns": {
+        "count": 0,
+        "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+      },
+      "editorial_events": {
+        "count": 121,
+        "sha256": "3c351074d5977b0d07b5185fd8e8f44a2399be781c09f1b299b7c45f5db286a0"
+      },
+      "editorial_reviews": {
+        "count": 31,
+        "sha256": "256df7e1f22792aa1a8fa2deca5f0ef808869ba16a0701c4e65430303c1a7c43"
+      },
+      "external_approvals": {
+        "count": 0,
+        "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+      },
+      "lab_trusted_auditors": {
+        "count": 0,
+        "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+      },
+      "login_limits": {
+        "count": 0,
+        "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+      },
+      "media": {
+        "count": 15,
+        "sha256": "7f99c4f5a923d51bc6ec16cc520540f102adc7934a4323f2ea573393cfd1d4b1"
+      },
+      "owner": {
+        "count": 0,
+        "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+      },
+      "pitches": {
+        "count": 0,
+        "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+      },
+      "routes": {
+        "count": 3,
+        "sha256": "34e54aaa7ede8cffa47e5ed535efcbf577ad474970339f9d667e21d4ec3d89b4"
+      },
+      "schedules": {
+        "count": 8,
+        "sha256": "d683d4034140f027f03c3f0e0f2f019becf554ebecac59ecbd49f8f2c175c1c9"
+      },
+      "sessions": {
+        "count": 0,
+        "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+      },
+      "staging_test_articles": {
+        "count": 0,
+        "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+      },
+      "staging_test_images": {
+        "count": 0,
+        "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+      },
+      "staging_test_rate": {
+        "count": 17,
+        "sha256": "74256feac36dee047665382cc5393a567c79b294f94aa4b76ee0c985629db283"
+      },
+      "submission_versions": {
+        "count": 0,
+        "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+      },
+      "submissions": {
+        "count": 0,
+        "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+      },
+      "system_events": {
+        "count": 3,
+        "sha256": "6a3e18a20c58f640cf08e43dd65f549d792b075b16fc2fe735a5b42222a65c51"
+      },
+      "terms": {
+        "count": 52,
+        "sha256": "91027c07982caf0fcfcfa22b25a25e45a1b92c7d4fc4b2f51c56d24f0a9ef94d"
+      }
+    }
+  },
+  "r2": {
+    "sourceObjects": 22,
+    "sourceBytes": 3907174,
+    "matchedObjects": 22,
+    "manifest": [
+      {
+        "key": "editorial-maintenance-backups/2026-10-22-cms-finalization/89e30d9a-023a-4e7a-8a47-4048d7fc0589",
+        "bytes": 30088,
+        "sha256": "4dc61bf1784ed808262cc10f3b0a580fa7db07b8002538eb5f9d3995cd4e32ab",
+        "http_metadata": {
+          "contentType": "image/jpeg"
+        },
+        "custom_metadata_sha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
+      },
+      {
+        "key": "editorial-maintenance-backups/2026-10-22-cms-finalization/f0ea24b3-3800-4e23-a5d4-fa7a6876d1dd",
+        "bytes": 47539,
+        "sha256": "11e77214c01204ab316ceea81100c858306d45cea9f2e3257553fd00f02626d6",
+        "http_metadata": {
+          "contentType": "image/jpeg"
+        },
+        "custom_metadata_sha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
+      },
+      {
+        "key": "editorial-maintenance-backups/2026-10-22-cms-finalization/f2546acd-2983-460b-90ae-3aac3d823ea0",
+        "bytes": 47539,
+        "sha256": "11e77214c01204ab316ceea81100c858306d45cea9f2e3257553fd00f02626d6",
+        "http_metadata": {
+          "contentType": "image/jpeg"
+        },
+        "custom_metadata_sha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
+      },
+      {
+        "key": "editorial-maintenance-backups/2026-10-22-cms-finalization/rows.json",
+        "bytes": 14207,
+        "sha256": "e6c45c30e2185c752c23ac980b4a5594889d0e7522401a1350ecbdfb1e015fe9",
+        "http_metadata": {},
+        "custom_metadata_sha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
+      },
+      {
+        "key": "editorial-maintenance-backups/2026-10-22-grok-corrections/7e636323-2c69-46a5-8995-1cf171572f8d",
+        "bytes": 30088,
+        "sha256": "4dc61bf1784ed808262cc10f3b0a580fa7db07b8002538eb5f9d3995cd4e32ab",
+        "http_metadata": {
+          "contentType": "image/jpeg"
+        },
+        "custom_metadata_sha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
+      },
+      {
+        "key": "editorial-maintenance-backups/2026-10-22-grok-corrections/a2d35c1f-62ef-4abe-98a2-142daf93238e",
+        "bytes": 47539,
+        "sha256": "11e77214c01204ab316ceea81100c858306d45cea9f2e3257553fd00f02626d6",
+        "http_metadata": {
+          "contentType": "image/jpeg"
+        },
+        "custom_metadata_sha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
+      },
+      {
+        "key": "editorial-maintenance-backups/2026-10-22-grok-corrections/rows.json",
+        "bytes": 13981,
+        "sha256": "abe831ebb188692ab90cdef965950bf41245adafc119063ba6d0bc83764a02e2",
+        "http_metadata": {},
+        "custom_metadata_sha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
+      },
+      {
+        "key": "editorial/03e2e35c-9ac9-4732-b5d0-ebd4c1aba512",
+        "bytes": 275010,
+        "sha256": "08e292ee9788e7341156f6a471cff77bf38b8bb2a190d906b6a52d3bb5aae02c",
+        "http_metadata": {
+          "contentType": "image/jpeg"
+        },
+        "custom_metadata_sha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
+      },
+      {
+        "key": "editorial/055e1134-0382-4e8c-b417-623c419a9fb0",
+        "bytes": 232003,
+        "sha256": "39b284fb325b2c9a5a33e3e70a72157245db98a524acbe36f5c4fc7ffd410884",
+        "http_metadata": {
+          "contentType": "image/jpeg"
+        },
+        "custom_metadata_sha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
+      },
+      {
+        "key": "editorial/0695c1cf-304f-4958-970b-676ef8d81a16",
+        "bytes": 47539,
+        "sha256": "11e77214c01204ab316ceea81100c858306d45cea9f2e3257553fd00f02626d6",
+        "http_metadata": {
+          "contentType": "image/jpeg"
+        },
+        "custom_metadata_sha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
+      },
+      {
+        "key": "editorial/0cfffcbd-ed51-49bc-b2ad-b63359a0a080",
+        "bytes": 234484,
+        "sha256": "87d29512536fcfe56040cb2f538c434382499af336d162188435fc09c73a1887",
+        "http_metadata": {
+          "contentType": "image/jpeg"
+        },
+        "custom_metadata_sha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
+      },
+      {
+        "key": "editorial/16fa9927-b9c0-4976-a4f2-b549e928262a",
+        "bytes": 277662,
+        "sha256": "fbd75dd1d289c151d9e750907ce3bf838b360699ba53e74b55c98a04a03000ad",
+        "http_metadata": {
+          "contentType": "image/jpeg"
+        },
+        "custom_metadata_sha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
+      },
+      {
+        "key": "editorial/31cf7ec2-cf4e-468f-97c1-4f5d36dcd28d",
+        "bytes": 239836,
+        "sha256": "f507adbc4d656231b13f3fa9da6e6a4773f577c9a1302998714144ba58ca9713",
+        "http_metadata": {
+          "contentType": "image/jpeg"
+        },
+        "custom_metadata_sha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
+      },
+      {
+        "key": "editorial/3233e912-ac00-472c-b1dc-181692a9204b",
+        "bytes": 194890,
+        "sha256": "b492a233788eaf4ff58f162e4393d3df39ca104422862e720e0f0bd244fb3bcb",
+        "http_metadata": {
+          "contentType": "image/jpeg"
+        },
+        "custom_metadata_sha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
+      },
+      {
+        "key": "editorial/59384c1d-bec0-4ccd-ae67-734ce8747aec",
+        "bytes": 340617,
+        "sha256": "bd6c5b4877e81fcb9fcac06332c39dd7946d4049e0ba83269999fd7c75caaacb",
+        "http_metadata": {
+          "contentType": "image/jpeg"
+        },
+        "custom_metadata_sha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
+      },
+      {
+        "key": "editorial/660a59f7-ba57-4956-8b04-95ed261d16a6",
+        "bytes": 223657,
+        "sha256": "35945b5cf35c0778e5626db8b1bc8544ccfb7f878903dbae38b509299287cb2c",
+        "http_metadata": {
+          "contentType": "image/jpeg"
+        },
+        "custom_metadata_sha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
+      },
+      {
+        "key": "editorial/8c063c74-7bf1-4f39-97fd-21ff7afcef15",
+        "bytes": 230527,
+        "sha256": "d4986e48d227438ac4a129242a8022ee6c9912e507e7cd7521695ed214211573",
+        "http_metadata": {
+          "contentType": "image/jpeg"
+        },
+        "custom_metadata_sha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
+      },
+      {
+        "key": "editorial/9a1fbb53-874b-4646-98d0-5780ed9032de",
+        "bytes": 164216,
+        "sha256": "f1da1d7d8d31a73acf559770e4bd42edffa67cfbea92393e5633e3c9a53d1283",
+        "http_metadata": {
+          "contentType": "image/jpeg"
+        },
+        "custom_metadata_sha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
+      },
+      {
+        "key": "editorial/b9dd3871-e392-490f-9ea0-90d3eb248f19",
+        "bytes": 509335,
+        "sha256": "deddf691860012d6fc340c77dd30eac3ae2456cd6f121c3e3033660c5c1e4ad2",
+        "http_metadata": {
+          "contentType": "image/jpeg"
+        },
+        "custom_metadata_sha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
+      },
+      {
+        "key": "editorial/d85fa768-ccbb-445e-9a81-02bfa951e4c2",
+        "bytes": 206623,
+        "sha256": "445b71ecbba99a4f541ac69c6226141be927335bf909e14e1d7ab34c64005b6c",
+        "http_metadata": {
+          "contentType": "image/jpeg"
+        },
+        "custom_metadata_sha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
+      },
+      {
+        "key": "editorial/e2b99138-7b3c-4900-8340-51d93150be25",
+        "bytes": 220857,
+        "sha256": "6a4c4aa8616af71d7b2f17dd7238746b9ee7d513be77efdb7697aefd5854860b",
+        "http_metadata": {
+          "contentType": "image/jpeg"
+        },
+        "custom_metadata_sha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
+      },
+      {
+        "key": "editorial/f766c471-7474-4a05-a04c-0dda4bb55398",
+        "bytes": 278937,
+        "sha256": "1a99d82fd2d63c8cddf0ede814b01ffb8b13a772b30a5a4abba169b04f6785ee",
+        "http_metadata": {
+          "contentType": "image/jpeg"
+        },
+        "custom_metadata_sha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
+      }
+    ]
+  },
+  "priorDataVerificationRun": "41728615571",
+  "pagesSubdomain": "homeimprovement-tools.pages.dev",
+  "customDomain": {
+    "id": "5e69e38d-b577-4809-b551-57cd969d5119",
+    "domain_id": "5e69e38d-b577-4809-b551-57cd969d5119",
+    "name": "homeimprovement.tools",
+    "status": "initializing",
+    "verification_data": {
+      "status": "pending"
+    },
+    "validation_data": {
+      "status": "initializing",
+      "method": "http"
+    },
+    "certificate_authority": "google",
+    "zone_tag": "073f0a447d0b8f87ca17fe20ceed2eb0",
+    "created_on": "2026-11-03T22:16:33.66772Z"
+  },
+  "http": [
+    {
+      "path": "/",
+      "status": 200,
+      "noindex": true
+    },
+    {
+      "path": "/admin",
+      "status": 200,
+      "noindex": true
+    },
+    {
+      "path": "/blog/",
+      "status": 200,
+      "noindex": true
+    },
+    {
+      "path": "/paint-calculators/",
+      "status": 200,
+      "noindex": true
+    },
+    {
+      "path": "/paint-calculator/",
+      "status": 200,
+      "noindex": true
+    },
+    {
+      "path": "/print/paint-calculator/",
+      "status": 200,
+      "noindex": true
+    },
+    {
+      "path": "/sitemap-blog.xml",
+      "status": 200,
+      "noindex": true
+    },
+    {
+      "path": "/robots.txt",
+      "status": 200,
+      "noindex": true
+    }
+  ],
+  "sourceProductionUnchanged": true,
+  "completed": true,
+  "completedAt": "2026-11-03T22:16:35.506Z"
+}

@@ -1,0 +1,247 @@
+{
+  "at": "2026-11-03T22:08:40.707Z",
+  "run": "41728113194",
+  "target": {
+    "pages": "homeimprovement-tools",
+    "worker": "homeimprovement-editorial",
+    "database": "homeimprovement-editorial-db",
+    "bucket": "homeimprovement-editorial-media"
+  },
+  "steps": [
+    "Source identity and absent destinations confirmed",
+    "Independent D1 and R2 created",
+    "Consistent SQL exported, restored locally and backed up to private destination R2",
+    "D1 copied; all application table counts and fingerprints match"
+  ],
+  "failures": [
+    "Expected values to be strictly deep-equal:\n+ actual - expected\n\n+ {\n+   contentType: 'text/plain; charset=utf-8'\n+ }\n- {}\n"
+  ],
+  "sourceProduction": "08983672-ebdc-47a3-b4b7-f246cb9d22be",
+  "database_id": "4674c99c-cb26-47af-a557-19f097678ec6",
+  "privateBucketConfirmed": true,
+  "sourceBookmarkBefore": "0000036d-00000000-00005118-8a21463b90b9c72c13d22d83e175e8e3",
+  "exportBookmark": "0000036d-00000000-00005118-8a21463b90b9c72c13d22d83e175e8e3",
+  "sql": {
+    "bytes": 472540,
+    "sha256": "cb1545a389e613d528d5a4d029be8175cd38ac770eff7ebdc08d81c8e2773c52",
+    "privateBackupKey": "_migration/source-backup.sql"
+  },
+  "localRestore": {
+    "articles": 15,
+    "versions": 42
+  },
+  "tableFingerprints": {
+    "source": {
+      "agents": {
+        "count": 1,
+        "sha256": "1ebd39633a2e9ba6ccc30d2e99cd90d0ae6c12235193e709f9ba5c43b3d11661"
+      },
+      "article_versions": {
+        "count": 42,
+        "sha256": "c468184e677d67ef5de8d439d5374da137d180144241671a609cd93fd5618db1"
+      },
+      "articles": {
+        "count": 15,
+        "sha256": "c60848fa982ba2baaf7b8b401d15c6001f98d0aebd0dcc46575997c0b5faae40"
+      },
+      "briefs": {
+        "count": 1,
+        "sha256": "f8f41254fef6c74db677596ef3975e1973de36a2e4ebd41355f6224a7bb00ab4"
+      },
+      "calculator_audits": {
+        "count": 0,
+        "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+      },
+      "d1_migrations": {
+        "count": 6,
+        "sha256": "77fa82c44b5a0b1b1ebde381e5cf82b63ac6f9acc2bea5476a19ce5c838719af"
+      },
+      "editorial_campaign_items": {
+        "count": 0,
+        "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+      },
+      "editorial_campaigns": {
+        "count": 0,
+        "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+      },
+      "editorial_events": {
+        "count": 121,
+        "sha256": "3c351074d5977b0d07b5185fd8e8f44a2399be781c09f1b299b7c45f5db286a0"
+      },
+      "editorial_reviews": {
+        "count": 31,
+        "sha256": "256df7e1f22792aa1a8fa2deca5f0ef808869ba16a0701c4e65430303c1a7c43"
+      },
+      "external_approvals": {
+        "count": 0,
+        "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+      },
+      "lab_trusted_auditors": {
+        "count": 0,
+        "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+      },
+      "login_limits": {
+        "count": 0,
+        "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+      },
+      "media": {
+        "count": 15,
+        "sha256": "7f99c4f5a923d51bc6ec16cc520540f102adc7934a4323f2ea573393cfd1d4b1"
+      },
+      "owner": {
+        "count": 0,
+        "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+      },
+      "pitches": {
+        "count": 0,
+        "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+      },
+      "routes": {
+        "count": 3,
+        "sha256": "34e54aaa7ede8cffa47e5ed535efcbf577ad474970339f9d667e21d4ec3d89b4"
+      },
+      "schedules": {
+        "count": 8,
+        "sha256": "d683d4034140f027f03c3f0e0f2f019becf554ebecac59ecbd49f8f2c175c1c9"
+      },
+      "sessions": {
+        "count": 0,
+        "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+      },
+      "staging_test_articles": {
+        "count": 0,
+        "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+      },
+      "staging_test_images": {
+        "count": 0,
+        "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+      },
+      "staging_test_rate": {
+        "count": 17,
+        "sha256": "74256feac36dee047665382cc5393a567c79b294f94aa4b76ee0c985629db283"
+      },
+      "submission_versions": {
+        "count": 0,
+        "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+      },
+      "submissions": {
+        "count": 0,
+        "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+      },
+      "system_events": {
+        "count": 3,
+        "sha256": "6a3e18a20c58f640cf08e43dd65f549d792b075b16fc2fe735a5b42222a65c51"
+      },
+      "terms": {
+        "count": 52,
+        "sha256": "91027c07982caf0fcfcfa22b25a25e45a1b92c7d4fc4b2f51c56d24f0a9ef94d"
+      }
+    },
+    "destination": {
+      "agents": {
+        "count": 1,
+        "sha256": "1ebd39633a2e9ba6ccc30d2e99cd90d0ae6c12235193e709f9ba5c43b3d11661"
+      },
+      "article_versions": {
+        "count": 42,
+        "sha256": "c468184e677d67ef5de8d439d5374da137d180144241671a609cd93fd5618db1"
+      },
+      "articles": {
+        "count": 15,
+        "sha256": "c60848fa982ba2baaf7b8b401d15c6001f98d0aebd0dcc46575997c0b5faae40"
+      },
+      "briefs": {
+        "count": 1,
+        "sha256": "f8f41254fef6c74db677596ef3975e1973de36a2e4ebd41355f6224a7bb00ab4"
+      },
+      "calculator_audits": {
+        "count": 0,
+        "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+      },
+      "d1_migrations": {
+        "count": 6,
+        "sha256": "77fa82c44b5a0b1b1ebde381e5cf82b63ac6f9acc2bea5476a19ce5c838719af"
+      },
+      "editorial_campaign_items": {
+        "count": 0,
+        "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+      },
+      "editorial_campaigns": {
+        "count": 0,
+        "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+      },
+      "editorial_events": {
+        "count": 121,
+        "sha256": "3c351074d5977b0d07b5185fd8e8f44a2399be781c09f1b299b7c45f5db286a0"
+      },
+      "editorial_reviews": {
+        "count": 31,
+        "sha256": "256df7e1f22792aa1a8fa2deca5f0ef808869ba16a0701c4e65430303c1a7c43"
+      },
+      "external_approvals": {
+        "count": 0,
+        "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+      },
+      "lab_trusted_auditors": {
+        "count": 0,
+        "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+      },
+      "login_limits": {
+        "count": 0,
+        "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+      },
+      "media": {
+        "count": 15,
+        "sha256": "7f99c4f5a923d51bc6ec16cc520540f102adc7934a4323f2ea573393cfd1d4b1"
+      },
+      "owner": {
+        "count": 0,
+        "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+      },
+      "pitches": {
+        "count": 0,
+        "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+      },
+      "routes": {
+        "count": 3,
+        "sha256": "34e54aaa7ede8cffa47e5ed535efcbf577ad474970339f9d667e21d4ec3d89b4"
+      },
+      "schedules": {
+        "count": 8,
+        "sha256": "d683d4034140f027f03c3f0e0f2f019becf554ebecac59ecbd49f8f2c175c1c9"
+      },
+      "sessions": {
+        "count": 0,
+        "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+      },
+      "staging_test_articles": {
+        "count": 0,
+        "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+      },
+      "staging_test_images": {
+        "count": 0,
+        "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+      },
+      "staging_test_rate": {
+        "count": 17,
+        "sha256": "74256feac36dee047665382cc5393a567c79b294f94aa4b76ee0c985629db283"
+      },
+      "submission_versions": {
+        "count": 0,
+        "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+      },
+      "submissions": {
+        "count": 0,
+        "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+      },
+      "system_events": {
+        "count": 3,
+        "sha256": "6a3e18a20c58f640cf08e43dd65f549d792b075b16fc2fe735a5b42222a65c51"
+      },
+      "terms": {
+        "count": 52,
+        "sha256": "91027c07982caf0fcfcfa22b25a25e45a1b92c7d4fc4b2f51c56d24f0a9ef94d"
+      }
+    }
+  }
+}
