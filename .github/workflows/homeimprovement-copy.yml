@@ -1,0 +1,52 @@
+name: HomeImprovement authorized independent copy
+on:
+  push:
+    branches: [work/homeimprovement-copy-prep-20261103]
+    paths: [migration/homeimprovement/migrate.mjs, .github/workflows/homeimprovement-copy.yml]
+permissions:
+  contents: read
+concurrency:
+  group: homeimprovement-isolated-copy
+  cancel-in-progress: false
+jobs:
+  copy:
+    if: contains(github.event.head_commit.message, '[copy-authorized-20261103]')
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Assemble isolated copy locally
+        run: python migration/homeimprovement/prepare.py /tmp/homeimprovement-copy
+      - name: Build and validate before creating resources
+        working-directory: /tmp/homeimprovement-copy/cms
+        run: |
+          npm ci --ignore-scripts
+          node build-local.mjs
+          test "$(cat ../site/robots.txt | wc -l)" = '2'
+      - name: Test read-only destination with local fixtures
+        run: node migration/homeimprovement/tests/validation.mjs /tmp/homeimprovement-copy/cms
+      - name: Authorized resource creation, backup, copy and isolated deploy
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: b81896777d206a2239625d9cf2e8a40b
+          HI_MIGRATION_AUTHORIZED: '2026-11-03'
+          HI_PREPARED_CMS: /tmp/homeimprovement-copy/cms
+          WRANGLER_SEND_METRICS: 'false'
+        run: node migration/homeimprovement/migrate.mjs
+      - name: Preserve sanitized copy report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: homeimprovement-copy-report
+          path: migration-result.json
+          if-no-files-found: ignore
+          retention-days: 14

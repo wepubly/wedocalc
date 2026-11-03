@@ -29,7 +29,7 @@ try{
   if(path==='/paint-calculator/'){assert.match(html,/Guide paint-calculator-/);assert.doesNotMatch(html,/Guide primer-|Guide exterior-/);}
  }
  for(const method of ['POST','PUT','PATCH','DELETE'])assert.equal((await mf.dispatchFetch('https://homeimprovement.tools/api/editorial/articles',{method,body:'{}'})).status,423);
- assert.match(await (await mf.dispatchFetch('https://homeimprovement.tools/robots.txt')).text(),/Disallow: \//);
+ assert.equal(await (await mf.dispatchFetch('https://homeimprovement.tools/robots.txt')).text(),'User-agent: *\nDisallow: /\n');
  assert.equal((await db.prepare('SELECT COUNT(*) n FROM articles').first()).n,12);
  assert.equal((await db.prepare('SELECT COUNT(*) n FROM schedules').first()).n,0);
  assert.equal((await mf.dispatchFetch('https://homeimprovement.tools/not-found')).status,404);
