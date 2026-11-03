@@ -1,4 +1,4 @@
-// Validation entry point: independent resources only, no scheduled handler.
+// Isolated editorial entry point: independent resources only, no scheduled handler.
 import pages from './pages';
 import production from './production';
 // @ts-ignore: reused JavaScript catalogue is covered by its behavior tests.
@@ -10,7 +10,8 @@ function isolated(env:Env){
 export default {
  async fetch(request:Request,env:Env):Promise<Response>{
   isolated(env);
-  if(!['GET','HEAD'].includes(request.method))return new Response('Editorial writes disabled during migration validation',{status:423,headers:{'X-Robots-Tag':'noindex,nofollow,noarchive'}});
+  const writes=(env as Env & {HI_EDITORIAL_WRITES?:string}).HI_EDITORIAL_WRITES==='enabled';
+  if(!['GET','HEAD'].includes(request.method)&&!(writes&&new URL(request.url).origin==='https://homeimprovement.tools'&&new URL(request.url).pathname.startsWith('/api/editorial/')))return new Response('Editorial writes disabled during migration validation',{status:423,headers:{'X-Robots-Tag':'noindex,nofollow,noarchive'}});
   const url=new URL(request.url);
   if(url.pathname==='/robots.txt')return new Response('User-agent: *\nDisallow: /\n',{headers:{'Content-Type':'text/plain','X-Robots-Tag':'noindex,nofollow,noarchive'}});
   let response=await pages.fetch(request,env);
@@ -26,6 +27,9 @@ export default {
     const markup=kind==='home'?homeColumns(chosen,''):chosen.map((row:unknown)=>card(row,kind)).join('');
     el.setInnerContent(markup||'<p>No published guides yet.</p>',{html:true});
    }}).transform(response);
+  }
+  if(writes&&['/admin','/admin/','/cms','/cms/'].includes(url.pathname)&&response.headers.get('Content-Type')?.includes('text/html')){
+   response=new HTMLRewriter().on('body',{element(el){el.prepend('<aside style="padding:12px;background:#fff3cd;color:#332701">HomeImprovement: operação manual liberada para o Escritor. Auditoria externa. Publicação automática desligada; agendamentos não serão executados automaticamente. Site noindex.</aside>',{html:true});}}).transform(response);
   }
   const headers=new Headers(response.headers);
   headers.set('X-Robots-Tag','noindex, nofollow, noarchive');headers.set('Cache-Control','no-store');
