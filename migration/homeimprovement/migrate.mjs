@@ -44,7 +44,7 @@ async function put(key,body,metadata={}){
 async function query(db,sql){assert.ok(db===sourceDB||db===report.database_id);return (await api('/d1/database/'+db+'/query','POST',{sql})).result.flatMap(q=>q.results);}
 const tables=async db=>(await query(db,"SELECT name FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%' AND name NOT LIKE '_cf_%' ORDER BY name")).map(x=>x.name);
 async function fingerprints(db){const result={};for(const table of await tables(db)){assert.match(table,/^[a-z_][a-z0-9_]*$/);const rows=await query(db,'SELECT * FROM '+table);const serial=rows.map(row=>JSON.stringify(Object.fromEntries(Object.entries(row).sort(([a],[b])=>a.localeCompare(b))))).sort();result[table]={count:rows.length,sha256:sha(JSON.stringify(serial))};}return result;}
-function command(args,dir=cms){const r=spawnSync(process.execPath,[cms+'/node_modules/wrangler/bin/wrangler.js',...args],{cwd:dir,encoding:'utf8',env:{...process.env,WRANGLER_SEND_METRICS:'false'},maxBuffer:16*1024*1024});if(r.status!==0)throw Error('Wrangler operation failed: '+args.slice(0,3).join(' ')+'; details suppressed to protect data');return r.stdout;}
+function command(args,dir=cms){const r=spawnSync(process.execPath,[cms+'/node_modules/wrangler/bin/wrangler.js',...args],{cwd:dir,encoding:'utf8',env:{...process.env,WRANGLER_SEND_METRICS:'false'},maxBuffer:16*1024*1024});if(r.status!==0){if(args[0]!=='d1')console.error((r.stdout+r.stderr).split(token).join('[REDACTED]'));throw Error('Wrangler operation failed: '+args.slice(0,3).join(' ')+'; details suppressed to protect data');}return r.stdout;}
 try{
  const sourcePages=(await api('/pages/projects/wedocalc')).result;
  report.sourceProduction=sourcePages.canonical_deployment?.id;
@@ -102,6 +102,14 @@ try{
  report.tableFingerprints={source:sourceFingerprint,destination:destinationFingerprint};assert.deepEqual(destinationFingerprint,sourceFingerprint,'Database drift or copy mismatch; do not deploy');
  assert.deepEqual(await query(db.uuid,'SELECT * FROM pragma_foreign_key_check'),[]);
  report.steps.push('D1 copied; all application table counts and fingerprints match');save();
+ if(process.env.HI_DEPLOY_ONLY==='true'){
+  const prior=JSON.parse((await bytes(target.bucket,'_migration/copy-manifest.json')).body.toString());
+  assert.equal(prior.database_id,db.uuid);assert.equal(prior.sql.sha256,report.sql.sha256);assert.ok(prior.r2&&prior.r2.sourceObjects===prior.r2.matchedObjects);
+  const sourceList=await objects(sourceBucket),targetList=await objects(target.bucket);
+  assert.equal(sourceList.length,prior.r2.sourceObjects);
+  for(const item of prior.r2.manifest){const a=sourceList.find(o=>o.key===item.key),b=targetList.find(o=>o.key===item.key);assert.ok(a&&b);assert.equal(a.size,item.bytes);assert.equal(b.size,item.bytes);assert.deepEqual(b.http_metadata||{},a.http_metadata||{});assert.deepEqual(b.custom_metadata||{},a.custom_metadata||{});}
+  report.r2=prior.r2;report.priorDataVerificationRun='41728615571';report.steps.push('Validated copy manifest reused; no new export, D1 import or R2 copy');save();
+ }else{
  const media=await query(db.uuid,'SELECT object_key,size FROM media'),sourceObjects=await objects(sourceBucket),manifest=[],existingObjects=await objects(target.bucket);
  for(const object of sourceObjects){
   const item=await bytes(sourceBucket,object.key);assert.equal(item.body.length,object.size);
@@ -121,6 +129,8 @@ try{
  report.r2={sourceObjects:sourceObjects.length,sourceBytes:manifest.reduce((n,o)=>n+o.bytes,0),matchedObjects:manifest.length,manifest};
  await put('_migration/copy-manifest.json',Buffer.from(JSON.stringify(report)),{contentType:'application/json'});
  report.steps.push('All source R2 objects copied with matching SHA-256, including maintenance backups');save();
+
+ }
  // Source must still match the copied snapshot before any destination deploy.
  assert.deepEqual(await fingerprints(sourceDB),sourceFingerprint,'Source changed after snapshot; reconcile before deploy');
  const pagesCfg=JSON.parse(readFileSync(cms+'/pages.target.template.json','utf8'));pagesCfg.deployment_configs.production.d1_databases.DB.id=db.uuid;

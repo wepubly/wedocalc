@@ -40,6 +40,7 @@ jobs:
           CLOUDFLARE_ACCOUNT_ID: b81896777d206a2239625d9cf2e8a40b
           HI_MIGRATION_AUTHORIZED: '2026-11-03'
           HI_RESUME_RUN: '41728113194'
+          HI_DEPLOY_ONLY: 'true'
           HI_PREPARED_CMS: /tmp/homeimprovement-copy/cms
           WRANGLER_SEND_METRICS: 'false'
         run: node migration/homeimprovement/migrate.mjs
