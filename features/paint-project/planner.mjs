@@ -13,7 +13,7 @@ if(root){
   const data={};for(const key of ['kind','units','length','width','height','doorsCount','doorsWidth','doorsHeight','windowsCount','windowsWidth','windowsHeight','coats','rate','waste','ceiling','ceilingCoats','ceilingRate','primer','primerCoats','primerRate','packageSize'])data[key]=value(key);
   data.method=value('method');
   if(data.method==='existing'){
-   const base=window.HIPaintPlan;if(!base)throw Error('Choose Paint Needed above and enter valid measurements, or select Detailed room.');
+   const base=window.HIPaintPlan||window.HILastPaintPlan;if(!base)throw Error('Enter valid Paint Needed measurements in Quick Calculator, or select Detailed room.');
    const metric=data.units==='metric';data.method='area';data.area=base.areaSqFt/(metric?SQFT_PER_SQM:1);data.coats=base.coats;data.rate=base.rate/(metric?SQFT_PER_SQM*L_PER_GAL:1);data.waste=base.waste;data.ceiling=false;
   }
   return data;
@@ -51,9 +51,10 @@ if(root){
    $('room').hidden=value('method')!=='room';$('source').hidden=value('method')!=='existing';$('ceiling-options').hidden=!value('ceiling');$('primer-options').hidden=!value('primer');
    result=calculate(input());const next=recommendations(result,{mask:value('mask'),repair:value('repair')}).filter(x=>!removed.has(x.id));items=reset?[...next,...items.filter(x=>x.custom)]:reconcile(next,items);valid=true;$('output').hidden=false;
    const metric=result.units==='metric',area=n=>fmt(n/(metric?SQFT_PER_SQM:1))+(metric?' m²':' sq ft'),volume=n=>fmt(n*(metric?L_PER_GAL:1))+(metric?' L':' US gal');
+   if($('result-total'))$('result-total').textContent=volume(result.paint);
    $('breakdown').replaceChildren();for(const [label,value] of [['Gross / supplied net area',area(result.gross)],['Openings deducted',area(result.deduction)],['Net paintable walls / area',area(result.net)],['Separate ceiling',area(result.ceiling)],['Wall paint',volume(result.wallPaint)],['Ceiling paint',volume(result.ceilingPaint)],['Primer',volume(result.primer)],['Coating allowance',result.waste+'%']]){const div=document.createElement('div');text('dt',label,div);text('dd',value,div);$('breakdown').append(div);}
    materialCards();totals();
-  }catch(e){valid=false;result=null;$('output').hidden=true;error(e.message);}
+  }catch(e){valid=false;result=null;$('output').hidden=true;$('breakdown').replaceChildren();if($('result-total'))$('result-total').textContent='—';error(e.message);}
  }
  function changeUnits(){
   const now=value('units');if(now===lastUnits)return;

@@ -1,13 +1,14 @@
-<section id="project-planner" class="calc-panel hi-planner" aria-labelledby="planner-title">
- <p class="hi-eyebrow">PLAN YOUR PROJECT</p><h2 id="planner-title">From paint quantity to your shopping list</h2>
- <p>Organize materials and calculate a budget using your own prices. No account, AI or supplier lookup. Your project stays in this page.</p>
+<section id="project-planner" class="hi-planner" aria-labelledby="planner-title">
+ <div class="planner-head"><h2 id="planner-title">Painting Project Planner</h2><p>Everything you need to organize your painting project in one place.</p>
+ <nav class="planner-steps" aria-label="Project sections"><a href="#pp-measurements">01 Measurements</a><a href="#pp-materials-title">02 Materials Checklist</a><a href="#pp-shopping-title">03 Shopping List</a><a href="#pp-budget-title">04 Budget &amp; PDF</a></nav></div>
+ <div class="planner-top"><section id="pp-measurements" class="planner-measurements" aria-label="Project Measurements"><h3>Project Measurements</h3><p>Start with your Quick Paint Needed calculation or use detailed dimensions.</p>
  <div class="hi-grid">
   <label>Project name (optional)<input id="pp-name" maxlength="120" placeholder="Living room refresh"></label>
   <label>Project type<select id="pp-kind"><option value="interior">Interior painting</option><option value="exterior">Exterior walls (rectangular footprint)</option></select></label>
-  <label>Measurements<select id="pp-method"><option value="existing">Use Paint Needed result above</option><option value="room">Detailed room / rectangular walls</option></select></label>
+  <label>Measurements<select id="pp-method"><option value="existing">Use Quick Paint Needed result</option><option value="room">Detailed room / rectangular walls</option></select></label>
   <label>Project units<select id="pp-units"><option value="imperial">US — feet, sq ft, US gallons</option><option value="metric">Metric — meters, m², liters</option></select></label>
  </div>
- <p id="pp-source">The paintable area, coverage, coats and allowance will follow Paint Needed above.</p>
+ <p id="pp-source">The paintable area, coverage, coats and allowance follow your last valid Quick Paint Needed calculation.</p>
  <fieldset id="pp-room" hidden><legend>Detailed measurements</legend><p>Four rectangular walls. Do not include doors or windows you intend to paint. Counts share the entered size; use measured total area above for irregular layouts.</p><div class="hi-grid">
   <label>Length <span data-length-unit>ft</span><input id="pp-length" type="number" min="0.01" max="10000" step="any" value="15"></label>
   <label>Width <span data-length-unit>ft</span><input id="pp-width" type="number" min="0.01" max="10000" step="any" value="12"></label>
@@ -34,21 +35,22 @@
   <label>Primer coats<input id="pp-primerCoats" type="number" min="1" max="10" value="1"></label>
   <label>Primer coverage <span data-coverage-unit>sq ft / US gal</span><input id="pp-primerRate" type="number" min="0.01" step="any" value="250"></label>
  </div><p>Coverage examples are editable starting points, not a product guarantee. Check each coating label. Containers are rounded up separately for wall paint, ceiling paint and primer.</p></fieldset>
- <p id="pp-error" role="alert" hidden></p><div id="pp-output">
- <h3>Paint and surface breakdown</h3><dl id="pp-breakdown" class="hi-breakdown" aria-live="polite"></dl>
- <h3>Project Materials Checklist</h3><p>Reusable tools assume one painter. Accessory quantities are editable planning allowances, not fixed consumption rates. Your edits stay when measurements change; reset quantities to use new suggestions.</p>
+ <p id="pp-error" role="alert" hidden></p></section>
+ <aside class="planner-results" aria-labelledby="pp-results-title"><h3 id="pp-results-title">Results</h3><p class="planner-mini-label">Estimated paint needed</p><strong id="pp-result-total">—</strong><p>Before rounding individual containers</p><dl id="pp-breakdown" class="hi-breakdown" aria-live="polite"></dl><a class="hi-textlink" href="#pp-materials-title">Review your materials checklist →</a></aside></div>
+ <div id="pp-output" class="planner-purchases"><section class="planner-materials-panel" aria-labelledby="pp-materials-title">
+ <h3 id="pp-materials-title">Project Materials Checklist</h3><p>Reusable tools assume one painter. Accessory quantities are editable planning allowances, not fixed consumption rates. Your edits stay when measurements change; reset quantities to use new suggestions.</p>
  <button id="pp-reset" type="button">Reset suggested quantities and selections</button>
  <div id="pp-materials" class="hi-materials"></div>
  <fieldset><legend>Add your own material</legend><div class="hi-grid">
   <label>Material name<input id="pp-newName" maxlength="100"></label><label>Quantity<input id="pp-newQuantity" type="number" min="0.01" max="1000000" step="any" value="1"></label><label>Purchase unit<input id="pp-newUnit" maxlength="40" value="each"></label>
  </div><button id="pp-add" type="button">Add material</button></fieldset>
- <h3>Your Shopping List</h3><label class="hi-check"><input id="pp-includeOwned" type="checkbox"> Also show materials I already own (excluded from the budget)</label><ul id="pp-shopping"></ul>
- <h3>Project Budget Calculator</h3><p>USD amounts use only prices you enter. Blank prices are unquoted, not free. No labor estimate is included. Add taxes, delivery or other costs yourself.</p>
+ </section><section class="planner-budget-panel" aria-labelledby="pp-shopping-title"><h3 id="pp-shopping-title">Your Shopping List</h3><label class="hi-check"><input id="pp-includeOwned" type="checkbox"> Also show materials I already own (excluded from the budget)</label><ul id="pp-shopping"></ul>
+ <h3 id="pp-budget-title">Project Budget Calculator</h3><p>USD amounts use only prices you enter. Blank prices are unquoted, not free. No labor estimate is included. Add taxes, delivery or other costs yourself.</p>
  <div class="hi-grid"><label>Additional costs (USD)<input id="pp-additional" type="number" min="0" max="100000000" step="0.01" placeholder="Not entered"></label><label>Contingency %<input id="pp-contingency" type="number" min="0" max="100" step="any" placeholder="Not entered"></label></div>
  <p id="pp-budget" role="status" aria-live="polite"></p>
  <div class="hi-actions"><button id="pp-print" type="button">Print project report</button><button id="pp-letter" type="button">Download PDF US Letter</button><button id="pp-a4" type="button">Download PDF A4</button></div>
- <p id="pp-export-status" role="status"></p>
- </div>
+ <p id="pp-export-status" role="status"></p><button class="hi-back-quick" type="button" data-switch-to="quick">Back to Quick Calculator</button>
+ </section></div>
  <details><summary>Methodology and assumptions</summary><p>Gross wall area = 2 × (length + width) × height. Deduct count × width × height for doors and windows. Ceiling area = length × width, calculated separately. Coating quantity = net area × coats ÷ label coverage × (1 + allowance ÷ 100). Primer uses its own coverage and coats. Metric values convert through 1 ft = 0.3048 m and 1 US gallon = 3.785411784 L.</p><p>The existing-area option uses an already net paintable area; it does not deduct openings again. Separate paints are rounded independently to the chosen container size. Budget = selected, unowned purchase quantities × your unit prices + additional costs, then contingency. Missing quotes mean an incomplete budget. Material prices and labor are never fetched.</p></details>
  <section id="pp-recommendations" hidden aria-label="Recommended Painting Tools & Supplies"></section>
 </section>

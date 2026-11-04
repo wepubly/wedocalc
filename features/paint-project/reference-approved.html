@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Paint Calculator — Design Preview</title>
+<style>
+:root{--navy:#14233d;--blue:#155bd4;--pale:#f1f7ff;--line:#dbe5f2;--muted:#617087;--white:#fff;--green:#13805a}
+*{box-sizing:border-box}
+body{margin:0;background:var(--pale);color:var(--navy);font-family:Inter,system-ui,-apple-system,"Segoe UI",sans-serif}
+button,input,select{font:inherit}
+button{cursor:pointer}
+header{background:#fff;border-bottom:1px solid var(--line)}
+.nav{max-width:1190px;margin:auto;min-height:76px;display:flex;align-items:center;justify-content:space-between;gap:20px;padding:0 22px}
+.logo{display:flex;align-items:center;gap:11px;font-size:20px;font-weight:800;letter-spacing:-.65px}
+.logo-mark{width:39px;height:39px;background:#e9f2ff;border-radius:10px;display:grid;place-items:center;color:var(--blue)}
+nav{display:flex;gap:30px;font-size:14px;color:#44536a}
+nav span{white-space:nowrap}
+main{max-width:1190px;margin:auto;padding:42px 22px 80px}
+.intro{text-align:center;margin-bottom:30px}
+.eyebrow{color:var(--blue);font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:2px;margin-bottom:10px}
+h1{font-size:clamp(32px,5vw,47px);letter-spacing:-1.8px;margin:0 0 10px}
+.intro p{color:var(--muted);font-size:16px;margin:0}
+.options{display:grid;grid-template-columns:1fr 1fr;gap:17px;margin-bottom:25px}
+.option{border:1px solid #d3deec;border-radius:17px;background:white;text-align:left;padding:24px;display:flex;gap:17px;align-items:flex-start;position:relative;min-height:169px;transition:.2s;box-shadow:0 5px 18px #18365c08}
+.option.active{border:2px solid var(--blue);background:#eef5ff;padding:23px;box-shadow:0 5px 24px #155bd417}
+.option-icon{width:57px;height:57px;flex:none;display:grid;place-items:center;border-radius:15px;background:#e6f1ff;color:#164a97}
+.option h2{font-size:21px;letter-spacing:-.5px;margin:0 0 6px}
+.option p{color:var(--muted);font-size:13px;line-height:1.5;margin:0 0 15px}
+.tag{display:inline-block;border-radius:20px;background:#dceaff;color:#1557ad;padding:4px 10px;font-size:10px;font-weight:800;margin-left:6px;vertical-align:middle}
+.choice-button{display:inline-block;padding:10px 17px;border-radius:8px;background:var(--blue);color:#fff;font-weight:700;font-size:12px}
+.option:not(.active) .choice-button{background:white;color:var(--blue);border:1px solid var(--blue)}
+.check{position:absolute;right:17px;top:17px;background:var(--blue);color:white;border-radius:50%;width:24px;height:24px;display:none;place-items:center;font-size:15px}
+.option.active .check{display:grid}
+.workspace{background:white;border:1px solid var(--line);border-radius:17px;box-shadow:0 12px 35px #17395f09;overflow:hidden}
+.workspace-head{padding:22px 28px 0}
+.workspace-head h2{margin:0 0 5px;font-size:22px;letter-spacing:-.5px}
+.workspace-head p{margin:0;color:var(--muted);font-size:13px}
+.tabs{display:flex;gap:5px;border-bottom:1px solid var(--line);padding:18px 0 0}
+.tab{border:0;background:#f1f5fa;color:#54627a;padding:13px 21px;font-size:13px;font-weight:700;border-radius:8px 8px 0 0}
+.tab.active{background:var(--blue);color:white}
+.panel{padding:26px 28px 30px}
+.calc-grid{display:grid;grid-template-columns:1.05fr 1fr;gap:26px}
+.fields{display:grid;grid-template-columns:1fr 1fr;gap:19px}
+.field label{display:block;font-size:12px;font-weight:750;margin-bottom:8px}
+.control{display:flex;align-items:center;border:1px solid #cbd8e7;border-radius:9px;overflow:hidden;height:44px;background:#fff}
+.control input,.control select{width:100%;border:0;outline:none;padding:10px 12px;color:var(--navy);min-width:0;background:transparent}
+.unit{background:#eff3f8;border-left:1px solid var(--line);padding:12px;color:#6c7890;font-size:12px}
+.primary{border:0;background:var(--blue);color:white;border-radius:9px;padding:13px 19px;font-size:13px;font-weight:800}
+.full{grid-column:1/-1;width:100%}
+.result{background:#edf5ff;border:1px solid #e1ecfa;border-radius:14px;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:245px;padding:25px;text-align:center}
+.result .mini-label{font-size:11px;text-transform:uppercase;letter-spacing:1.2px;font-weight:800;color:#58749e}
+.result strong{display:block;font-size:clamp(28px,4vw,40px);letter-spacing:-1.2px;color:#1456c0;margin:12px 0 2px}
+.result p{font-size:13px;color:#60728d;margin:0 0 22px}
+.textlink{border:0;background:none;color:var(--blue);font-size:13px;font-weight:750;text-decoration:underline;text-underline-offset:3px}
+.note{margin-top:18px;color:#8490a2;font-size:11px;line-height:1.6}
+.advanced{display:none}
+.advanced.show{display:block}
+.quick.hide{display:none}
+.step-row{display:flex;gap:8px;flex-wrap:wrap;padding:18px 0;border-bottom:1px solid var(--line)}
+.step{background:#edf3fb;border-radius:20px;padding:7px 12px;font-size:11px;font-weight:750;color:#6d7c95}
+.step:first-child{background:#dceaff;color:#1557ad}
+.advanced-layout{display:grid;grid-template-columns:1fr 1fr;gap:22px;margin-top:24px}
+.subcard{border:1px solid var(--line);border-radius:12px;padding:22px}
+.subcard h3{margin:0 0 6px;font-size:17px}
+.subcard>p{margin:0 0 18px;color:var(--muted);font-size:12px}
+.field-stack{display:grid;grid-template-columns:1fr 1fr;gap:13px}
+.material-row{display:grid;grid-template-columns:23px 1fr 68px 82px;align-items:center;gap:9px;border-bottom:1px solid #edf1f6;padding:11px 0;font-size:12px}
+.material-row input[type=checkbox]{accent-color:var(--blue);width:16px;height:16px}
+.qty,.money{width:100%;min-width:0;padding:8px;border:1px solid var(--line);border-radius:7px;font-size:12px}
+.material-row:first-of-type{margin-top:10px}
+.total{display:flex;justify-content:space-between;align-items:center;background:#e9f4ff;padding:16px;border-radius:10px;margin:18px 0;font-weight:800}
+.total strong{font-size:23px;color:var(--blue)}
+.muted-small{font-size:11px;color:var(--muted);line-height:1.5}
+.bottom-actions{display:flex;gap:10px;justify-content:flex-end;flex-wrap:wrap;margin-top:19px}
+.secondary{border:1px solid #b9cee9;border-radius:9px;background:white;color:var(--blue);font-weight:750;font-size:12px;padding:12px 15px}
+.foot{max-width:1190px;margin:auto;padding:0 22px 35px;color:#8190a6;font-size:11px;text-align:center}
+@media(max-width:780px){
+ nav{display:none}.logo{font-size:17px}
+ main{padding-top:31px}.options,.calc-grid,.advanced-layout{grid-template-columns:1fr}
+ .option{min-height:145px}.result{min-height:180px}
+ .panel{padding:19px}.workspace-head{padding:20px 19px 0}
+ .tab{padding:11px;font-size:11px}
+}
+@media(max-width:420px){
+ .fields,.field-stack{grid-template-columns:1fr}
+ .option{padding:18px;gap:12px}
+ .option.active{padding:17px}
+ .option-icon{width:46px;height:46px}
+ .option h2{font-size:17px}
+ .tag{margin:6px 0 0}
+ .material-row{grid-template-columns:20px 1fr 47px 68px;gap:6px;font-size:11px}
+}
+</style>
+</head>
+<body>
+<header>
+  <div class="nav">
+    <div class="logo">
+      <span class="logo-mark">⌂</span> HomeImprovement.tools
+    </div>
+    <nav><span>Calculators ⌄</span><span>Home Improvement ⌄</span><span>Blog</span></nav>
+  </div>
+</header>
+<main>
+  <section class="intro">
+    <div class="eyebrow">Home Improvement Calculators</div>
+    <h1>Paint Calculator</h1>
+    <p>Calculate paint quickly or plan your entire painting project.</p>
+  </section>
+  <section class="options" aria-label="Choose calculator mode">
+    <button class="option active" id="quickChoice" onclick="switchMode('quick')" aria-pressed="true">
+      <div class="option-icon">
+        <svg width="31" height="31" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="4" y="2" width="16" height="20" rx="2"/><rect x="7" y="5" width="10" height="4"/><path d="M8 13h2m4 0h2M8 17h2m4 0h2"/></svg>
+      </div>
+      <div>
+        <h2>Quick Calculator <span class="tag">Simple & Fast</span></h2>
+        <p>Get the paint you need in seconds. Just a few measurements, instant results.</p>
+        <span class="choice-button">Quick Calculate</span>
+      </div>
+      <span class="check">✓</span>
+    </button>
+    <button class="option" id="advancedChoice" onclick="switchMode('advanced')" aria-pressed="false">
+      <div class="option-icon">
+        <svg width="31" height="31" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="5" y="4" width="14" height="18" rx="2"/><rect x="9" y="2" width="6" height="4" rx="1"/><path d="m8 11 1.5 1.5L12 10m2 1h3m-9 6 1.5 1.5L12 16m2 1h3"/></svg>
+      </div>
+      <div>
+        <h2>Project Planner <span class="tag">Advanced</span></h2>
+        <p>Plan materials, organize a shopping list and estimate your project budget.</p>
+        <span class="choice-button">Plan My Project</span>
+      </div>
+      <span class="check">✓</span>
+    </button>
+  </section>
+  <section class="workspace quick" id="quickPanel">
+    <div class="workspace-head">
+      <h2>Quick Paint Calculator</h2>
+      <p>Choose what you want to calculate and enter your measurements.</p>
+      <div class="tabs" role="tablist">
+        <button class="tab active" onclick="changeTab(this,'needed')">Paint Needed</button>
+        <button class="tab" onclick="changeTab(this,'coverage')">Paint Coverage</button>
+        <button class="tab" onclick="changeTab(this,'cost')">Paint Cost</button>
+      </div>
+    </div>
+    <div class="panel">
+      <div class="calc-grid">
+        <div class="fields">
+          <div class="field"><label for="wallLength">Wall Length</label><div class="control"><input id="wallLength" type="number" min="0" value="20"><span class="unit">ft</span></div></div>
+          <div class="field"><label for="wallHeight">Wall Height</label><div class="control"><input id="wallHeight" type="number" min="0" value="8"><span class="unit">ft</span></div></div>
+          <div class="field"><label for="wallCount">Number of Walls</label><div class="control"><input id="wallCount" type="number" min="1" value="4"></div></div>
+          <div class="field"><label for="coatCount">Paint Coats</label><div class="control"><select id="coatCount"><option>1</option><option selected>2</option><option>3</option></select></div></div>
+          <div class="field full" id="priceField" style="display:none"><label for="paintUnitPrice">Price Per Gallon (USD)</label><div class="control"><input id="paintUnitPrice" type="number" min="0" placeholder="Enter your own price"></div></div>
+          <button class="primary full" onclick="calculate()">Calculate Paint</button>
+        </div>
+        <div class="result" aria-live="polite">
+          <div class="mini-label" id="resultLabel">Estimated Paint Needed</div>
+          <strong id="resultValue">4 Gallons</strong>
+          <p id="resultInfo">Based on your project measurements</p>
+          <button class="textlink" onclick="switchMode('advanced')">Continue to Project Planner →</button>
+        </div>
+      </div>
+      <p class="note">Design demonstration: simplified rectangular wall calculation using an assumed 350 sq ft per gallon. The production calculator will retain its existing validated formulas.</p>
+    </div>
+  </section>
+  <section class="workspace advanced" id="advancedPanel">
+    <div class="workspace-head">
+      <h2>Painting Project Planner</h2>
+      <p>Everything you need to organize your painting project in one place.</p>
+      <div class="step-row"><span class="step">01 Measurements</span><span class="step">02 Materials Checklist</span><span class="step">03 Shopping List</span><span class="step">04 Budget & PDF</span></div>
+    </div>
+    <div class="panel">
+      <div class="advanced-layout">
+        <div class="subcard">
+          <h3>Project Measurements</h3>
+          <p>Start with your quick calculation or adjust the dimensions.</p>
+          <div class="field-stack">
+            <div class="field"><label for="advLength">Wall Length (ft)</label><div class="control"><input id="advLength" type="number" min="0" value="20"></div></div>
+            <div class="field"><label for="advHeight">Wall Height (ft)</label><div class="control"><input id="advHeight" type="number" min="0" value="8"></div></div>
+            <div class="field"><label for="advWalls">Number of Walls</label><div class="control"><input id="advWalls" type="number" min="1" value="4"></div></div>
+            <div class="field"><label for="advCoats">Number of Coats</label><div class="control"><input id="advCoats" type="number" min="1" value="2"></div></div>
+          </div>
+          <button class="primary" style="margin-top:20px" onclick="updateAdvanced()">Update Materials</button>
+          <div class="total"><span>Paint Needed</span><strong id="advGallons">4 gal</strong></div>
+          <div class="muted-small">The full version will include doors, windows, ceiling, primer, waste allowance and detailed room measurements.</div>
+        </div>
+        <div class="subcard">
+          <h3>Project Materials Checklist</h3>
+          <p>Select the supplies you need and enter prices if available.</p>
+          <div style="display:grid;grid-template-columns:23px 1fr 68px 82px;gap:9px;font-size:10px;font-weight:800;color:#7b89a0;margin-top:16px">
+            <span></span><span>MATERIAL</span><span>QTY</span><span>UNIT PRICE</span>
+          </div>
+          <div id="materialItems"></div>
+          <div class="total"><span>Your Estimated Budget</span><strong id="budgetValue">—</strong></div>
+          <div class="muted-small" id="budgetNote">Enter your own unit prices to calculate the budget. No store prices are provided.</div>
+        </div>
+      </div>
+      <div class="bottom-actions">
+        <button class="secondary" onclick="window.print()">Print Shopping List</button>
+        <button class="secondary" onclick="alert('PDF exports will be enabled in the Work implementation. This is a visual prototype.')">Download PDF</button>
+        <button class="primary" onclick="switchMode('quick')">Back to Quick Calculator</button>
+      </div>
+      <p class="note">Visual prototype only. Materials are editable examples, not final technical purchasing recommendations.</p>
+    </div>
+  </section>
+</main>
+<div class="foot">HomeImprovement.tools · Visual concept for review · No commercial prices or affiliate integrations</div>
+<script>
+let currentTab="needed";
+const items=[
+{name:"Interior Wall Paint",qty:4,unit:"gal",selected:true},
+{name:"Paint Primer",qty:1,unit:"gal",selected:true},
+{name:"Paint Roller Kit",qty:2,unit:"kit",selected:true},
+{name:"Paint Brushes",qty:2,unit:"each",selected:true},
+{name:"Painter's Tape",qty:3,unit:"roll",selected:true},
+{name:"Drop Cloth",qty:2,unit:"each",selected:true},
+{name:"Sandpaper",qty:1,unit:"pack",selected:false}
+];
+function switchMode(mode){
+ const quick=mode==="quick";
+ document.getElementById("quickPanel").classList.toggle("hide",!quick);
+ document.getElementById("advancedPanel").classList.toggle("show",!quick);
+ document.getElementById("quickChoice").classList.toggle("active",quick);
+ document.getElementById("advancedChoice").classList.toggle("active",!quick);
+ document.getElementById("quickChoice").setAttribute("aria-pressed",String(quick));
+ document.getElementById("advancedChoice").setAttribute("aria-pressed",String(!quick));
+ if(!quick){
+ ["Length","Height"].forEach(k=>document.getElementById("adv"+k).value=document.getElementById(k==="Length"?"wallLength":"wallHeight").value);
+ document.getElementById("advWalls").value=document.getElementById("wallCount").value;
+ document.getElementById("advCoats").value=document.getElementById("coatCount").value;
+ updateAdvanced();
+ }
+}
+function changeTab(button,mode){
+ document.querySelectorAll(".tab").forEach(x=>x.classList.remove("active"));
+ button.classList.add("active");
+ currentTab=mode;
+ document.getElementById("priceField").style.display=mode==="cost"?"block":"none";
+ calculate();
+}
+function gallons(length,height,walls,coats){return Math.ceil(Math.max(0,length*height*walls*coats)/350)}
+function calculate(){
+ const length=Number(document.getElementById("wallLength").value)||0;
+ const height=Number(document.getElementById("wallHeight").value)||0;
+ const walls=Number(document.getElementById("wallCount").value)||0;
+ const coats=Number(document.getElementById("coatCount").value)||0;
+ const area=length*height*walls;
+ const gal=gallons(length,height,walls,coats);
+ let label="Estimated Paint Needed",value=gal+" Gallons",info="Based on your project measurements";
+ if(currentTab==="coverage"){label="Total Wall Area";value=Math.round(area).toLocaleString()+" sq ft";info="Before paint coats";}
+ if(currentTab==="cost"){
+ label="Estimated Paint Cost";
+ const price=document.getElementById("paintUnitPrice").value;
+ value=price===""?"Enter a Price":(gal*Number(price)).toLocaleString("en-US",{style:"currency",currency:"USD"});
+ info="Using the price you entered";
+ }
+ document.getElementById("resultLabel").textContent=label;
+ document.getElementById("resultValue").textContent=value;
+ document.getElementById("resultInfo").textContent=info;
+}
+function renderItems(){
+ const box=document.getElementById("materialItems");
+ box.innerHTML="";
+ items.forEach((item,i)=>{
+ const row=document.createElement("div");row.className="material-row";
+ const ck=document.createElement("input");ck.type="checkbox";ck.checked=item.selected;ck.setAttribute("aria-label","Include "+item.name);ck.onchange=()=>{item.selected=ck.checked;updateBudget()};
+ const name=document.createElement("span");name.textContent=item.name;
+ const qty=document.createElement("input");qty.type="number";qty.className="qty";qty.min="0";qty.value=item.qty;qty.setAttribute("aria-label","Quantity for "+item.name);qty.oninput=()=>{item.qty=Math.max(0,Number(qty.value)||0);updateBudget()};
+ const price=document.createElement("input");price.type="number";price.className="money";price.min="0";price.placeholder="$";price.dataset.index=i;price.setAttribute("aria-label","Unit price for "+item.name);price.oninput=updateBudget;
+ row.append(ck,name,qty,price);box.append(row);
+ });
+ updateBudget();
+}
+function updateBudget(){
+ let total=0,missing=0,hasPrice=false;
+ document.querySelectorAll("#materialItems .money").forEach(input=>{
+ const item=items[Number(input.dataset.index)];
+ if(!item.selected||item.qty<=0)return;
+ if(input.value===""){missing++;return}
+ total+=item.qty*Math.max(0,Number(input.value)||0);hasPrice=true;
+ });
+ document.getElementById("budgetValue").textContent=hasPrice?total.toLocaleString("en-US",{style:"currency",currency:"USD"}):"—";
+ document.getElementById("budgetNote").textContent=missing?`Partial estimate — ${missing} selected material(s) still need a price.`:"Total based only on your entered prices.";
+}
+function updateAdvanced(){
+ const gal=gallons(Number(document.getElementById("advLength").value)||0,Number(document.getElementById("advHeight").value)||0,Number(document.getElementById("advWalls").value)||0,Number(document.getElementById("advCoats").value)||0);
+ items[0].qty=gal;
+ document.getElementById("advGallons").textContent=gal+" gal";
+ renderItems();
+}
+calculate();renderItems();
+</script>
+</body>
+</html>
