@@ -1,0 +1,30 @@
+name: HomeImprovement live Paint verification
+on:
+  push:
+    branches: [work/homeimprovement-paint-planner-20261103]
+    paths: [.github/workflows/homeimprovement-paint-live.yml, features/paint-project/tests/live.mjs]
+permissions:
+  contents: read
+jobs:
+  verify:
+    if: contains(github.event.head_commit.message, '[paint-live-verification]')
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: |
+          npm install --prefix /tmp/paint-browser --ignore-scripts playwright@1.58.2
+          /tmp/paint-browser/node_modules/.bin/playwright install --with-deps chromium
+      - env:
+          PLAYWRIGHT_MODULE: /tmp/paint-browser/node_modules/playwright/index.mjs
+        run: timeout --kill-after=5s 120s node features/paint-project/tests/live.mjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: paint-live-verification
+          path: test-output/
