@@ -1,0 +1,58 @@
+{
+  "codeCommit": "3a1736f9a8dfffad82212506b816c8eb9ebb45cb",
+  "workflowRun": 41749155322,
+  "unitTests": {
+    "passed": 24,
+    "failed": 0
+  },
+  "BROWSER_RESULTS": {
+    "passed": true,
+    "checks": [
+      "existing needed/coverage/cost and invalid inputs",
+      "integration with existing result",
+      "owned items and incomplete prices",
+      "custom material XSS safety/removal",
+      "detailed room, ceiling and primer",
+      "physical unit round-trip",
+      "complete budget",
+      "direct Letter/A4 PDFs and browser print",
+      "desktop/mobile overflow",
+      "new field labels and keyboard order",
+      "canonical/noindex",
+      "no external API requests; only pre-existing hero image attempted"
+    ],
+    "externalRequests": [
+      "https://images.pexels.com/photos/6474471/pexels-photo-6474471.jpeg?auto=compress&cs=tinysrgb&w=1800"
+    ],
+    "pageErrors": []
+  },
+  "PRODUCTION_AUDIT": {
+    "at": "2026-11-04T00:45:40.694Z",
+    "pages": {
+      "name": "homeimprovement-tools",
+      "deployment": "a5f8ef83-55ec-456a-9841-0750f662501c",
+      "gitSource": false,
+      "branch": "main",
+      "commit": "bee8cc02a8261f0c92659d3c64bed0ab9475c5ac",
+      "d1": "4674c99c-cb26-47af-a557-19f097678ec6",
+      "r2": "homeimprovement-editorial-media"
+    },
+    "worker": {
+      "version": "8e5b8b79-711b-4f56-99ab-e15d93c078e1",
+      "d1": "4674c99c-cb26-47af-a557-19f097678ec6",
+      "r2": "homeimprovement-editorial-media",
+      "cron": [
+        "* * * * *"
+      ]
+    },
+    "calculator": {
+      "status": 200,
+      "noindex": "noindex, nofollow, noarchive",
+      "hasPlanner": false
+    }
+  },
+  "artifacts": [
+    "https://github.com/wepubly/wedocalc/actions/runs/41749155322/artifacts/13285630966",
+    "https://github.com/wepubly/wedocalc/actions/runs/41749155322/artifacts/13285256713"
+  ]
+}
