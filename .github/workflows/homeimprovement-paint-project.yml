@@ -33,7 +33,7 @@ jobs:
       - name: Browser, accessibility, mobile and PDF tests
         env:
           PLAYWRIGHT_MODULE: /tmp/paint-browser/node_modules/playwright/index.mjs
-        run: node features/paint-project/tests/browser.mjs /tmp/paint-project-demo/demo
+        run: timeout --kill-after=5s 110s node features/paint-project/tests/browser.mjs /tmp/paint-project-demo/demo
       - name: Read-only current production metadata
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
