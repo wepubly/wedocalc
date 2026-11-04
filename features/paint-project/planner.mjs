@@ -58,10 +58,10 @@ if(root){
  function changeUnits(){
   const now=value('units');if(now===lastUnits)return;
   const toMetric=now==='metric',factor=toMetric?0.3048:1/0.3048;
-  for(const key of ['length','width','height','doorsWidth','doorsHeight','windowsWidth','windowsHeight'])if($(key).value!=='')$(key).value=String(Number($(key).value)*factor);
-  for(const key of ['rate','ceilingRate','primerRate'])if($(key).value!=='')$(key).value=String(Number($(key).value)*(toMetric?1/(SQFT_PER_SQM*L_PER_GAL):SQFT_PER_SQM*L_PER_GAL));
-  if($('packageSize').value!=='')$('packageSize').value=String(Number($('packageSize').value)*(toMetric?L_PER_GAL:1/L_PER_GAL));
-  for(const el of root.querySelectorAll('[data-length-unit]'))el.textContent=toMetric?'m':'ft';for(const el of root.querySelectorAll('[data-coverage-unit]'))el.textContent=toMetric?'m² / L':'sq ft / US gal';for(const el of root.querySelectorAll('[data-volume-unit]'))el.textContent=toMetric?'L':'US gal';lastUnits=now;
+  for(const key of ['length','width','height','doorsWidth','doorsHeight','windowsWidth','windowsHeight'])if($(key).value!=='')$(key).value=String(Number((Number($(key).value)*factor).toPrecision(12)));
+  for(const key of ['rate','ceilingRate','primerRate'])if($(key).value!=='')$(key).value=String(Number((Number($(key).value)*(toMetric?1/(SQFT_PER_SQM*L_PER_GAL):SQFT_PER_SQM*L_PER_GAL)).toPrecision(12)));
+  if($('packageSize').value!=='')$('packageSize').value=String(Number((Number($('packageSize').value)*(toMetric?L_PER_GAL:1/L_PER_GAL)).toPrecision(12)));
+  for(const el of root.querySelectorAll('[data-length-unit]'))el.textContent=toMetric?'m':'ft';for(const el of root.querySelectorAll('[data-coverage-unit]'))el.textContent=toMetric?'m² / L':'sq ft / US gal';for(const el of root.querySelectorAll('[data-volume-unit]'))el.textContent=toMetric?'L':'US gal';lastUnits=now;$('export-status').textContent='Units converted. Re-enter prices if the purchase unit changed.';
  }
  function measurements(){const data=input();if(value('method')==='existing')return [['Source','Paint Needed result (already net area)'],['Project type',value('kind')],['Units',value('units')]];return Object.entries(data).map(([key,val])=>[key,String(val)]);}
  function lines(){if(!valid||!result)throw Error('Calculate a valid project first.');const b=quote();return reportLines({name:value('name'),result,inventory:items,list:shopping(items,value('includeOwned')),budget:b,measurements:measurements()});}
