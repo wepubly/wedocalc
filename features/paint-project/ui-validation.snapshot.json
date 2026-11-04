@@ -1,0 +1,118 @@
+{
+  "codeCommit": "039e02920d1b0dbc80aaf7e5ed941472d078509b",
+  "workflowRun": 41757181004,
+  "unitTests": {
+    "passed": 24,
+    "failed": 0
+  },
+  "BROWSER_RESULTS": {
+    "passed": true,
+    "checks": [
+      "existing needed/coverage/cost and invalid inputs",
+      "legacy sharing and Print Preview",
+      "integration with existing result",
+      "owned items and incomplete prices",
+      "custom material XSS safety/removal",
+      "detailed room, ceiling and primer",
+      "physical unit round-trip",
+      "complete budget",
+      "direct Letter/A4 PDFs and browser print",
+      "desktop/mobile overflow",
+      "new field labels and keyboard order",
+      "canonical/noindex",
+      "no external requests in isolated demo",
+      "Quick/Planner switching preserves data",
+      "three-column lower grid and FAQ",
+      "four verified public guide cards",
+      "offline single-file demo and PDF download"
+    ],
+    "externalRequests": [],
+    "pageErrors": []
+  },
+  "PRODUCTION_AUDIT": {
+    "at": "2026-11-04T01:54:45.476Z",
+    "pages": {
+      "name": "homeimprovement-tools",
+      "deployment": "a5f8ef83-55ec-456a-9841-0750f662501c",
+      "gitSource": false,
+      "branch": "main",
+      "commit": "bee8cc02a8261f0c92659d3c64bed0ab9475c5ac",
+      "d1": "4674c99c-cb26-47af-a557-19f097678ec6",
+      "r2": "homeimprovement-editorial-media"
+    },
+    "worker": {
+      "version": "8e5b8b79-711b-4f56-99ab-e15d93c078e1",
+      "d1": "4674c99c-cb26-47af-a557-19f097678ec6",
+      "r2": "homeimprovement-editorial-media",
+      "cron": [
+        "* * * * *"
+      ]
+    },
+    "calculator": {
+      "status": 200,
+      "noindex": "noindex, nofollow, noarchive",
+      "hasPlanner": false
+    }
+  },
+  "PUBLIC_LINKS": {
+    "at": "2026-11-04T01:54:19.588Z",
+    "publicCatalogueCount": 7,
+    "guides": [
+      {
+        "title": "How Much Paint Do You Need for One Wall or Accent Wall?",
+        "href": "https://homeimprovement.tools/home-garden/paint-calculators/paint-calculator/paint-for-one-wall/",
+        "status": 200,
+        "canonicalMatches": true
+      },
+      {
+        "title": "How Much Paint Do You Need for a Bedroom?",
+        "href": "https://homeimprovement.tools/home-garden/paint-calculators/paint-calculator/paint-for-a-bedroom/",
+        "status": 200,
+        "canonicalMatches": true
+      },
+      {
+        "title": "How Many Coats of Paint Do Interior Walls Need?",
+        "href": "https://homeimprovement.tools/home-garden/paint-calculators/paint-calculator/coats-of-paint/",
+        "status": 200,
+        "canonicalMatches": true
+      },
+      {
+        "title": "How to Measure Walls for Painting: Doors, Windows and Openings",
+        "href": "https://homeimprovement.tools/home-garden/paint-calculators/paint-calculator/measure-walls-for-painting/",
+        "status": 200,
+        "canonicalMatches": true
+      }
+    ],
+    "related": [
+      {
+        "href": "https://homeimprovement.tools/paint-calculators/",
+        "status": 200,
+        "destination": "Existing Paint Calculators directory"
+      },
+      {
+        "href": "https://homeimprovement.tools/paint-calculators/",
+        "status": 200,
+        "destination": "Existing Paint Calculators directory"
+      },
+      {
+        "href": "https://homeimprovement.tools/paint-calculators/",
+        "status": 200,
+        "destination": "Existing Paint Calculators directory"
+      },
+      {
+        "href": "https://homeimprovement.tools/paint-calculators/",
+        "status": 200,
+        "destination": "Existing Paint Calculators directory"
+      },
+      {
+        "href": "https://homeimprovement.tools/paint-calculators/",
+        "status": 200,
+        "destination": "Existing Paint Calculators directory"
+      }
+    ]
+  },
+  "artifacts": [
+    "https://github.com/wepubly/wedocalc/actions/runs/41757181004/artifacts/13288399066",
+    "https://github.com/wepubly/wedocalc/actions/runs/41757181004/artifacts/13288843075"
+  ]
+}

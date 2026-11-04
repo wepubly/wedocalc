@@ -1,5 +1,7 @@
 # Paint Project Planner — entrega isolada
 
+Atualização visual final ao protótipo aprovado: [UI-FINAL.md](UI-FINAL.md), com [evidências atualizadas](EVIDENCIAS-UI.md). A apresentação anterior abaixo foi substituída pela interface Quick/Planner, preservando os motores.
+
 Status: desenvolvimento isolado concluído; produção não publicada. O proprietário deve aprovar a interface e autorizar o deploy separadamente.
 
 Branch: `work/homeimprovement-paint-planner-20261103` (repo `wepubly/wedocalc`). A referência exata do código validado está em validation.snapshot.json e na execução final do Actions vinculada abaixo. Não foi feito merge em main.
