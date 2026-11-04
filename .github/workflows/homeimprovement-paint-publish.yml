@@ -1,0 +1,41 @@
+name: HomeImprovement approved Paint UI publication
+on:
+  push:
+    branches: [work/homeimprovement-paint-planner-20261103]
+    paths: [.github/workflows/homeimprovement-paint-publish.yml, features/paint-project/publish.mjs]
+permissions:
+  contents: read
+concurrency:
+  group: homeimprovement-isolated-copy
+  cancel-in-progress: false
+jobs:
+  publish:
+    if: contains(github.event.head_commit.message, '[paint-project-publish-authorized]')
+    runs-on: ubuntu-24.04
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Assemble approved Paint UI
+        run: python features/paint-project/assemble.py /tmp/paint-approved
+      - name: Build and typecheck
+        working-directory: /tmp/paint-approved/cms
+        run: |
+          npm ci --ignore-scripts
+          node build-local.mjs
+      - name: Guard production, publish Pages only, verify preservation
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: b81896777d206a2239625d9cf2e8a40b
+          HI_PREPARED_CMS: /tmp/paint-approved/cms
+        run: node features/paint-project/publish.mjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: paint-publication
+          path: paint-project-publication.json
