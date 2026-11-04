@@ -1,0 +1,46 @@
+name: HomeImprovement paint project isolated validation
+on:
+  push:
+    branches: [work/homeimprovement-paint-planner-20261103]
+    paths: [features/paint-project/**, .github/workflows/homeimprovement-paint-project.yml]
+permissions:
+  contents: read
+jobs:
+  tests:
+    if: contains(github.event.head_commit.message, '[paint-project-validation]')
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Math, inventory, budget and PDF unit tests
+        run: node --test features/paint-project/tests/engine.test.mjs
+      - name: Assemble static demo without runtime bindings
+        run: python features/paint-project/assemble.py /tmp/paint-project-demo
+      - name: Install test-only browser dependencies
+        run: |
+          npm install --prefix /tmp/paint-browser --ignore-scripts playwright@1.58.2
+          /tmp/paint-browser/node_modules/.bin/playwright install --with-deps chromium
+      - name: Browser, accessibility, mobile and PDF tests
+        env:
+          PLAYWRIGHT_MODULE: /tmp/paint-browser/node_modules/playwright/index.mjs
+        run: node features/paint-project/tests/browser.mjs /tmp/paint-project-demo/demo
+      - name: Read-only current production metadata
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+        run: node features/paint-project/inspect-production.mjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: paint-project-evidence
+          path: test-output/
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: paint-project-offline-demo
+          path: /tmp/paint-project-demo/demo/

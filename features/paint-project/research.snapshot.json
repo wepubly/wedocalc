@@ -1,0 +1,28 @@
+{
+  "buildvisionai/construction-calculators": {
+    "tree": "4dde4be0b2b6bd13fd0c97eb837d8b3b99e4129b",
+    "testFiles": [],
+    "licenseFiles": [
+      "python/LICENSE"
+    ]
+  },
+  "estimatorsuite/construction-calculators": {
+    "tree": "bda718accd39a6ff757d385a6e71a8e8aee491b1",
+    "testFiles": [],
+    "licenseFiles": [
+      "LICENSE"
+    ]
+  },
+  "alstc/home-renovation-planner-java": {
+    "tree": "778014ea7f47174d92865a123c29050b8ebbdeca",
+    "testFiles": [],
+    "licenseFiles": [
+      "LICENSE"
+    ]
+  },
+  "retailerapi/mcp": {
+    "tree": "aafc7d0d460711e4f4eddc5e5c67d7faae1fea14",
+    "testFiles": [],
+    "licenseFiles": []
+  }
+}

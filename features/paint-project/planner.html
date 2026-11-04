@@ -1,0 +1,54 @@
+<section id="project-planner" class="calc-panel hi-planner" aria-labelledby="planner-title">
+ <p class="hi-eyebrow">PLAN YOUR PROJECT</p><h2 id="planner-title">From paint quantity to your shopping list</h2>
+ <p>Organize materials and calculate a budget using your own prices. No account, AI or supplier lookup. Your project stays in this page.</p>
+ <div class="hi-grid">
+  <label>Project name (optional)<input id="pp-name" maxlength="120" placeholder="Living room refresh"></label>
+  <label>Project type<select id="pp-kind"><option value="interior">Interior painting</option><option value="exterior">Exterior walls (rectangular footprint)</option></select></label>
+  <label>Measurements<select id="pp-method"><option value="existing">Use Paint Needed result above</option><option value="room">Detailed room / rectangular walls</option></select></label>
+  <label>Project units<select id="pp-units"><option value="imperial">US — feet, sq ft, US gallons</option><option value="metric">Metric — meters, m², liters</option></select></label>
+ </div>
+ <p id="pp-source">The paintable area, coverage, coats and allowance will follow Paint Needed above.</p>
+ <fieldset id="pp-room" hidden><legend>Detailed measurements</legend><p>Four rectangular walls. Do not include doors or windows you intend to paint. Counts share the entered size; use measured total area above for irregular layouts.</p><div class="hi-grid">
+  <label>Length <span data-length-unit>ft</span><input id="pp-length" type="number" min="0.01" max="10000" step="any" value="15"></label>
+  <label>Width <span data-length-unit>ft</span><input id="pp-width" type="number" min="0.01" max="10000" step="any" value="12"></label>
+  <label>Wall height <span data-length-unit>ft</span><input id="pp-height" type="number" min="0.01" max="1000" step="any" value="9"></label>
+  <label>Doors (same size)<input id="pp-doorsCount" type="number" min="0" max="1000" step="1" value="1"></label>
+  <label>Door width <span data-length-unit>ft</span><input id="pp-doorsWidth" type="number" min="0.01" step="any" value="3"></label>
+  <label>Door height <span data-length-unit>ft</span><input id="pp-doorsHeight" type="number" min="0.01" step="any" value="7"></label>
+  <label>Windows (same size)<input id="pp-windowsCount" type="number" min="0" max="1000" step="1" value="2"></label>
+  <label>Window width <span data-length-unit>ft</span><input id="pp-windowsWidth" type="number" min="0.01" step="any" value="3"></label>
+  <label>Window height <span data-length-unit>ft</span><input id="pp-windowsHeight" type="number" min="0.01" step="any" value="5"></label>
+  <label>Paint coats<input id="pp-coats" type="number" min="1" max="10" step="1" value="2"></label>
+  <label>Paint coverage <span data-coverage-unit>sq ft / US gal</span><input id="pp-rate" type="number" min="0.01" step="any" value="350"></label>
+  <label>Extra allowance %<input id="pp-waste" type="number" min="0" max="100" step="any" value="10"></label>
+ </div><label class="hi-check"><input id="pp-ceiling" type="checkbox"> Include ceiling as a separate paint</label><div id="pp-ceiling-options" class="hi-grid" hidden>
+  <label>Ceiling coats<input id="pp-ceilingCoats" type="number" min="1" max="10" value="2"></label>
+  <label>Ceiling coverage <span data-coverage-unit>sq ft / US gal</span><input id="pp-ceilingRate" type="number" min="0.01" step="any" value="350"></label>
+ </div></fieldset>
+ <fieldset><legend>Materials and preparation</legend><div class="hi-grid">
+  <label>Container size <span data-volume-unit>US gal</span><input id="pp-packageSize" type="number" min="0.01" max="1000" step="any" value="1"></label>
+  <label class="hi-check"><input id="pp-primer" type="checkbox"> Include primer</label>
+  <label class="hi-check"><input id="pp-mask" type="checkbox" checked> Include masking and protection</label>
+  <label class="hi-check"><input id="pp-repair" type="checkbox"> Include minor surface repair supplies</label>
+ </div><div id="pp-primer-options" class="hi-grid" hidden>
+  <label>Primer coats<input id="pp-primerCoats" type="number" min="1" max="10" value="1"></label>
+  <label>Primer coverage <span data-coverage-unit>sq ft / US gal</span><input id="pp-primerRate" type="number" min="0.01" step="any" value="250"></label>
+ </div><p>Coverage examples are editable starting points, not a product guarantee. Check each coating label. Containers are rounded up separately for wall paint, ceiling paint and primer.</p></fieldset>
+ <p id="pp-error" role="alert" hidden></p><div id="pp-output">
+ <h3>Paint and surface breakdown</h3><dl id="pp-breakdown" class="hi-breakdown" aria-live="polite"></dl>
+ <h3>Project Materials Checklist</h3><p>Reusable tools assume one painter. Accessory quantities are editable planning allowances, not fixed consumption rates. Your edits stay when measurements change; reset quantities to use new suggestions.</p>
+ <button id="pp-reset" type="button">Reset suggested quantities and selections</button>
+ <div id="pp-materials" class="hi-materials"></div>
+ <fieldset><legend>Add your own material</legend><div class="hi-grid">
+  <label>Material name<input id="pp-newName" maxlength="100"></label><label>Quantity<input id="pp-newQuantity" type="number" min="0.01" max="1000000" step="any" value="1"></label><label>Purchase unit<input id="pp-newUnit" maxlength="40" value="each"></label>
+ </div><button id="pp-add" type="button">Add material</button></fieldset>
+ <h3>Your Shopping List</h3><label class="hi-check"><input id="pp-includeOwned" type="checkbox"> Also show materials I already own (excluded from the budget)</label><ul id="pp-shopping"></ul>
+ <h3>Project Budget Calculator</h3><p>USD amounts use only prices you enter. Blank prices are unquoted, not free. No labor estimate is included. Add taxes, delivery or other costs yourself.</p>
+ <div class="hi-grid"><label>Additional costs (USD)<input id="pp-additional" type="number" min="0" max="100000000" step="0.01" placeholder="Not entered"></label><label>Contingency %<input id="pp-contingency" type="number" min="0" max="100" step="any" placeholder="Not entered"></label></div>
+ <p id="pp-budget" role="status" aria-live="polite"></p>
+ <div class="hi-actions"><button id="pp-print" type="button">Print project report</button><button id="pp-letter" type="button">Download PDF US Letter</button><button id="pp-a4" type="button">Download PDF A4</button></div>
+ <p id="pp-export-status" role="status"></p>
+ </div>
+ <details><summary>Methodology and assumptions</summary><p>Gross wall area = 2 × (length + width) × height. Deduct count × width × height for doors and windows. Ceiling area = length × width, calculated separately. Coating quantity = net area × coats ÷ label coverage × (1 + allowance ÷ 100). Primer uses its own coverage and coats. Metric values convert through 1 ft = 0.3048 m and 1 US gallon = 3.785411784 L.</p><p>The existing-area option uses an already net paintable area; it does not deduct openings again. Separate paints are rounded independently to the chosen container size. Budget = selected, unowned purchase quantities × your unit prices + additional costs, then contingency. Missing quotes mean an incomplete budget. Material prices and labor are never fetched.</p></details>
+ <section id="pp-recommendations" hidden aria-label="Recommended Painting Tools & Supplies"></section>
+</section>
