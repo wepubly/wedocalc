@@ -49,7 +49,7 @@ if(root){
  function refresh(reset=false){
   try{
    $('room').hidden=value('method')!=='room';$('source').hidden=value('method')!=='existing';$('ceiling-options').hidden=!value('ceiling');$('primer-options').hidden=!value('primer');
-   result=calculate(input());const next=recommendations(result,{mask:value('mask'),repair:value('repair')}).filter(x=>!removed.has(x.id));items=reset?next:reconcile(next,items);valid=true;$('output').hidden=false;
+   result=calculate(input());const next=recommendations(result,{mask:value('mask'),repair:value('repair')}).filter(x=>!removed.has(x.id));items=reset?[...next,...items.filter(x=>x.custom)]:reconcile(next,items);valid=true;$('output').hidden=false;
    const metric=result.units==='metric',area=n=>fmt(n/(metric?SQFT_PER_SQM:1))+(metric?' m²':' sq ft'),volume=n=>fmt(n*(metric?L_PER_GAL:1))+(metric?' L':' US gal');
    $('breakdown').replaceChildren();for(const [label,value] of [['Gross / supplied net area',area(result.gross)],['Openings deducted',area(result.deduction)],['Net paintable walls / area',area(result.net)],['Separate ceiling',area(result.ceiling)],['Wall paint',volume(result.wallPaint)],['Ceiling paint',volume(result.ceilingPaint)],['Primer',volume(result.primer)],['Coating allowance',result.waste+'%']]){const div=document.createElement('div');text('dt',label,div);text('dd',value,div);$('breakdown').append(div);}
    materialCards();totals();

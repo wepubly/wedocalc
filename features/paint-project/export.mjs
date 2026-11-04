@@ -2,12 +2,22 @@
 const winExtras={'€':128,'‘':145,'’':146,'“':147,'”':148,'–':150,'—':151,'•':149,'×':215,'²':178};
 export const unsupported=lines=>lines.some(line=>[...line.text].some(c=>c.codePointAt(0)>255&&!(c in winExtras)));
 function hex(text){return [...text].map(c=>(winExtras[c]??c.charCodeAt(0)).toString(16).padStart(2,'0')).join('');}
-function wrap(text,limit){const lines=[];for(const paragraph of String(text).replace(/[\r\n]+/g,' ').split(/\s+/)){let word=paragraph;while(word.length>limit){if(lines.at(-1)&&lines.at(-1).length<limit)lines.push('');lines.push(word.slice(0,limit));word=word.slice(limit);}if(!lines.length)lines.push(word);else if(lines.at(-1).length+word.length+1<=limit)lines[lines.length-1]+=' '+word;else lines.push(word);}return lines;}
+// Conservative Helvetica width estimates prevent long names from leaving the page.
+function textWidth(text,size){return [...text].reduce((sum,c)=>sum+size*(c==='@'?1.02:/[WMÆæ]/.test(c)?.98:/[mw]/.test(c)?.9:/[A-Z]/.test(c)?.8:/[ ilI.,:;!'`|]/.test(c)?.33:c.charCodeAt(0)>127?.9:.65),0);}
+function wrap(text,maxWidth,size){
+ const lines=[];let line='';
+ for(let word of String(text).replace(/[\r\n]+/g,' ').split(/\s+/)){
+  if(textWidth((line?line+' ':'')+word,size)>maxWidth&&line){lines.push(line);line='';}
+  while(textWidth(word,size)>maxWidth){let cut=1;while(cut<word.length&&textWidth(word.slice(0,cut+1),size)<=maxWidth)cut++;lines.push(word.slice(0,cut));word=word.slice(cut);}
+  line+=(line?' ':'')+word;
+ }
+ if(line)lines.push(line);return lines.length?lines:[''];
+}
 export function pdf(lines,format='Letter'){
  if(unsupported(lines))throw Error('For names or materials outside the Latin character set, use Print and Save as PDF.');
  const [width,height]=format==='A4'?[595.28,841.89]:[612,792],margin=44,lineHeight=15;
  const pages=[];let page=[],y=height-margin;
- for(const row of lines){const size=row.heading?15:10;const max=Math.floor((width-2*margin)/(size*0.54));for(const text of wrap(row.text,max)){if(y<margin+30){pages.push(page);page=[];y=height-margin;}page.push(`BT /F1 ${size} Tf 1 0 0 1 ${margin} ${y} Tm <${hex(text)}> Tj ET`);y-=row.heading?23:lineHeight;}y-=row.heading?3:1;}
+ for(const row of lines){const size=row.heading?15:10;const max=width-2*margin;for(const text of wrap(row.text,max,size)){if(y<margin+30){pages.push(page);page=[];y=height-margin;}page.push(`BT /F1 ${size} Tf 1 0 0 1 ${margin} ${y} Tm <${hex(text)}> Tj ET`);y-=row.heading?23:lineHeight;}y-=row.heading?3:1;}
  if(page.length)pages.push(page);
  const objects=['','<< /Type /Catalog /Pages 2 0 R >>','', '<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>'];const ids=[];
  pages.forEach((commands,i)=>{const pageId=objects.length,streamId=pageId+1;ids.push(pageId);objects.push(`<< /Type /Page /Parent 2 0 R /MediaBox [0 0 ${width} ${height}] /Resources << /Font << /F1 3 0 R >> >> /Contents ${streamId} 0 R >>`);const footer=`BT /F1 9 Tf 1 0 0 1 ${margin} 28 Tm <${hex('HomeImprovement.tools | Page '+(i+1)+' of '+pages.length)}> Tj ET`;const stream=['0.12 0.16 0.22 rg',...commands,footer].join('\n');objects.push(`<< /Length ${stream.length} >>\nstream\n${stream}\nendstream`);});
