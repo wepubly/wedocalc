@@ -1,0 +1,31 @@
+{
+  "at": "2026-11-04T02:06:02.855Z",
+  "commit": "a532b71484e391e32f97d248721721cbd32bb3fe",
+  "pagesDeployment": "c662c051-eb97-4814-afe9-bcd900657a3d",
+  "rollbackDeployment": "a5f8ef83-55ec-456a-9841-0750f662501c",
+  "workerVersion": "8e5b8b79-711b-4f56-99ab-e15d93c078e1",
+  "cron": "* * * * *",
+  "sourcePagesUnchanged": "08983672-ebdc-47a3-b4b7-f246cb9d22be",
+  "sourceWorkerVersion": "dda5078a-3413-4f91-9f02-e39ad362df43",
+  "noindex": true,
+  "editorialUnchanged": true,
+  "publicationRun": "https://github.com/wepubly/wedocalc/actions/runs/41758439950",
+  "liveVerificationRun": "https://github.com/wepubly/wedocalc/actions/runs/41758598107",
+  "live": {
+    "at": "2026-11-04T02:07:46.309Z",
+    "checks": [
+      "Quick calculation on live domain",
+      "Planner transfer and detailed dimensions",
+      "Letter and A4 PDFs",
+      "Live CMS guide links",
+      "Mobile layout and JavaScript"
+    ],
+    "guideLinks": [
+      "https://homeimprovement.tools/home-garden/paint-calculators/paint-calculator/paint-for-one-wall/",
+      "https://homeimprovement.tools/home-garden/paint-calculators/paint-calculator/paint-for-a-bedroom/",
+      "https://homeimprovement.tools/home-garden/paint-calculators/paint-calculator/coats-of-paint/",
+      "https://homeimprovement.tools/home-garden/paint-calculators/paint-calculator/measure-walls-for-painting/"
+    ],
+    "success": true
+  }
+}
