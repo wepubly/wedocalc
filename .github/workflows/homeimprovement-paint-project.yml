@@ -24,6 +24,8 @@ jobs:
         run: python features/paint-project/assemble.py /tmp/paint-project-demo
       - name: Read public guides and verify demo links (no editorial API)
         run: node features/paint-project/demo-guides.mjs /tmp/paint-project-demo/demo
+      - name: Build one-file interactive demonstration
+        run: python features/paint-project/standalone.py /tmp/paint-project-demo/demo test-output/paint-calculator-interactive-demo.html
       - name: Install test-only browser dependencies
         run: |
           npm install --prefix /tmp/paint-browser --ignore-scripts playwright@1.58.2
