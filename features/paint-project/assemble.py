@@ -11,6 +11,7 @@ p=out/'site/paint-calculator/index.html';s=p.read_text()
 # Preserve FAQ, metadata, sharing and CMS slots. Reorganize only this calculator's static UI.
 s,n=re.subn(r'<section class="mp-calculator-top-slot".*?</section>','',s,count=1,flags=re.S);assert n==1
 s=re.sub(r'<style>\s*/\* Critical placement sizing:.*?</style>','',s,count=1,flags=re.S)
+s=re.sub(r'<style>\s*/\* Match the approved Paint Calculators background and yellow calculation action\. \*/.*?</style>','',s,count=1,flags=re.S)
 crumb=re.search(r'<div class="calc-crumb">.*?</div>',s,re.S).group(0)
 intro='<section class="calc-hero"><div class="calc-hero-inner">'+crumb+'<div class="calculator-intro"><p class="intro-eyebrow">Home Improvement Calculators</p><h1>Paint Calculator</h1><p>Calculate paint quickly or plan your entire painting project.</p></div></div></section>'
 s,n=re.subn(r'<section class="calc-hero">.*?</section>',lambda _:intro,s,count=1,flags=re.S);assert n==1
