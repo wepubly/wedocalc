@@ -38,6 +38,21 @@ shutil.copyfile(root/'migration/homeimprovement/cards-catalog.mjs',out/'cms/work
 home=out/'site/index.html'; text=home.read_text()
 if 'id="guides"' not in text:
  text=text.replace('</main>','<section id="guides" class="content"><h2>Ideas, Tips &amp; Guides</h2><div class="guides-grid" data-hi-cards="home"></div></section></main>',1)
+
+logo_before='<a class="new-logo" href="/" aria-label="HomeImprovement home"><img class="light-logo" src="/teste2/assets/logo-light.png?v=3" alt="HomeImprovement"><img class="dark-logo" src="/teste2/assets/logo-dark.png?v=3" alt="HomeImprovement"></a>'
+logo_after='<a class="new-logo homeimprovement-logo" href="/" aria-label="HomeImprovement.tools home"><img class="light-logo" src="/teste2/assets/homeimprovement-logo-light.webp" alt="" width="640" height="359"><img class="dark-logo" src="/teste2/assets/homeimprovement-logo-dark.webp" alt="" width="640" height="359"></a>'
+assert text.count(logo_before)==1
+text=text.replace(logo_before,logo_after).replace('/teste2/page.css?v=15','/teste2/page.css?v=16').replace('/teste2/footer.js?v=1','/teste2/footer.js?v=2')
+css=out/'site/teste2/page.css'
+with css.open('a') as f:f.write('\n.teste2 .hero-copy .homeimprovement-logo img{max-height:156px}\n')
+footer=out/'site/teste2/footer.js'
+footer_before='src=\\"/teste2/assets/logo-dark.png?v=3\\" alt=\\"HomeImprovement\\" width=\\"260\\" height=\\"70\\"'
+footer_after='src=\\"/teste2/assets/homeimprovement-logo-dark.webp\\" alt=\\"HomeImprovement.tools\\" width=\\"640\\" height=\\"359\\"'
+footer_script=footer.read_text()
+assert footer_script.count(footer_before)==1
+footer.write_text(footer_script.replace(footer_before,footer_after))
+for logo in (root/'migration/homeimprovement/assets').glob('homeimprovement-logo-*.webp'):
+ shutil.copyfile(logo,out/'site/teste2/assets'/logo.name)
 home.write_text(text)
 category=out/'site/paint-calculators/index.html';text=category.read_text()
 text,n=re.subn(r'<aside class="paint-guides">.*?</aside>','<aside class="paint-guides"><h2>Paint Guides &amp; Tips</h2><div data-hi-cards="category"></div></aside>',text,count=1,flags=re.S)
