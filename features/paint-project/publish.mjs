@@ -10,7 +10,7 @@ async function api(path){const r=await fetch(base+path,{headers:{Authorization:'
 async function state(){return {sourcePages:(await api('/pages/projects/wedocalc')).canonical_deployment.id,sourceWorker:(await api('/workers/scripts/metricpedia-editorial-lab/deployments')).deployments[0],targetWorker:(await api('/workers/scripts/homeimprovement-editorial/deployments')).deployments[0],targetCron:await api('/workers/scripts/homeimprovement-editorial/schedules')};}
 try{
  const before=await state();assert.deepEqual(before.targetCron.schedules.map(s=>s.cron),['* * * * *']);
- const p=await api('/pages/projects/homeimprovement-tools');assert.ok(!p.source);assert.equal(p.canonical_deployment.id,'cb5ac6ea-0785-48b4-8233-d0e6effe656d','Unexpected current deployment; stop for inspection');
+ const p=await api('/pages/projects/homeimprovement-tools');assert.ok(!p.source);assert.equal(p.canonical_deployment.deployment_trigger.metadata.commit_hash,'a28c9a8caa95f9ef674905ab1fdcc43d2f09289d','Unexpected current deployment; stop for inspection');
  const cfg=p.deployment_configs.production;assert.equal(cfg.d1_databases.DB.id,'4674c99c-cb26-47af-a557-19f097678ec6');assert.equal(cfg.r2_buckets.MEDIA.name,'homeimprovement-editorial-media');for(const k of ['HI_EDITORIAL_CRON','HI_EDITORIAL_WRITES'])assert.equal(cfg.env_vars[k].value,'enabled');
  report.previousPagesDeployment=p.canonical_deployment.id;report.before=before;
  writeFileSync('paint-project-publication.json',JSON.stringify(report,null,2));
@@ -21,6 +21,17 @@ try{
  const html=await home.text();
  assert.doesNotMatch(html, /class="tools-showcase"/);
  assert.match(html, /id="categories"/);
+ for(const path of ['/assets/shared-header.js?v=brand-1','/blog/']){
+  const response=await fetch(origin+path);assert.equal(response.status,200,path);
+  const markup=await response.text();
+  for(const theme of ['light','dark'])assert.ok(markup.includes('/assets/header-logo-'+theme+'.webp'),path);
+ }
+ for(const theme of ['light','dark']){
+  const path='/assets/header-logo-'+theme+'.webp';
+  const asset=await fetch(origin+path);assert.equal(asset.status,200,path);
+  assert.match(asset.headers.get('content-type')||'',/^image\/webp/,path);
+  await asset.body.cancel();
+ }
  for(const theme of ['light','dark']){
   const path='/teste2/assets/homeimprovement-logo-'+theme+'.webp';
   assert.ok(html.includes(path),path);

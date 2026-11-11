@@ -1,0 +1,27 @@
+.hi-header-brand {
+  display: block;
+  width: clamp(128px, 45vw, 224px);
+  flex-shrink: 0;
+}
+
+.hi-header-brand img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.hi-header-brand .hi-header-brand-dark,
+html[data-theme="dark"] .hi-header-brand .hi-header-brand-light,
+body.dark .hi-header-brand .hi-header-brand-light {
+  display: none;
+}
+
+html[data-theme="dark"] .hi-header-brand .hi-header-brand-dark,
+body.dark .hi-header-brand .hi-header-brand-dark {
+  display: block;
+}
+
+header > .hi-header-brand {
+  flex-shrink: 1;
+  min-width: 0;
+}

@@ -56,6 +56,31 @@ for logo in (root/'migration/homeimprovement/assets').glob('homeimprovement-logo
 text,removed=re.subn(r'<section class="tools-showcase"[^>]*>.*?</section>', '', text, flags=re.S)
 assert removed==1, 'Expected one calculator preview section on the homepage'
 home.write_text(text)
+
+# Apply the same wordmark to the shared tools header and the public blog header.
+brand_assets=root/'migration/homeimprovement/assets'
+for name in ['header-logo-light.webp','header-logo-dark.webp','header-brand.css']:
+ shutil.copyfile(brand_assets/name,out/'site/assets'/name)
+brand_css='<link rel="stylesheet" href="/assets/header-brand.css">'
+brand_link='<a class="hi-header-brand" href="/" aria-label="HomeImprovement.tools home">' + ''.join(
+ f'<img class="hi-header-brand-{theme}" src="/assets/header-logo-{theme}.webp" alt="" width="640" height="{height}">'
+ for theme,height in [('light',78),('dark',75)]
+) + '</a>'
+header=out/'site/assets/shared-header.js'
+script=header.read_text()
+old_brand='<a class="compact-brand" href="../" aria-label="HomeImprovement home"><strong>HomeImprovement</strong></a>'
+assert script.count(old_brand)==1
+header.write_text(script.replace(old_brand,brand_link))
+for route in ['home-garden','paint-calculators','paint-calculator']:
+ page=out/'site'/route/'index.html'
+ html=page.read_text()
+ assert html.count('../assets/shared-header.js')==1
+ page.write_text(html.replace('</head>',brand_css+'</head>',1).replace('../assets/shared-header.js','/assets/shared-header.js?v=brand-1'))
+blog=out/'cms/worker/production-render.ts'
+template=blog.read_text()
+old_blog_brand='<a href="/" aria-label="Metricpedia home"><strong style="font-size:24px">Metricpedia</strong></a>'
+assert template.count(old_blog_brand)==1
+blog.write_text(template.replace(old_blog_brand,brand_link).replace('</style>${extra}','</style>'+brand_css+'${extra}',1))
 category=out/'site/paint-calculators/index.html';text=category.read_text()
 text,n=re.subn(r'<aside class="paint-guides">.*?</aside>','<aside class="paint-guides"><h2>Paint Guides &amp; Tips</h2><div data-hi-cards="category"></div></aside>',text,count=1,flags=re.S)
 assert n==1,'Category article slot changed; inspect before preparing'
