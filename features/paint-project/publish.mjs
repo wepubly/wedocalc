@@ -14,6 +14,7 @@ try{
   'a28c9a8caa95f9ef674905ab1fdcc43d2f09289d',
   'e50b27a349fb00196d356299f6cf1b5009201c11',
   'dee95d7f60c98fd9f9df95da96f65b01362f7e0a',
+  'e0fded6c8a63ab3288fe1052b3c02277d77d0fd0',
  ].includes(p.canonical_deployment.deployment_trigger.metadata.commit_hash),'Unexpected current deployment; stop for inspection');
  const cfg=p.deployment_configs.production;assert.equal(cfg.d1_databases.DB.id,'4674c99c-cb26-47af-a557-19f097678ec6');assert.equal(cfg.r2_buckets.MEDIA.name,'homeimprovement-editorial-media');for(const k of ['HI_EDITORIAL_CRON','HI_EDITORIAL_WRITES'])assert.equal(cfg.env_vars[k].value,'enabled');
  report.previousPagesDeployment=p.canonical_deployment.id;report.before=before;
@@ -32,6 +33,9 @@ try{
   const page=await fetch(origin+path);assert.equal(page.status,200,path);
   const markup=await page.text();
   assert.match(markup, /id="shared-header"/,path);
+  assert.match(markup, /id="shared-footer"/,path);
+  assert.match(markup, /teste2\/footer\.js\?v=2/,path);
+  assert.match(markup, /blog-footer\.css\?v=2/,path);
   assert.match(markup, /shared-header\.js\?v=brand-2/,path);
  }
  for(const theme of ['light','dark']){
@@ -47,9 +51,9 @@ try{
   assert.match(asset.headers.get('content-type')||'',/^image\/webp/,path);
   await asset.body.cancel();
  }
- const footerCss=await fetch(origin+'/assets/blog-footer.css?v=1');assert.equal(footerCss.status,200);
+ const footerCss=await fetch(origin+'/assets/blog-footer.css?v=2');assert.equal(footerCss.status,200);
  const blogPage=await fetch(origin+'/blog/');const blogMarkup=await blogPage.text();
- assert.match(blogMarkup,/id="shared-footer"/);assert.match(blogMarkup,/blog-footer\.css\?v=1/);
+ assert.match(blogMarkup,/id="shared-footer"/);assert.match(blogMarkup,/blog-footer\.css\?v=2/);
  assert.doesNotMatch(blogMarkup,/<footer>HomeImprovement · Powered by/);
  const footer=await fetch(origin+'/teste2/footer.js?v=2');assert.equal(footer.status,200);
  assert.match(await footer.text(),/homeimprovement-logo-dark\.webp/);
