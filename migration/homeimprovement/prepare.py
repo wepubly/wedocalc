@@ -78,7 +78,7 @@ for route in ['home-garden','paint-calculators','paint-calculator']:
  assert html.count('../assets/shared-footer.js')==1
  html=html.replace('../assets/shared-footer.js','/teste2/footer.js?v=2')
  html=re.sub(r'<body([^>]*)>',lambda m:'<body'+m.group(1)+' data-hi-shared-footer>',html,count=1)
- page.write_text(html.replace('</head>',brand_css+'<link rel="stylesheet" href="/assets/blog-footer.css?v=2"></head>',1).replace('../assets/shared-header.js','/assets/shared-header.js?v=brand-2'))
+ page.write_text(html.replace('</head>',brand_css+'<link rel="stylesheet" href="/assets/blog-footer.css?v=3"></head>',1).replace('../assets/shared-header.js','/assets/shared-header.js?v=brand-2'))
 blog=out/'cms/worker/production-render.ts'
 template=blog.read_text()
 blog_header, replacements=re.subn(
@@ -97,7 +97,7 @@ blog_css='<link rel="stylesheet" href="/css/tokens.css">'+brand_css
 old_footer='<footer>Metricpedia · Powered by <a href="https://wepubly.com">WePubly</a></footer>'
 assert blog_theme.count(old_footer)==1
 blog_theme=blog_theme.replace(old_footer,'<div id="shared-footer"></div><script src="/teste2/footer.js?v=2" defer></script>',1)
-blog_css+='<link rel="stylesheet" href="/assets/blog-footer.css?v=2">'
+blog_css+='<link rel="stylesheet" href="/assets/blog-footer.css?v=3">'
 blog.write_text(blog_theme.replace('body.dark','html[data-theme="dark"] body')
  .replace('</style>${extra}','</style>'+blog_css+'${extra}',1)
  .replace('<body>${preview','<body class="hi-blog">${preview',1))
