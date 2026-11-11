@@ -21,7 +21,38 @@ body.dark .hi-header-brand .hi-header-brand-dark {
   display: block;
 }
 
-header > .hi-header-brand {
-  flex-shrink: 1;
-  min-width: 0;
+
+.hi-blog .metricpedia-shared-header {
+  display: block;
+  max-width: none;
+  padding: 0;
+  border-bottom: 1px solid var(--mp-border);
+}
+
+.hi-blog .metricpedia-shared-header .header-inner {
+  height: 100%;
+}
+
+.hi-blog .metricpedia-shared-header .primary {
+  border-radius: 10px;
+  padding: 9px 16px;
+}
+
+.hi-blog .metricpedia-shared-header .theme-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 25px;
+  height: 25px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--mp-text);
+}
+
+@media (max-width: 720px) {
+  .hi-blog .metricpedia-shared-header .primary {
+    padding: 8px;
+  }
 }
