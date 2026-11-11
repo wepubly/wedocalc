@@ -117,3 +117,6 @@ config=json.loads((root/'migration/homeimprovement/wrangler.template.json').read
 (out/'cms/wrangler.homeimprovement.template.json').write_text(json.dumps(config,indent=2)+'\n')
 (out/'SOURCE-REFS.json').write_text(json.dumps({'public':public,'cms':cms,'cardsCandidate':'2c252b7e8d0234ca8df571a866ad97cff1cc4986','deployedWorkerVersion':'dda5078a-3413-4f91-9f02-e39ad362df43','productionPagesDeployment':'08983672-ebdc-47a3-b4b7-f246cb9d22be','status':'LOCAL PREPARATION ONLY; no data copied; cards adapted locally; remote validation pending'},indent=2))
 print(out)
+
+# Add only owner-approved institutional pages and wire their shared footer links.
+subprocess.run([sys.executable,str(root/'features/institutional/render.py'),str(out/'site'),str(root/'features/institutional/approved-content.json')],check=True)
