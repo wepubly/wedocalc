@@ -59,7 +59,7 @@ home.write_text(text)
 
 # Apply the same wordmark to the shared tools header and the public blog header.
 brand_assets=root/'migration/homeimprovement/assets'
-for name in ['header-logo-light.webp','header-logo-dark.webp','header-brand.css']:
+for name in ['header-logo-light.webp','header-logo-dark.webp','header-brand.css','blog-footer.css']:
  shutil.copyfile(brand_assets/name,out/'site/assets'/name)
 brand_css='<link rel="stylesheet" href="/assets/header-brand.css?v=2">'
 brand_link='<a class="hi-header-brand" href="/" aria-label="HomeImprovement.tools home">' + ''.join(
@@ -90,6 +90,11 @@ blog_theme, replacements=re.subn(
 )
 assert replacements==1
 blog_css='<link rel="stylesheet" href="/css/tokens.css">'+brand_css
+# Reuse the home footer verbatim; only scoped CSS is added to blog pages.
+old_footer='<footer>Metricpedia · Powered by <a href="https://wepubly.com">WePubly</a></footer>'
+assert blog_theme.count(old_footer)==1
+blog_theme=blog_theme.replace(old_footer,'<div id="shared-footer"></div><script src="/teste2/footer.js?v=2" defer></script>',1)
+blog_css+='<link rel="stylesheet" href="/assets/blog-footer.css?v=1">'
 blog.write_text(blog_theme.replace('body.dark','html[data-theme="dark"] body')
  .replace('</style>${extra}','</style>'+blog_css+'${extra}',1)
  .replace('<body>${preview','<body class="hi-blog">${preview',1))

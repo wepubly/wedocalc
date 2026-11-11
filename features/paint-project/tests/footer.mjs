@@ -1,0 +1,21 @@
+// Local-only structural regression test. Pass prepared site path as first argument.
+import {readFileSync} from 'node:fs';
+import vm from 'node:vm';
+import assert from 'node:assert/strict';
+const site=process.argv[2];assert.ok(site);
+const markup=readFileSync(site+'/footer-test.html','utf8');
+assert.equal((markup.match(/id="shared-footer"/g)||[]).length,1);
+assert.match(markup,/\/teste2\/footer\.js\?v=2/);
+assert.match(markup,/\/assets\/blog-footer\.css\?v=1/);
+assert.match(markup,/id="shared-header"/);
+assert.match(markup,/<article><h1>Paint guide<\/h1>/);
+assert.doesNotMatch(markup,/<footer>Metricpedia · Powered by/);
+const target={};
+vm.runInNewContext(readFileSync(site+'/teste2/footer.js','utf8'),{document:{querySelector:s=>{assert.equal(s,'#shared-footer');return target}}});
+assert.equal((target.outerHTML.match(/<footer>/g)||[]).length,1);
+assert.equal((target.outerHTML.match(/class="footer-column"/g)||[]).length,4);
+assert.match(target.outerHTML,/homeimprovement-logo-dark\.webp/);
+const css=readFileSync(site+'/assets/blog-footer.css','utf8');
+assert.match(css,/@media\(max-width:720px\)/);assert.match(css,/@media\(max-width:420px\)/);
+assert.ok(css.split('\n').filter(l=>l&& !l.startsWith('/*')).every(l=>l.includes('.hi-blog footer')));
+console.log('PASS: shared footer, home asset reuse, header/article preservation, scoped mobile CSS');
