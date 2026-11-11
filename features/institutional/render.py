@@ -7,7 +7,7 @@ from pathlib import Path
 import json,sys,html,re
 site=Path(sys.argv[1]).resolve(); source=Path(sys.argv[2]); review='--review' in sys.argv[3:]
 pages=json.loads(source.read_text())
-expected=({'about','our-mission','contact','privacy-policy','terms-of-service'} if review else {'about','our-mission','contact'})
+expected={'about','our-mission','contact','privacy-policy','terms-of-service'}
 assert {p['slug'] for p in pages}==expected
 if not review:
  assert all(p.get('approved') is True and not p.get('pending') for p in pages), 'Owner review and factual verification required before publication'

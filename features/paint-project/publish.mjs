@@ -11,7 +11,7 @@ async function state(){return {sourcePages:(await api('/pages/projects/wedocalc'
 try{
  const before=await state();assert.deepEqual(before.targetCron.schedules.map(s=>s.cron),['* * * * *']);
  const p=await api('/pages/projects/homeimprovement-tools');assert.ok(!p.source);assert.ok([
-  'e829d9021c85749ec0e4373a411cc7be756cb0a1',
+  'a22437e77575ee0499e094236c74741a7184cd0b',
  ].includes(p.canonical_deployment.deployment_trigger.metadata.commit_hash),'Unexpected current deployment; stop for inspection');
  const cfg=p.deployment_configs.production;assert.equal(cfg.d1_databases.DB.id,'4674c99c-cb26-47af-a557-19f097678ec6');assert.equal(cfg.r2_buckets.MEDIA.name,'homeimprovement-editorial-media');for(const k of ['HI_EDITORIAL_CRON','HI_EDITORIAL_WRITES'])assert.equal(cfg.env_vars[k].value,'enabled');
  report.previousPagesDeployment=p.canonical_deployment.id;report.before=before;
@@ -55,17 +55,17 @@ try{
  const footer=await fetch(origin+'/teste2/footer.js?v=2');assert.equal(footer.status,200);
  assert.match(await footer.text(),/homeimprovement-logo-dark\.webp/);
 
- for(const path of ['/about/','/our-mission/','/contact/']){
+ for(const path of ['/about/','/our-mission/','/contact/','/privacy-policy/','/terms-of-service/']){
   const res=await fetch(origin+path);assert.equal(res.status,200,path);const body=await res.text();
   assert.match(body,/data-hi-shared-footer/);assert.match(body,/noindex,nofollow/);
   assert.doesNotMatch(body,/Draft for review|review-note|PENDENTE/);
   if(path==='/contact/'){
- const emails=[...body.matchAll(/data-cfemail="([0-9a-f]+)"/g)].map(m=>{const b=Buffer.from(m[1],'hex');return [...b.subarray(1)].map(c=>String.fromCharCode(c^b[0])).join('');});
- assert.ok(body.includes('mailto:alex@avantybrands.com')||emails.includes('alex@avantybrands.com'),'Contact email missing');
- }
+   const emails=[...body.matchAll(/data-cfemail="([0-9a-f]+)"/g)].map(m=>{const b=Buffer.from(m[1],'hex');return [...b.subarray(1)].map(c=>String.fromCharCode(c^b[0])).join('');});
+   assert.ok(body.includes('mailto:alex@avantybrands.com')||emails.includes('alex@avantybrands.com'),'Contact email missing');
+  }
  }
  const institutionalFooter=await (await fetch(origin+'/teste2/footer.js?v=2')).text();
- for(const slug of ['about','our-mission','contact'])assert.ok(institutionalFooter.includes('/'+slug+'/'));
+ for(const slug of ['about','our-mission','contact','privacy-policy','terms-of-service'])assert.ok(institutionalFooter.includes('/'+slug+'/'));
  for(const label of ['Privacy Policy','Terms of Use'])assert.ok(institutionalFooter.includes(label));
  for(const path of ['/paint-calculator/','/admin','/api/editorial/articles','/api/editorial/schedules','/robots.txt']){
   const res=await fetch(origin+path);assert.equal(res.status,200,path);assert.match(res.headers.get('x-robots-tag')||'',/noindex/,path);const body=await res.text();
