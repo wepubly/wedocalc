@@ -22,3 +22,5 @@ html body:is(.hi-blog,[data-hi-shared-footer]) footer .signature strong span{col
 @media(max-width:720px){html body:is(.hi-blog,[data-hi-shared-footer]) footer{padding:30px 0 22px}html body:is(.hi-blog,[data-hi-shared-footer]) footer .footer-inner{gap:26px}html body:is(.hi-blog,[data-hi-shared-footer]) footer .footer-bottom{align-items:flex-start;flex-direction:column}html body:is(.hi-blog,[data-hi-shared-footer]) footer .footer-bottom .signature{text-align:left;padding-bottom:0}}
 @media(max-width:420px){html body:is(.hi-blog,[data-hi-shared-footer]) footer .footer-inner{grid-template-columns:1fr}}
 @media(prefers-reduced-motion:reduce){html body:is(.hi-blog,[data-hi-shared-footer]) footer .socials .social-button{transition:none}html body:is(.hi-blog,[data-hi-shared-footer]) footer .socials .social-button:hover{transform:none}}
+/* Theme-specific legacy category rules must not replace the shared dark-gray footer. */
+html[data-theme] body:is(.hi-blog,[data-hi-shared-footer]) footer{background:#292b2f}

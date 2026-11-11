@@ -6,7 +6,7 @@ const site=process.argv[2];assert.ok(site);
 const markup=readFileSync(site+'/footer-test.html','utf8');
 assert.equal((markup.match(/id="shared-footer"/g)||[]).length,1);
 assert.match(markup,/\/teste2\/footer\.js\?v=2/);
-assert.match(markup,/\/assets\/blog-footer\.css\?v=3/);
+assert.match(markup,/\/assets\/blog-footer\.css\?v=4/);
 assert.match(markup,/id="shared-header"/);
 assert.match(markup,/<article><h1>Paint guide<\/h1>/);
 assert.doesNotMatch(markup,/<footer>Metricpedia · Powered by/);
