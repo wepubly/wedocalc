@@ -53,6 +53,8 @@ assert footer_script.count(footer_before)==1
 footer.write_text(footer_script.replace(footer_before,footer_after))
 for logo in (root/'migration/homeimprovement/assets').glob('homeimprovement-logo-*.webp'):
  shutil.copyfile(logo,out/'site/teste2/assets'/logo.name)
+text,removed=re.subn(r'<section class="tools-showcase"[^>]*>.*?</section>', '', text, flags=re.S)
+assert removed==1, 'Expected one calculator preview section on the homepage'
 home.write_text(text)
 category=out/'site/paint-calculators/index.html';text=category.read_text()
 text,n=re.subn(r'<aside class="paint-guides">.*?</aside>','<aside class="paint-guides"><h2>Paint Guides &amp; Tips</h2><div data-hi-cards="category"></div></aside>',text,count=1,flags=re.S)
