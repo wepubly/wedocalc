@@ -16,6 +16,7 @@
 /* Brand at left; centered headline and supporting copy above the search. */
 .teste2 .hero-copy .new-logo{width:min(100%,360px);margin:0 auto;display:block}
 .teste2 .hero-copy .new-logo img{width:100%;height:auto;max-height:124px;object-fit:contain}
+.teste2 .hero-copy .homeimprovement-logo img{max-height:156px}
 .teste2 .hero-copy .new-logo .dark-logo{display:none}
 [data-theme=dark] .teste2 .hero-copy .new-logo .light-logo{display:none}
 [data-theme=dark] .teste2 .hero-copy .new-logo .dark-logo{display:block}
