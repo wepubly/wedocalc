@@ -1,6 +1,7 @@
 import {estimate} from './engine.mjs';
 
 const form = document.querySelector('#specialized-form');
+const paintCan = document.querySelector('.paint-result-can');
 const result = document.querySelector('#specialized-result');
 const details = document.querySelector('#specialized-details');
 const error = document.querySelector('#specialized-error');
@@ -37,11 +38,13 @@ function render() {
       return row;
     }));
     error.textContent = '';
+    paintCan.hidden = kind === 'cost';
     print.disabled = false;
   } catch (cause) {
     result.textContent = '—';
     details.replaceChildren();
     error.textContent = cause.message;
+    paintCan.hidden = true;
     print.disabled = true;
   }
 }
