@@ -114,9 +114,10 @@ with sync_playwright() as p:
             with page.expect_download() as event:
                 page.locator('#pp-'+size).click()
             data=Path(event.value.path()).read_bytes()
-            assert data.startswith(b'%PDF') and b'Spare tray' in data
+            assert data.startswith(b'%PDF') and b'Spare tray'.hex().encode() in data
         page.evaluate('window.print=()=>{window.paintPrintCalled=true}')
         page.locator('#pp-print').click()
+        page.screenshot(path=out/'Paint-Results-desktop.png',full_page=True)
         assert page.evaluate('window.paintPrintCalled')
         expect(page.locator('#hi-project-print')).to_contain_text('Hall paint')
         page.locator('#quickChoice').click()
