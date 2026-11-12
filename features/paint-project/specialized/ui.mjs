@@ -38,13 +38,13 @@ function render() {
       return row;
     }));
     error.textContent = '';
-    paintCan.hidden = kind === 'cost';
+    paintCan.toggleAttribute('hidden', kind === 'cost');
     print.disabled = false;
   } catch (cause) {
     result.textContent = '—';
     details.replaceChildren();
     error.textContent = cause.message;
-    paintCan.hidden = true;
+    paintCan.setAttribute('hidden', '');
     print.disabled = true;
   }
 }

@@ -50,8 +50,8 @@ s=s.replace('let result,resultLabel,details,explanation,extra=[],modeLabel;','le
 s=s.replace('const gallons=(areaSqFt*coats/rate)*(1+waste/100);','planning={areaSqFt,coats,rate,waste};\n    const gallons=(areaSqFt*coats/rate)*(1+waste/100);',1)
 s=s.replace("   ['result-value'","   window.HIPaintPlan=planning;if(planning)window.HILastPaintPlan=planning;window.dispatchEvent(new Event('hi:paint-plan'));\n   ['result-value'",1)
 s=s.replace(" restore();setAreaMode", ' restore();\n const costTab=tabs.find(tab=>tab.dataset.mode==="cost");\n if(costTab && mode==="cost")costTab.hidden=false;\n setAreaMode',1)
-s=s.replace("  report=null;", "  root.querySelector('.paint-result-can').hidden=true;\n  report=null;",1)
-s=s.replace("   const labels=mode", "   root.querySelector('.paint-result-can').hidden=mode!=='needed';\n   const labels=mode",1)
+s=s.replace("  report=null;", "  root.querySelector('.paint-result-can').setAttribute('hidden','');\n  report=null;",1)
+s=s.replace("   const labels=mode", "   root.querySelector('.paint-result-can').toggleAttribute('hidden',mode!=='needed');\n   const labels=mode",1)
 p.write_text(s)
 subprocess.run([sys.executable,str(root/'features/launch/prepare.py'),str(out)],check=True)
 # Demo serves static content only; no D1, R2, runtime bindings or operational CMS.
