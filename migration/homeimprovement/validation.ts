@@ -18,9 +18,18 @@ export default {
   const writes=(env as Env & {HI_EDITORIAL_WRITES?:string}).HI_EDITORIAL_WRITES==='enabled';
   if(!['GET','HEAD'].includes(request.method)&&!(writes&&new URL(request.url).origin==='https://homeimprovement.tools'&&new URL(request.url).pathname.startsWith('/api/editorial/')))return new Response('Editorial writes disabled during migration validation',{status:423,headers:{'X-Robots-Tag':'noindex,nofollow,noarchive'}});
   const url=new URL(request.url);
+  // Match only the retired hub, never the editorial URLs beneath it.
+  const path=url.pathname.replace(/\/$/,'');
+  if(path==='/paint-calculators'||path==='/home-garden/paint-calculators'){
+   return new Response(null,{status:308,headers:{
+    Location:'/paint-calculator/'+url.search,
+    'X-Robots-Tag':'noindex,nofollow,noarchive',
+    'Cache-Control':'no-store',
+   }});
+  }
   if(url.pathname==='/robots.txt')return new Response('User-agent: *\nDisallow: /\n',{headers:{'Content-Type':'text/plain','X-Robots-Tag':'noindex,nofollow,noarchive'}});
   let response=await pages.fetch(request,env);
-  const slotPage=['/','/paint-calculators','/paint-calculators/','/paint-calculator','/paint-calculator/'].includes(url.pathname);
+  const slotPage=['/','/paint-calculator','/paint-calculator/'].includes(url.pathname);
   if(slotPage && response.headers.get('Content-Type')?.includes('text/html')){
    // In-process read from the destination bindings only: no HTTP request to the origin site.
    const catalogue=await production.fetch(new Request('https://homeimprovement.tools/blog/'),env);

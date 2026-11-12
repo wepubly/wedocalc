@@ -27,7 +27,12 @@ try{
  const homeResponse=await colors.goto('https://homeimprovement.tools/');
  assert.equal(homeResponse.status(),200);
  assert.equal(await colors.locator('body.teste2 > main').evaluate(el=>getComputedStyle(el).backgroundColor),light);
- const paths=['/paint-calculator/','/paint-calculators/','/home-garden/','/blog/','/about/','/our-mission/','/contact/','/privacy-policy/','/terms-of-service/','/print/paint-calculator/','/__launch_check_missing_page__',...links];
+ const paintCard=colors.locator('a.project-card').filter({hasText:'Painting & Walls'});
+ assert.equal(await paintCard.getAttribute('href'),'/paint-calculator/');
+ await paintCard.click();
+ assert.equal(new URL(colors.url()).pathname,'/paint-calculator/');
+ report.checks.push('Painting & Walls card opens the calculator directly');
+ const paths=['/paint-calculator/','/home-garden/','/blog/','/about/','/our-mission/','/contact/','/privacy-policy/','/terms-of-service/','/print/paint-calculator/','/__launch_check_missing_page__',...links];
  for(const path of paths){
   const url=new URL(path,'https://homeimprovement.tools');
   const response=await colors.goto(url.href);

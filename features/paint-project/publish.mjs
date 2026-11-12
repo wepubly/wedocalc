@@ -11,7 +11,7 @@ async function state(){return {sourcePages:(await api('/pages/projects/wedocalc'
 try{
  const before=await state();assert.deepEqual(before.targetCron.schedules.map(s=>s.cron),['* * * * *']);
  const p=await api('/pages/projects/homeimprovement-tools');assert.ok(!p.source);assert.ok([
-  '4e98324d6bc08100893e91fc7b4096cd88b792ec',
+  '9944c7b9cdca0aa175d7c2516e4bc20aa8034393',
  ].includes(p.canonical_deployment.deployment_trigger.metadata.commit_hash),'Unexpected current deployment: '+p.canonical_deployment.deployment_trigger.metadata.commit_hash);
  const cfg=p.deployment_configs.production;assert.equal(cfg.d1_databases.DB.id,'4674c99c-cb26-47af-a557-19f097678ec6');assert.equal(cfg.r2_buckets.MEDIA.name,'homeimprovement-editorial-media');for(const k of ['HI_EDITORIAL_CRON','HI_EDITORIAL_WRITES'])assert.equal(cfg.env_vars[k].value,'enabled');
  report.previousPagesDeployment=p.canonical_deployment.id;report.before=before;
@@ -23,10 +23,15 @@ try{
  const html=await home.text();
  assert.doesNotMatch(html, /class="tools-showcase"/);
  assert.match(html, /id="categories"/);
+ for(const path of ['/paint-calculators/','/paint-calculators','/home-garden/paint-calculators/']){
+  const res=await fetch(origin+path+'?source=old-link',{redirect:'manual'});
+  assert.equal(res.status,308,path);
+  assert.equal(new URL(res.headers.get('location'),origin).href,origin+'/paint-calculator/?source=old-link',path);
+ }
  const header=await fetch(origin+'/assets/shared-header.js?v=brand-2');assert.equal(header.status,200);
  const headerScript=await header.text();
  for(const theme of ['light','dark'])assert.ok(headerScript.includes('/assets/header-logo-'+theme+'.webp'),theme);
- for(const path of ['/blog/','/home-garden/','/paint-calculators/','/paint-calculator/']){
+ for(const path of ['/blog/','/home-garden/','/paint-calculator/']){
   const page=await fetch(origin+path);assert.equal(page.status,200,path);
   const markup=await page.text();
   assert.match(markup, /id="shared-header"/,path);
@@ -73,9 +78,9 @@ try{
   if(path==='/robots.txt')assert.match(body,/Disallow:\s*\//);
  }
  for(const file of ['math.mjs','materials.mjs','budget.mjs','export.mjs','commercial.mjs','planner.mjs','page-shell.mjs','planner.css','page-shell.css']){const res=await fetch(origin+'/paint-calculator/project/'+file);assert.equal(res.status,200,file);await res.body.cancel();}
- const map=await fetch(origin+'/sitemap.xml');assert.equal(map.status,200);assert.match(map.headers.get('content-type')||'',/application\/xml/);const xml=await map.text();assert.match(xml,/<urlset/);assert.ok(xml.includes(origin+'/paint-calculator/'));assert.doesNotMatch(xml,/privacy-policy|terms-of-service|\/admin|\/teste2/);
+ const map=await fetch(origin+'/sitemap.xml');assert.equal(map.status,200);assert.match(map.headers.get('content-type')||'',/application\/xml/);const xml=await map.text();assert.match(xml,/<urlset/);assert.ok(xml.includes(origin+'/paint-calculator/'));assert.ok(!xml.includes('<loc>'+origin+'/paint-calculators/</loc>'));assert.doesNotMatch(xml,/privacy-policy|terms-of-service|\/admin|\/teste2/);
  const missing=await fetch(origin+'/__launch_check_missing_page__');assert.equal(missing.status,404);assert.match(await missing.text(),/Page not found/);assert.match(missing.headers.get('x-robots-tag')||'',/noindex/);
- for(const path of ['/','/home-garden/','/paint-calculators/']){const res=await fetch(origin+path);const body=await res.text();assert.match(body,/rel="canonical"/);assert.doesNotMatch(body,/<title>[^<]*Visual Preview/);assert.match(res.headers.get('x-robots-tag')||'',/noindex/);}
+ for(const path of ['/','/home-garden/']){const res=await fetch(origin+path);const body=await res.text();assert.match(body,/rel="canonical"/);assert.doesNotMatch(body,/<title>[^<]*Visual Preview/);assert.match(res.headers.get('x-robots-tag')||'',/noindex/);}
  assert.equal((html.match(/href="\/home-garden\/"/g)||[]).length,1,'Only real category hub navigation remains');
  assert.deepEqual(await state(),before,'Production Worker/cron/source changed');const after=await api('/pages/projects/homeimprovement-tools');assert.deepEqual(after.deployment_configs.production,cfg,'Production bindings/settings changed');report.pagesDeployment=after.canonical_deployment.id;assert.notEqual(report.pagesDeployment,report.previousPagesDeployment);report.success=true;report.noindex=true;report.editorialUnchanged=true;
 }catch(e){report.error=e.message;process.exitCode=1;}finally{writeFileSync('paint-project-publication.json',JSON.stringify(report,null,2));console.log('PAINT_PROJECT_PUBLICATION '+JSON.stringify(report));}

@@ -2,7 +2,7 @@
 from pathlib import Path
 import re,sys,shutil
 root=Path(__file__).resolve().parents[2]; out=Path(sys.argv[1]); site=out/'site'
-for route,title in [('', 'HomeImprovement — Home Improvement Calculators'),('home-garden','Home & Garden Calculators & Guides | HomeImprovement'),('paint-calculators','Paint Calculators | HomeImprovement')]:
+for route,title in [('', 'HomeImprovement — Home Improvement Calculators'),('home-garden','Home & Garden Calculators & Guides | HomeImprovement')]:
  p=site/route/'index.html';s=p.read_text()
  s=re.sub(r'<title>.*?</title>',lambda m:'<title>'+title+'</title>',s,count=1)
  if 'rel="canonical"' not in s:s=s.replace('</head>','<link rel="canonical" href="https://homeimprovement.tools/'+(route+'/' if route else '')+'"></head>',1)
@@ -31,6 +31,14 @@ s=re.sub(r'<label>.*?</label>',name_select,s,flags=re.S)
 p.write_text(s)
 # Cloudflare Pages uses a root 404 file instead of SPA fallback for absent assets.
 (site/'404.html').write_text('''<!doctype html><html lang="en-US" data-theme="light"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow"><title>Page not found | HomeImprovement.tools</title><link rel="stylesheet" href="/css/tokens.css"><link rel="stylesheet" href="/assets/header-brand.css?v=2"><link rel="stylesheet" href="/assets/blog-footer.css?v=4"><style>main{max-width:850px;margin:6rem auto;padding:2rem;font-family:system-ui}main a{color:inherit}</style></head><body data-hi-shared-footer><div id="shared-header" data-variant="inner"></div><main><h1>Page not found</h1><p>This page is not available. You can return home or use our Paint Calculator.</p><p><a href="/">Home</a> · <a href="/paint-calculator/">Paint Calculator</a></p></main><div id="shared-footer"></div><script src="/assets/shared-header.js?v=brand-2" defer></script><script src="/assets/theme.js" defer></script><script src="/teste2/footer.js?v=2" defer></script></body></html>''')
+# Retire the redundant hub and point all public navigation directly to the tool.
+shutil.rmtree(site/'paint-calculators')
+for page in site.rglob('*.html'):
+    html = page.read_text()
+    html = html.replace('<a href="../paint-calculators/">Paint Calculators</a><span>›</span>', '')
+    html = re.sub(r'href="(?:https://homeimprovement\.tools|\.\.)?/paint-calculators/?"',
+                  'href="/paint-calculator/"', html)
+    page.write_text(html)
 # Apply one light page surface to static pages and to the public editorial renderer.
 background_link = '<link rel="stylesheet" href="/assets/page-background.css">'
 shutil.copyfile(root/'features/launch/page-background.css', site/'assets/page-background.css')
