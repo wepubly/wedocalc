@@ -1,0 +1,89 @@
+name: Metricpedia CMS staging
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: metricpedia-cms-staging
+  cancel-in-progress: false
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    defaults:
+      run:
+        working-directory: cms
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: cms/package-lock.json
+      - run: npm ci
+      - run: npm run check
+      - run: npm run build
+      - run: npm test
+  staging:
+    needs: verify
+    if: false # Staging retired by the Writer-only production mission
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    defaults:
+      run:
+        working-directory: cms
+    env:
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      CLOUDFLARE_ACCOUNT_ID: b81896777d206a2239625d9cf2e8a40b
+      WRANGLER_SEND_METRICS: "false"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: cms/package-lock.json
+      - run: npm ci
+      - run: npm run build
+      - name: Inspect and prepare isolated staging resources
+        run: node scripts/provision-staging.mjs
+      - name: Apply migrations only to staging D1
+        run: |
+          node --input-type=module <<'NODE'
+          import {readFileSync} from 'node:fs';
+          const c=JSON.parse(readFileSync('wrangler.staging.json'));
+          if(c.name!=='metricpedia-cms-staging'||c.vars.ENVIRONMENT!=='staging'||c.routes||c.d1_databases[0].database_name!=='metricpedia-cms-staging-db'||c.r2_buckets[0].bucket_name!=='metricpedia-cms-staging-assets')throw Error('Staging isolation check failed');
+          NODE
+          npx wrangler d1 migrations apply metricpedia-cms-staging-db --remote --config wrangler.staging.json
+      - name: Deploy CMS staging only
+        run: npx wrangler deploy --config wrangler.staging.json
+      - name: Install protected owner setup key when configured
+        env:
+          SETUP_KEY: ${{ secrets.METRICPEDIA_SETUP_TOKEN }}
+        run: |
+          if [ -n "$SETUP_KEY" ]; then
+            printf '%s' "$SETUP_KEY" | npx wrangler secret put SETUP_TOKEN --config wrangler.staging.json
+          else
+            echo 'Initial owner setup is locked unless SETUP_TOKEN was already configured. Add METRICPEDIA_SETUP_TOKEN to repository secrets to enable first setup.' >> "$GITHUB_STEP_SUMMARY"
+          fi
+      - name: Verify public staging shell and noindex
+        run: |
+          node --input-type=module <<'NODE'
+          import {readFileSync,appendFileSync} from 'node:fs';
+          const {origin}=JSON.parse(readFileSync('staging-resources.json'));
+          const visual=await fetch(origin+'/admin');
+          const visualHtml=await visual.text();
+          if(!visual.ok||!visualHtml.includes('Visão geral do Editorial Center')||!visual.headers.get('x-robots-tag')?.includes('noindex'))throw Error('Visual-only staging admin missing or not protected against indexing');
+          const editor=await fetch(origin+'/admin/test-article');
+          const editorHtml=await editor.text();
+          if(!editor.ok||!editorHtml.includes('Criar matéria de teste')||!editorHtml.includes('Meta description')||!editor.headers.get('x-robots-tag')?.includes('noindex'))throw Error('Local-only test article editor not deployed');
+          const r=await fetch(origin+'/admin/setup');
+          if(!r.ok||!r.headers.get('x-robots-tag')?.includes('noindex'))throw Error('Staging setup/noindex check failed');
+          const api=await fetch(origin+'/api/editorial/articles');if(api.status!==401)throw Error('Administrative API must require authentication');
+          const blog=await fetch(origin+'/blog/');if(!blog.ok||!blog.headers.get('x-robots-tag')?.includes('noindex'))throw Error('Staging blog/noindex check failed');
+          appendFileSync(process.env.GITHUB_STEP_SUMMARY,`\nCMS staging: ${origin}/admin/setup\nBlog: ${origin}/blog/\nProduction Pages and domain were not deployed.\n`);
+          NODE
+      - uses: actions/upload-artifact@v4
+        with:
+          name: metricpedia-staging-resource-identifiers
+          path: cms/staging-resources.json

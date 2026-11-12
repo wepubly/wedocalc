@@ -1,0 +1,23 @@
+{
+  "name": "metricpedia-editorial-center",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "vite build",
+    "check": "tsc --noEmit",
+    "dev": "wrangler dev --config wrangler.local.json",
+    "test": "node --experimental-strip-types tests/integration.mjs"
+  },
+  "dependencies": {
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0"
+  },
+  "devDependencies": {
+    "vite": "^7.1.0",
+    "typescript": "^5.9.0",
+    "wrangler": "^4.0.0",
+    "@cloudflare/workers-types": "latest",
+    "@types/react": "^19.1.0",
+    "@types/react-dom": "^19.1.0"
+  }
+}
