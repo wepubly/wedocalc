@@ -161,8 +161,9 @@ with sync_playwright() as p:
         assert page.locator('h1').count()==1
         assert page.locator('link[rel=canonical]').get_attribute('href')=='https://homeimprovement.tools/paint-calculator/'
         expect(page.locator('meta[name=robots]')).to_have_attribute('content','noindex,nofollow')
-        expect(page.locator('#shared-header')).to_be_visible()
+        expect(page.locator('header.metricpedia-shared-header')).to_be_visible()
         expect(page.locator('footer')).to_be_visible()
+        assert page.locator('[data-hi-cards=calculator] a').count()==4
         page.locator('.calc-faq summary').last.click()
         expect(page.locator('.calc-faq details').last).to_have_attribute('open','')
         assert not errors,errors

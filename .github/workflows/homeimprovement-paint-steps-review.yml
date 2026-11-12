@@ -46,7 +46,7 @@ jobs:
         run: |
           git worktree add --detach /tmp/paint-baseline-source 1b22342cc769b42ec80c776cc8ec3f3371d150e7
           python /tmp/paint-baseline-source/features/paint-project/assemble.py /tmp/paint-baseline
-          python -m pip install playwright==1.58.2
+          python -m pip install playwright==1.58.0
           python -m playwright install --with-deps chromium
           python features/paint-project/tests/steps-browser.py /tmp/paint-baseline/site /tmp/paint-review/demo
       - uses: actions/upload-artifact@v4
