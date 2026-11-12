@@ -38,6 +38,7 @@ s=s.replace('let result,resultLabel,details,explanation,extra=[],modeLabel;','le
 s=s.replace('const gallons=(areaSqFt*coats/rate)*(1+waste/100);','planning={areaSqFt,coats,rate,waste};\n    const gallons=(areaSqFt*coats/rate)*(1+waste/100);',1)
 s=s.replace("   ['result-value'","   window.HIPaintPlan=planning;if(planning)window.HILastPaintPlan=planning;window.dispatchEvent(new Event('hi:paint-plan'));\n   ['result-value'",1)
 p.write_text(s)
+subprocess.run([sys.executable,str(root/'features/launch/prepare.py'),str(out)],check=True)
 # Demo serves static content only; no D1, R2, runtime bindings or operational CMS.
 (out/'demo').mkdir();shutil.copytree(out/'site',out/'demo',dirs_exist_ok=True)
 print('Offline demo ready:',out/'demo')

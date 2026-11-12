@@ -11,7 +11,7 @@ async function state(){return {sourcePages:(await api('/pages/projects/wedocalc'
 try{
  const before=await state();assert.deepEqual(before.targetCron.schedules.map(s=>s.cron),['* * * * *']);
  const p=await api('/pages/projects/homeimprovement-tools');assert.ok(!p.source);assert.ok([
-  'a22437e77575ee0499e094236c74741a7184cd0b',
+  '267fbe3a5bfa5d1936f0be9d639127487ca11d7a',
  ].includes(p.canonical_deployment.deployment_trigger.metadata.commit_hash),'Unexpected current deployment; stop for inspection');
  const cfg=p.deployment_configs.production;assert.equal(cfg.d1_databases.DB.id,'4674c99c-cb26-47af-a557-19f097678ec6');assert.equal(cfg.r2_buckets.MEDIA.name,'homeimprovement-editorial-media');for(const k of ['HI_EDITORIAL_CRON','HI_EDITORIAL_WRITES'])assert.equal(cfg.env_vars[k].value,'enabled');
  report.previousPagesDeployment=p.canonical_deployment.id;report.before=before;
@@ -73,5 +73,9 @@ try{
   if(path==='/robots.txt')assert.match(body,/Disallow:\s*\//);
  }
  for(const file of ['math.mjs','materials.mjs','budget.mjs','export.mjs','commercial.mjs','planner.mjs','page-shell.mjs','planner.css','page-shell.css']){const res=await fetch(origin+'/paint-calculator/project/'+file);assert.equal(res.status,200,file);await res.body.cancel();}
+ const map=await fetch(origin+'/sitemap.xml');assert.equal(map.status,200);assert.match(map.headers.get('content-type')||'',/application\/xml/);const xml=await map.text();assert.match(xml,/<urlset/);assert.ok(xml.includes(origin+'/paint-calculator/'));assert.doesNotMatch(xml,/privacy-policy|terms-of-service|\/admin|\/teste2/);
+ const missing=await fetch(origin+'/__launch_check_missing_page__');assert.equal(missing.status,404);assert.match(await missing.text(),/Page not found/);assert.match(missing.headers.get('x-robots-tag')||'',/noindex/);
+ for(const path of ['/','/home-garden/','/paint-calculators/']){const res=await fetch(origin+path);const body=await res.text();assert.match(body,/rel="canonical"/);assert.doesNotMatch(body,/<title>[^<]*Visual Preview/);assert.match(res.headers.get('x-robots-tag')||'',/noindex/);}
+ assert.equal((html.match(/href="\/home-garden\/"/g)||[]).length,1,'Only real category hub navigation remains');
  assert.deepEqual(await state(),before,'Production Worker/cron/source changed');const after=await api('/pages/projects/homeimprovement-tools');assert.deepEqual(after.deployment_configs.production,cfg,'Production bindings/settings changed');report.pagesDeployment=after.canonical_deployment.id;assert.notEqual(report.pagesDeployment,report.previousPagesDeployment);report.success=true;report.noindex=true;report.editorialUnchanged=true;
 }catch(e){report.error=e.message;process.exitCode=1;}finally{writeFileSync('paint-project-publication.json',JSON.stringify(report,null,2));console.log('PAINT_PROJECT_PUBLICATION '+JSON.stringify(report));}

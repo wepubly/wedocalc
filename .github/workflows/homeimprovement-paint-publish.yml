@@ -23,6 +23,8 @@ jobs:
           node-version: '22'
       - name: Assemble approved Paint UI
         run: python features/paint-project/assemble.py /tmp/paint-approved
+      - name: Test launch readiness and paint engine
+        run: SITE=/tmp/paint-approved/site node --test features/launch/tests.mjs features/paint-project/tests/engine.test.mjs
       - name: Build and typecheck
         working-directory: /tmp/paint-approved/cms
         run: |
