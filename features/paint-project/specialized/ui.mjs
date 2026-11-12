@@ -24,7 +24,7 @@ function render() {
       const gal = n => (n > 0 && n < .0001 ? '< 0.0001' : format.format(n))+' gal';
       result.textContent = gal(value.gallons);
       rows = [['Gross surface',ft(value.gross)],['Openings deducted',ft(value.openings)],
-        ['Paintable area',ft(value.area)],['Before allowance',gal(value.base)],
+        ...(kind === 'room' ? [['Ceiling area',ft(value.ceiling)]] : []), ['Paintable area',ft(value.area)],['Before allowance',gal(value.base)],
         ['Extra paint',gal(value.extra)],['If buying whole gallons',format.format(value.whole)+' gal']];
     }
     details.replaceChildren(...rows.map(([label, text]) => {

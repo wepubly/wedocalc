@@ -31,3 +31,6 @@
     box-shadow: none;
   }
 }
+
+.specialized-paint .specialized-fields .room-ceiling { flex-direction: row; align-items: center; }
+.specialized-paint .room-ceiling input { width: 1rem; height: 1rem; flex: none; }

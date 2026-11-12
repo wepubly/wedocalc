@@ -22,6 +22,13 @@ def cards(exclude=None):
     <a class="paint-tool-action" href="/{slug}/" aria-label="Open {escape(name)}">Open Calculator</a>
   </div>
 </article>''')
+    if exclude is None:
+        result.append("""<article class="paint-tool-card">
+  <img src="/paint-calculator/project/photos/interior-wall.webp" alt="" width="512" height="280" loading="lazy" decoding="async">
+  <div><h3>Interior Wall Paint Calculator</h3><p>Estimate paint for individual interior walls.</p>
+    <span class="paint-tool-unavailable">Coming Soon</span>
+  </div>
+</article>""")
     return ''.join(result)
 
 
@@ -50,6 +57,8 @@ def render(site, source):
             f'value="{default}" min="{minimum}" max="{maximum}" step="{step}" required></label>'
             for field, label, default, minimum, maximum, step in fields
         )
+        if key == 'room':
+            fields_html += '<label class="room-ceiling"><input type="checkbox" name="ceiling"> Include the ceiling with the same paint</label>'
         questions = ''.join(f'<details><summary>{escape(question)}</summary><p>{escape(answer)}</p></details>'
                             for question, answer in faq)
         result_label = 'Estimated project cost' if key == 'cost' else 'Estimated paint needed'

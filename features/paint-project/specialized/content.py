@@ -41,3 +41,15 @@ TOOLS = [
      [('Should I count the back of the trim?', 'Include only surfaces you plan to coat. An installed baseboard normally needs paint on the exposed face and any visible edge.'),
       ('What if my trim profiles vary?', 'Run separate estimates for each width and add them. For a small job, check whether the paint is available in quarts.')]),
 ]
+
+TOOLS.append(
+    ('room', 'room-paint-calculator', 'Room Paint Calculator',
+     'Estimate paint for all four walls of a rectangular room, with optional ceiling coverage.',
+     [('length','Room length (ft)',12,.01,10000000,'any'),
+      ('width','Room width (ft)',10,.01,10000000,'any'),
+      ('height','Wall height (ft)',8,.01,10000000,'any'),
+      ('openings','Doors and windows to subtract (sq ft)',40,0,10000000,'any')]+COATING,
+     'Multiply twice the sum of length and width by wall height. Subtract doors and windows, and optionally add the ceiling area. Apply coats, coverage and allowance to the combined surface.',
+     [('What if the ceiling uses a different paint?', 'Leave the ceiling unchecked and use the Ceiling Paint Calculator for a separate estimate.'),
+      ('What if the room is L-shaped?', 'Measure the combined wall lengths directly, or estimate each rectangular part separately and omit any shared wall.')])
+)

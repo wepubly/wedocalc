@@ -7,6 +7,7 @@ cases = {
     'paint-cost-calculator': ('price', '50', '$215.00'),
     'exterior-paint-calculator': ('coverage', '400', '6.6 gal'),
     'ceiling-paint-calculator': ('coverage', '400', '0.66 gal'),
+    'room-paint-calculator': ('coverage', '400', '1.716 gal'),
     'trim-paint-calculator': ('coverage', '400', '0.1833 gal'),
 }
 
@@ -22,10 +23,11 @@ with sync_playwright() as playwright:
         expect(page.locator('[data-mode=needed]')).to_be_visible()
         expect(page.locator('[data-mode=coverage]')).to_be_visible()
         cards = page.locator('.paint-tool-card a')
-        expect(cards).to_have_count(4)
+        expect(cards).to_have_count(5)
+        expect(page.locator(".paint-tool-card")).to_have_count(6)
         if width == 1440:
             assert page.locator('.paint-tools').evaluate(
-                "el => getComputedStyle(el).gridTemplateColumns.split(' ').length") == 2
+                "el => getComputedStyle(el).gridTemplateColumns.split(' ').length") == 3
         for slug, (field, value, answer) in cases.items():
             assert page.goto(origin+'/'+slug+'/').status == 200
             expect(page.locator('h1')).to_have_count(1)
@@ -51,7 +53,7 @@ with sync_playwright() as playwright:
             expect(page.locator('#specialized-result')).to_be_visible()
             expect(page.locator('#specialized-form')).to_be_hidden()
             page.emulate_media(media='screen')
-        print(f'Passed all four calculators at {width}px, including invalid input and print')
+        print(f'Passed all five calculators at {width}px, including invalid input and print')
     page.goto(origin+'/paint-calculator/?mode=cost&v=4&v=10&v=0&u=gallons&u=USD&u=USD')
     expect(page.locator('#result-value')).to_have_text('$40.00')
     assert not errors,errors

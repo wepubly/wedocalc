@@ -36,3 +36,9 @@ test('invalid, empty and extreme values cannot produce an estimate',()=>{
   assert.throws(()=>estimate('trim',{...trim,length:Infinity}));
   assert.throws(()=>estimate('exterior',{...exterior,perimeter:1e7,height:1e7}));
 });
+test('room deducts openings from four walls and adds the ceiling only when requested',()=>{
+  const room = {...coating,length:12,width:10,height:8,openings:40};
+  close(estimate('room',room).gallons,1.716);
+  close(estimate('room',{...room,ceiling:'on'}).gallons,2.376);
+  assert.throws(()=>estimate('room',{...room,openings:352,ceiling:'on'}));
+});
