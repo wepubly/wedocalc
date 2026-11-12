@@ -38,3 +38,11 @@ worker=out/"cms/worker/homeimprovement-validation.ts"
 w=worker.read_text().replace("import pages from './pages';", "import pages from './pages';\n// @ts-ignore: pure helper covered by behavior tests.\nimport {sitemapFromPublished} from './homeimprovement-sitemap.mjs';")
 w=w.replace("  let response=await pages.fetch(request,env);","  if(url.pathname==='/sitemap.xml'){\n   const source=await production.fetch(new Request('https://homeimprovement.tools/sitemap-blog.xml'),env);\n   if(!source.ok)return new Response('Sitemap temporarily unavailable',{status:503,headers:{'X-Robots-Tag':'noindex,nofollow,noarchive'}});\n   try { const xml=sitemapFromPublished(await source.text());return new Response(request.method==='HEAD'?null:xml,{headers:{'Content-Type':'application/xml; charset=utf-8','X-Robots-Tag':'noindex,nofollow,noarchive','Cache-Control':'no-store'}}); }\n   catch{return new Response('Sitemap temporarily unavailable',{status:503,headers:{'X-Robots-Tag':'noindex,nofollow,noarchive'}});}\n  }\n"+"  let response=await pages.fetch(request,env);")
 worker.write_text(w)
+# CMS scheduling: visible confirmation, local feedback and verified queue persistence.
+p=out/'cms/src/AdminApp.tsx';s=p.read_text()
+s=s.replace('  const [reviewer, setReviewer]', '  const [scheduleConfirm,setScheduleConfirm]=useState(false);\n  const [reviewer, setReviewer]',1)
+s=s.replace('    setCurrent(row);','    setCurrent(row);setScheduleConfirm(false);',1)
+s=s.replace('    setDirty(true);','    setDirty(true);setScheduleConfirm(false);',1)
+s,n=re.subn(r'                        <details>\s*<summary>Agendar versão salva</summary>.*?</details>',lambda m:(root/'features/launch/schedule-panel.txt').read_text().rstrip(),s,count=1,flags=re.S)
+assert n==1,'Schedule panel not found'
+p.write_text(s)

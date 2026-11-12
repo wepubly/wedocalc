@@ -1,0 +1,26 @@
+                        <details>
+                          <summary>Agendar versão salva</summary>
+                          <p>Horário de Brasília (UTC−03:00). Editar e salvar invalida a aprovação e cancela o agendamento anterior.</p>
+                          <button type="button" onClick={()=>{setRunAt(nextBrasiliaFive());setScheduleConfirm(false);}}>Próximo horário às 5h de São Paulo</button>
+                          <label>Data e hora
+                            <input type="datetime-local" value={runAt} onChange={e=>{setRunAt(e.target.value);setScheduleConfirm(false);}} />
+                          </label>
+                          <p role="status">{dirty ? 'Salve as alterações e obtenha aprovação antes de agendar.' : current.review_status !== 'approved' ? 'A versão atual precisa estar aprovada.' : !runAt ? 'Escolha data e hora ou use o botão Próximo horário às 5h.' : 'Horário selecionado: '+runAt.replace('T',' às ')+' (Brasília).'}</p>
+                          {!scheduleConfirm ? <button type="button" disabled={busy || dirty || !runAt || current.review_status !== 'approved'} onClick={()=>{setError('');setNotice('');setScheduleConfirm(true);}}>Agendar versão aprovada</button> : <section aria-label="Confirmar agendamento">
+                            <p>Confirmar versão {current.draft_version} de “{current.snapshot.title}” para {runAt.replace('T',' às ')} (Brasília)?</p>
+                            <button type="button" disabled={busy || dirty || !runAt || current.review_status !== 'approved'} onClick={()=>perform(async()=>{
+                              const expectedAt=brasiliaToUtc(runAt), articleId=current.id, version=current.draft_version;
+                              if(Date.parse(expectedAt)<=Date.now())throw new Error('Escolha uma data futura.');
+                              const before:Schedule[]=await api('/schedules');
+                              const matches=(s:Schedule)=>s.article_id===articleId && s.version===version && s.run_at===expectedAt && s.status==='queued';
+                              if(!before.some(matches))await api('/articles/'+articleId+'/schedule','POST',{version,runAt:expectedAt});
+                              const saved:Schedule[]=await api('/schedules');
+                              if(!saved.some(matches))throw new Error('Não foi possível confirmar o registro na fila. Confira Agendamentos antes de tentar novamente.');
+                              setSchedules(saved);setScheduleConfirm(false);
+                              setNotice('Agendamento confirmado na fila: '+brasiliaDisplay(expectedAt)+' (Brasília), versão '+version+'.');
+                            })}>{busy ? 'Verificando…' : 'Confirmar agendamento'}</button>
+                            <button type="button" disabled={busy} onClick={()=>{setScheduleConfirm(false);setNotice('Agendamento não enviado.');}}>Voltar sem agendar</button>
+                          </section>}
+                          {error && <p role="alert">{error}</p>}
+                          {notice && <p role="status">{notice}</p>}
+                        </details>
