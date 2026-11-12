@@ -140,9 +140,3 @@ html body.calculator-page .calc-submit:hover,
 html[data-theme="dark"] .instant-estimate { background: #203c60; color: #f1f6ff; }
 html[data-theme="dark"] .instant-estimate-icon { background: #2d5180; color: #a8ceff; }
 
-.calculator-page .calc-answer { gap: 10px; }
-.calculator-page .paint-result-can {
-  flex: 0 0 auto;
-  width: clamp(26px, 4vw, 36px);
-  height: auto;
-}

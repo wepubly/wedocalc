@@ -11,7 +11,7 @@ async function state(){return {sourcePages:(await api('/pages/projects/wedocalc'
 try{
  const before=await state();assert.deepEqual(before.targetCron.schedules.map(s=>s.cron),['* * * * *']);
  const p=await api('/pages/projects/homeimprovement-tools');assert.ok(!p.source);assert.ok([
-  'dc61b883f5c37cf5983ce169d71d090834082cb4',
+  '4cd7b35eeecef004d689f9b20a4da5de4c98d393',
   '53d16d66c745f4216e79cd4e2b0a40e6c52cd5cb',
   'b0d624d33a9cadacbf23dffadcb428ce10a0e47a',
  ].includes(p.canonical_deployment.deployment_trigger.metadata.commit_hash),'Unexpected current deployment: '+p.canonical_deployment.deployment_trigger.metadata.commit_hash);

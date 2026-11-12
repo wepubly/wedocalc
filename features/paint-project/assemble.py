@@ -1,7 +1,7 @@
 """Assemble an offline demo atop the pinned HomeImprovement frontend. No remote operations."""
 from pathlib import Path
 import subprocess,sys,shutil,re
-from specialized.render import INSTANT_ESTIMATE, PAINT_CAN, cards, render
+from specialized.render import INSTANT_ESTIMATE, cards, render
 root=Path(__file__).resolve().parents[2]
 out=Path(sys.argv[1]).resolve()
 subprocess.run([sys.executable,str(root/'migration/homeimprovement/prepare.py'),str(out)],check=True)
@@ -41,8 +41,6 @@ s=s.replace('<div class="calc-tabs"','<p class="paint-cost-link"><a href="/paint
 s=s.replace('Estimate paint needed, coverage and cost, or plan measurements, materials and a budget with the Paint Project Planner.','Estimate paint quantity and coverage, or plan measurements, materials and a budget with the Paint Project Planner.')
 s,n=re.subn(r'<button[^>]*data-calc-action[^>]*>.*?</button>',lambda _:INSTANT_ESTIMATE,s,flags=re.S)
 assert n==3
-s,n=re.subn(r'(<div class="calc-answer">)<span class="result-symbol".*?</span>',lambda m:m[1]+PAINT_CAN,s,count=1,flags=re.S)
-assert n==1
 p.write_text(s)
 render(out/'site',s)
 p=out/'site/paint-calculator/calculator.js';s=p.read_text();s=s.replace("report=null;\n  $('result-value')","report=null;window.HIPaintPlan=null;if(mode==='needed')window.HILastPaintPlan=null;window.dispatchEvent(new Event('hi:paint-plan'));\n  $('result-value')",1)
@@ -50,8 +48,6 @@ s=s.replace('let result,resultLabel,details,explanation,extra=[],modeLabel;','le
 s=s.replace('const gallons=(areaSqFt*coats/rate)*(1+waste/100);','planning={areaSqFt,coats,rate,waste};\n    const gallons=(areaSqFt*coats/rate)*(1+waste/100);',1)
 s=s.replace("   ['result-value'","   window.HIPaintPlan=planning;if(planning)window.HILastPaintPlan=planning;window.dispatchEvent(new Event('hi:paint-plan'));\n   ['result-value'",1)
 s=s.replace(" restore();setAreaMode", ' restore();\n const costTab=tabs.find(tab=>tab.dataset.mode==="cost");\n if(costTab && mode==="cost")costTab.hidden=false;\n setAreaMode',1)
-s=s.replace("  report=null;", "  root.querySelector('.paint-result-can').setAttribute('hidden','');\n  report=null;",1)
-s=s.replace("   const labels=mode", "   root.querySelector('.paint-result-can').toggleAttribute('hidden',mode!=='needed');\n   const labels=mode",1)
 p.write_text(s)
 subprocess.run([sys.executable,str(root/'features/launch/prepare.py'),str(out)],check=True)
 # Demo serves static content only; no D1, R2, runtime bindings or operational CMS.

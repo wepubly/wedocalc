@@ -46,7 +46,6 @@ with sync_playwright() as playwright:
             input_field.fill(value)
             expect(page.locator('.instant-estimate')).to_be_visible()
             expect(page.locator('#specialized-result')).to_have_text(answer)
-            assert page.locator('.paint-result-can').is_visible() == (slug != 'paint-cost-calculator')
             input_field.fill('')
             expect(page.locator('#specialized-result')).to_have_text('—')
             expect(page.locator('#specialized-print')).to_be_disabled()

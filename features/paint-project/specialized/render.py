@@ -22,20 +22,6 @@ INSTANT_ESTIMATE = """<div class="instant-estimate">
 </div>"""
 
 
-PAINT_CAN = """<svg class="paint-result-can" viewBox="0 0 48 48" width="36" height="36" aria-hidden="true" focusable="false" hidden>
-  <defs><linearGradient id="paint-can-steel">
-    <stop stop-color="#61768a"/><stop offset=".25" stop-color="#e9f2f9"/>
-    <stop offset=".54" stop-color="#b6c6d4"/><stop offset=".76" stop-color="#f4f8fb"/>
-    <stop offset="1" stop-color="#7b91a4"/>
-  </linearGradient></defs>
-  <path d="M9 13v25c0 4 30 4 30 0V13z" fill="url(#paint-can-steel)" stroke="#526a80" stroke-width="1.4"/>
-  <ellipse cx="24" cy="13" rx="16" ry="5" fill="url(#paint-can-steel)" stroke="#526a80" stroke-width="1.4"/>
-  <ellipse cx="24" cy="12" rx="12" ry="2.5" fill="none" stroke="#eef6fc" stroke-width="1.4"/>
-  <path d="M8 20c-6 0 1 14 16 14s22-14 16-14" fill="none" stroke="#566e84" stroke-width="2"/>
-  <path d="M21 34h6" stroke="#344f68" stroke-width="3" stroke-linecap="round"/>
-</svg>"""
-
-
 def cards(exclude=None):
     result = []
     for key, slug, name, description, *_ in TOOLS:
@@ -132,7 +118,7 @@ def render(site, source):
       <section class="calc-panel calc-results" aria-labelledby="results-title">
         <h2 id="results-title">Results</h2>
         <p>{result_label}</p>
-        <div class="calc-answer">{PAINT_CAN}<strong id="specialized-result" aria-live="polite">—</strong></div>
+        <div class="calc-answer"><strong id="specialized-result" aria-live="polite">—</strong></div>
         <div id="specialized-details" class="calc-result-breakdown"></div>
         <p id="specialized-error" class="specialized-error" role="status"></p>
         <button id="specialized-print" class="paint-tool-action" type="button" disabled>Print Results</button>
