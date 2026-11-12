@@ -1,7 +1,7 @@
 name: HomeImprovement approved Paint UI publication
 on:
   push:
-    branches: [work/homeimprovement-paint-planner-20261103]
+    branches: [work/homeimprovement-paint-steps-20261112]
     paths: [.github/workflows/homeimprovement-paint-publish.yml, features/paint-project/publish.mjs]
 permissions:
   contents: read
@@ -36,8 +36,17 @@ jobs:
           CLOUDFLARE_ACCOUNT_ID: b81896777d206a2239625d9cf2e8a40b
           HI_PREPARED_CMS: /tmp/paint-approved/cms
         run: node features/paint-project/publish.mjs
+      - name: Verify the published calculator in Chromium
+        env:
+          PLAYWRIGHT_MODULE: /tmp/paint-browser/node_modules/playwright/index.mjs
+        run: |
+          npm install --prefix /tmp/paint-browser --ignore-scripts playwright@1.58.2
+          /tmp/paint-browser/node_modules/.bin/playwright install --with-deps chromium
+          node features/paint-project/tests/live.mjs
       - uses: actions/upload-artifact@v4
         if: always()
         with:
           name: paint-publication
-          path: paint-project-publication.json
+          path: |
+            paint-project-publication.json
+            test-output/

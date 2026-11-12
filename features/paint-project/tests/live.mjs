@@ -11,6 +11,14 @@ try{
  const fields=page.locator('[data-panel="needed"] [data-fields="area"] input');await fields.nth(0).fill('1000');await fields.nth(1).fill('400');await fields.nth(2).fill('10');assert.equal(await page.locator('#result-value').textContent(),'5.5 gallons');report.checks.push('Quick calculation on live domain');
  await page.locator('#advancedChoice').click();assert.ok(await page.locator('#advancedPanel').isVisible());assert.match(await page.locator('#pp-breakdown').textContent(),/5.5 US gal/);
  await page.locator('#pp-method').selectOption('room');assert.match(await page.locator('#pp-breakdown').textContent(),/435/);report.checks.push('Planner transfer and detailed dimensions');
+ for(const name of ['Measurements','Materials','Budget','Results']){
+  const active=page.locator('.planner-steps [aria-current=step]');
+  assert.ok((await active.textContent()).includes(name),name);
+  assert.equal(await page.locator('[data-planner-step]:visible').count(),1);
+  if(name!=='Results')await page.locator('#pp-next').click();
+ }
+ assert.equal(await page.locator('.paint-tool-card').count(),6);
+ report.checks.push('Four planner steps and six specialized cards');
  for(const id of ['pp-letter','pp-a4']){const wait=page.waitForEvent('download');await page.locator('#'+id).click();const download=await wait;await download.saveAs('test-output/'+id+'.pdf');assert.equal(readFileSync('test-output/'+id+'.pdf').subarray(0,5).toString(),'%PDF-');}report.checks.push('Letter and A4 PDFs');
  await page.screenshot({path:'test-output/live-planner-desktop.png',fullPage:true});await page.locator('#quickChoice').click();assert.equal(await fields.nth(0).inputValue(),'1000');
  await page.waitForSelector('[data-hi-cards="calculator"] a');const links=await page.locator('[data-hi-cards="calculator"] a').evaluateAll(es=>es.map(e=>e.href));assert.ok(links.length>0);for(const url of [...new Set(links)]){assert.ok(url.startsWith('https://homeimprovement.tools/'));const r=await page.request.get(url);assert.equal(r.status(),200);}report.guideLinks=links;report.checks.push('Live CMS guide links');
