@@ -1,6 +1,6 @@
 // A prepared launch inventory, not an indexing switch. All noindex guards remain.
 const ORIGIN='https://homeimprovement.tools';
-export const readyPaths=['/','/home-garden/','/paint-calculator/','/about/','/our-mission/','/contact/','/blog/'];
+export const readyPaths=['/','/home-garden/','/paint-calculator/','/paint-cost-calculator/','/exterior-paint-calculator/','/ceiling-paint-calculator/','/trim-paint-calculator/','/about/','/our-mission/','/contact/','/blog/'];
 const escape=s=>s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&apos;');
 export function sitemapFromPublished(xml){
  if(!/<urlset\b/.test(xml)||!/<\/urlset>/.test(xml))throw Error('Published sitemap unavailable');

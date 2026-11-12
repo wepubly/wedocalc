@@ -1,0 +1,32 @@
+name: HomeImprovement specialized paint review
+on:
+  push:
+    branches: [work/homeimprovement-specialized-paint-20261112]
+permissions:
+  contents: read
+jobs:
+  review:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: |
+          python features/paint-project/assemble.py /tmp/paint-specialized
+          SITE=/tmp/paint-specialized/site node --test features/launch/tests.mjs features/paint-project/tests/engine.test.mjs features/paint-project/specialized/engine.test.mjs
+      - run: |
+          python -m pip install playwright==1.58.0
+          python -m playwright install --with-deps chromium
+          python -m http.server 8765 --bind 127.0.0.1 --directory /tmp/paint-specialized/demo >/tmp/paint-http.log 2>&1 &
+          server=$!
+          trap 'kill "$server"' EXIT
+          for attempt in {1..10}; do
+            if curl -fsS http://127.0.0.1:8765/ >/dev/null; then break; fi
+            sleep 1
+          done
+          python features/paint-project/specialized/browser.test.py http://127.0.0.1:8765
