@@ -114,3 +114,28 @@ html body.calculator-page .calc-submit:hover,
 }
 
 .paint-cost-link { margin: 0 0 12px; }
+
+.instant-estimate {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-top: 22px;
+  padding: 14px 16px;
+  border-inline-start: 4px solid #1762db;
+  border-radius: 10px;
+  background: #eaf3ff;
+  color: #13284b;
+}
+.instant-estimate strong { display: block; font-size: 1.2rem; line-height: 1.25; }
+.instant-estimate strong + span { display: block; margin-top: 4px; }
+.instant-estimate-icon {
+  display: grid;
+  place-items: center;
+  flex: 0 0 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: #cfe3ff;
+  color: #0755cd;
+}
+html[data-theme="dark"] .instant-estimate { background: #203c60; color: #f1f6ff; }
+html[data-theme="dark"] .instant-estimate-icon { background: #2d5180; color: #a8ceff; }

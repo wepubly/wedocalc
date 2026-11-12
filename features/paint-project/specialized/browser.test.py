@@ -44,7 +44,7 @@ with sync_playwright() as playwright:
             assert page.evaluate('document.documentElement.scrollWidth <= innerWidth')
             input_field = page.locator('#'+field)
             input_field.fill(value)
-            page.get_by_role('button',name='Calculate Estimate').click()
+            expect(page.locator('.instant-estimate')).to_be_visible()
             expect(page.locator('#specialized-result')).to_have_text(answer)
             input_field.fill('')
             expect(page.locator('#specialized-result')).to_have_text('—')

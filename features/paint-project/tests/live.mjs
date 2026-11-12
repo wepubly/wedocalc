@@ -65,7 +65,7 @@ try{
   assert.equal(await page.locator('.paint-tool-card a[href="/paint-calculator/"]').count(),1,href);
   assert.equal(await page.getByRole('button',{name:'Project Planner Advanced Coming Soon'}).isEnabled(),false,href);
   await page.locator('#'+field).fill(value);
-  await page.getByRole('button',{name:'Calculate Estimate'}).click();
+  assert.ok(await page.locator('.instant-estimate').isVisible(),href);
   assert.equal(await page.locator('#specialized-result').innerText(),expected,href);
   assert.ok(await page.locator('#specialized-print').isEnabled(),href);
  }

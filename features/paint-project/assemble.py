@@ -1,7 +1,7 @@
 """Assemble an offline demo atop the pinned HomeImprovement frontend. No remote operations."""
 from pathlib import Path
 import subprocess,sys,shutil,re
-from specialized.render import cards, render
+from specialized.render import INSTANT_ESTIMATE, cards, render
 root=Path(__file__).resolve().parents[2]
 out=Path(sys.argv[1]).resolve()
 subprocess.run([sys.executable,str(root/'migration/homeimprovement/prepare.py'),str(out)],check=True)
@@ -39,6 +39,8 @@ s=s.replace('value="38" min="0"','min="0" placeholder="Your price"').replace('va
 s,n=re.subn(r'(<button[^>]*data-mode="cost")',r'\1 hidden',s,count=1);assert n==1
 s=s.replace('<div class="calc-tabs"','<p class="paint-cost-link"><a href="/paint-cost-calculator/">Open the dedicated Paint Cost Calculator →</a></p><div class="calc-tabs"',1)
 s=s.replace('Estimate paint needed, coverage and cost, or plan measurements, materials and a budget with the Paint Project Planner.','Estimate paint quantity and coverage, or plan measurements, materials and a budget with the Paint Project Planner.')
+s,n=re.subn(r'<button[^>]*data-calc-action[^>]*>.*?</button>',lambda _:INSTANT_ESTIMATE,s,flags=re.S)
+assert n==3
 p.write_text(s)
 render(out/'site',s)
 p=out/'site/paint-calculator/calculator.js';s=p.read_text();s=s.replace("report=null;\n  $('result-value')","report=null;window.HIPaintPlan=null;if(mode==='needed')window.HILastPaintPlan=null;window.dispatchEvent(new Event('hi:paint-plan'));\n  $('result-value')",1)

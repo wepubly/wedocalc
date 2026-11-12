@@ -11,6 +11,17 @@ FEATURE = Path(__file__).resolve().parent
 ORIGIN = 'https://homeimprovement.tools'
 
 
+INSTANT_ESTIMATE = """<div class="instant-estimate">
+  <span class="instant-estimate-icon" aria-hidden="true">
+    <svg width="34" height="34" viewBox="0 0 32 32" fill="currentColor" focusable="false">
+      <path d="M18 2 8 17h7l-1 13 11-16h-8z"/>
+      <path d="m3 9 4 3-1 2-4-3zm24 4 4-3 1 2-4 3zM2 23l4-3 1 2-4 3zm25-3 4 3-1 2-4-3z"/>
+    </svg>
+  </span>
+  <span><strong>Instant estimate</strong><span>Results update as you type.</span></span>
+</div>"""
+
+
 def cards(exclude=None):
     result = []
     for key, slug, name, description, *_ in TOOLS:
@@ -101,7 +112,7 @@ def render(site, source):
         <h2 id="quick-title">Quick Calculator</h2>
         <form id="specialized-form" data-kind="{key}">
           <div class="calc-fields specialized-fields">{fields_html}</div>
-          <button class="calc-submit" type="submit">Calculate Estimate</button>
+          {INSTANT_ESTIMATE}
         </form>
       </section>
       <section class="calc-panel calc-results" aria-labelledby="results-title">
