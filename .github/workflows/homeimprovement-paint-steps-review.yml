@@ -1,0 +1,55 @@
+name: Paint Calculator four-step review
+on:
+  push:
+    branches: [work/homeimprovement-paint-steps-20261112]
+permissions:
+  contents: read
+jobs:
+  review:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Run original engine tests
+        run: node --test features/paint-project/tests/engine.test.mjs
+      - name: Assemble candidate and compare production routes
+        run: |
+          python features/paint-project/assemble.py /tmp/paint-review
+          mkdir -p test-output
+          node features/paint-project/demo-guides.mjs /tmp/paint-review/demo
+          node --input-type=module <<'JS'
+          import assert from 'node:assert/strict';
+          import {writeFileSync} from 'node:fs';
+          const paths=['room-paint-calculator','interior-wall-paint-calculator','exterior-paint-calculator','ceiling-paint-calculator','trim-paint-calculator','paint-cost-calculator'];
+          const routes=await Promise.all(paths.map(async slug=>{
+            const path='/'+slug+'/';
+            const r=await fetch('https://homeimprovement.tools'+path,{redirect:'manual',signal:AbortSignal.timeout(20000)});
+            await r.body.cancel();
+            return {path,status:r.status,redirect:r.headers.get('location')};
+          }));
+          writeFileSync('test-output/specialized-routes.json',JSON.stringify(routes,null,2));
+          console.log('SPECIALIZED_ROUTES '+JSON.stringify(routes));
+          for(const route of routes)assert.equal(route.status,404,route.path);
+          JS
+      - name: Typecheck and compile destination locally
+        working-directory: /tmp/paint-review/cms
+        run: |
+          npm ci --ignore-scripts
+          node build-local.mjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: paint-review-guides
+          path: |
+            /tmp/paint-review/demo/paint-calculator/
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: paint-review-checks
+          path: test-output/
