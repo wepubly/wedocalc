@@ -11,9 +11,7 @@ async function state(){return {sourcePages:(await api('/pages/projects/wedocalc'
 try{
  const before=await state();assert.deepEqual(before.targetCron.schedules.map(s=>s.cron),['* * * * *']);
  const p=await api('/pages/projects/homeimprovement-tools');assert.ok(!p.source);assert.ok([
-  '4cd7b35eeecef004d689f9b20a4da5de4c98d393',
-  '53d16d66c745f4216e79cd4e2b0a40e6c52cd5cb',
-  'b0d624d33a9cadacbf23dffadcb428ce10a0e47a',
+  '4b9dc22ccece75a0a1ce9097cf371374734d5fb7',
  ].includes(p.canonical_deployment.deployment_trigger.metadata.commit_hash),'Unexpected current deployment: '+p.canonical_deployment.deployment_trigger.metadata.commit_hash);
  const cfg=p.deployment_configs.production;assert.equal(cfg.d1_databases.DB.id,'4674c99c-cb26-47af-a557-19f097678ec6');assert.equal(cfg.r2_buckets.MEDIA.name,'homeimprovement-editorial-media');for(const k of ['HI_EDITORIAL_CRON','HI_EDITORIAL_WRITES'])assert.equal(cfg.env_vars[k].value,'enabled');
  report.previousPagesDeployment=p.canonical_deployment.id;report.before=before;
@@ -49,8 +47,8 @@ try{
   const markup=await page.text();
   assert.match(markup, /id="shared-header"/,path);
   assert.match(markup, /id="shared-footer"/,path);
-  assert.match(markup, /teste2\/footer\.js\?v=2/,path);
-  assert.match(markup, /blog-footer\.css\?v=4/,path);
+  assert.match(markup, /teste2\/footer\.js\?v=3/,path);
+  assert.match(markup, /blog-footer\.css\?v=5/,path);
   assert.match(markup, /shared-header\.js\?v=brand-2/,path);
  }
  for(const theme of ['light','dark']){
@@ -66,11 +64,11 @@ try{
   assert.match(asset.headers.get('content-type')||'',/^image\/webp/,path);
   await asset.body.cancel();
  }
- const footerCss=await checkPublic(origin+'/assets/blog-footer.css?v=4');assert.equal(footerCss.status,200);
+ const footerCss=await checkPublic(origin+'/assets/blog-footer.css?v=5');assert.equal(footerCss.status,200);
  const blogPage=await checkPublic(origin+'/blog/');const blogMarkup=await blogPage.text();
- assert.match(blogMarkup,/id="shared-footer"/);assert.match(blogMarkup,/blog-footer\.css\?v=4/);
+ assert.match(blogMarkup,/id="shared-footer"/);assert.match(blogMarkup,/blog-footer\.css\?v=5/);
  assert.doesNotMatch(blogMarkup,/<footer>HomeImprovement · Powered by/);
- const footer=await checkPublic(origin+'/teste2/footer.js?v=2');assert.equal(footer.status,200);
+ const footer=await checkPublic(origin+'/teste2/footer.js?v=3');assert.equal(footer.status,200);
  assert.match(await footer.text(),/homeimprovement-logo-dark\.webp/);
 
  for(const path of ['/about/','/our-mission/','/contact/','/privacy-policy/','/terms-of-service/']){
@@ -82,7 +80,7 @@ try{
    assert.ok(body.includes('mailto:alex@avantybrands.com')||emails.includes('alex@avantybrands.com'),'Contact email missing');
   }
  }
- const institutionalFooter=await (await checkPublic(origin+'/teste2/footer.js?v=2')).text();
+ const institutionalFooter=await (await checkPublic(origin+'/teste2/footer.js?v=3')).text();
  for(const slug of ['about','our-mission','contact','privacy-policy','terms-of-service'])assert.ok(institutionalFooter.includes('/'+slug+'/'));
  for(const label of ['Privacy Policy','Terms of Use'])assert.ok(institutionalFooter.includes(label));
  for(const path of ['/paint-calculator/','/admin','/api/editorial/articles','/api/editorial/schedules','/robots.txt']){

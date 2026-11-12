@@ -71,5 +71,15 @@ try{
  }
  assert.deepEqual(errors,[]);
  report.checks.push('Five dedicated calculators, results, noindex, and cards linking to the main calculator');
+ const companyLinks = ['/about/','/our-mission/','/contact/','/privacy-policy/','/terms-of-service/'];
+ for(const path of ['/','/paint-calculator/','/room-paint-calculator/','/blog/','/about/']){
+  await colors.goto('https://homeimprovement.tools'+path);
+  const footer=colors.locator('footer');
+  assert.deepEqual(await footer.locator('h3').allTextContents(),['Company'],path);
+  assert.deepEqual(await footer.locator('.footer-column a').evaluateAll(links=>links.map(link=>link.getAttribute('href'))),companyLinks,path);
+  assert.equal(await footer.locator('.social-button').count(),0,path);
+  assert.equal(await footer.locator('.teste2-footer-logo').evaluate(logo=>getComputedStyle(logo).width),'180px',path);
+ }
+ report.checks.push('Identical compact Company footer on home, calculators, blog and institutional pages');
  report.success=true;
 }finally{await browser.close();writeFileSync('test-output/live-report.json',JSON.stringify(report,null,2));console.log('LIVE_PAINT '+JSON.stringify(report));}

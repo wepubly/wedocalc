@@ -64,3 +64,26 @@ s=s.replace('    setDirty(true);','    setDirty(true);setScheduleConfirm(false);
 s,n=re.subn(r'                        <details>\s*<summary>Agendar versão salva</summary>.*?</details>',lambda m:(root/'features/launch/schedule-panel.txt').read_text().rstrip(),s,count=1,flags=re.S)
 assert n==1,'Schedule panel not found'
 p.write_text(s)
+
+# Keep the same Company navigation and footer styles on the home and inner pages.
+footer = site/'teste2/footer.js'
+markup = footer.read_text()
+markup, count = re.subn(r'<div class=\\"socials\\"[^>]*>.*?</div>', '', markup, count=1, flags=re.S)
+assert count == 1
+for title in ('Categories', 'Popular Tools', 'Resources'):
+    markup, count = re.subn(
+        r'<div class=\\"footer-column\\"><h3>'+title+r'</h3>.*?</div>',
+        '', markup, count=1, flags=re.S)
+    assert count == 1, title
+footer.write_text(markup)
+for page in [*site.rglob('*.html'), out/'cms/worker/production-render.ts']:
+    html = page.read_text()
+    if 'id="shared-footer"' not in html:
+        continue
+    html = html.replace('/teste2/footer.js?v=2', '/teste2/footer.js?v=3')
+    html = html.replace('/assets/blog-footer.css?v=4', '/assets/blog-footer.css?v=5')
+    if '/assets/blog-footer.css?v=5' not in html:
+        html = html.replace('</head>', '<link rel="stylesheet" href="/assets/blog-footer.css?v=5"></head>', 1)
+    if 'data-hi-shared-footer' not in html and 'class="hi-blog"' not in html:
+        html = re.sub(r'<body\b', '<body data-hi-shared-footer', html, count=1)
+    page.write_text(html)
