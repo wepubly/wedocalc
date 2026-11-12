@@ -31,6 +31,10 @@ with sync_playwright() as playwright:
         for slug, (field, value, answer) in cases.items():
             assert page.goto(origin+'/'+slug+'/').status == 200
             expect(page.locator('h1')).to_have_count(1)
+            related = page.locator('.paint-tool-card')
+            expect(related).to_have_count(6)
+            expect(related.locator('a[href="/paint-calculator/"]')).to_have_count(1)
+            expect(related.locator('a[href="/'+slug+'/"]')).to_have_count(0)
             expect(page.locator('link[rel=canonical]')).to_have_attribute(
                 'href', 'https://homeimprovement.tools/'+slug+'/')
             expect(page.locator('meta[name=robots]')).to_have_attribute('content','noindex, nofollow')

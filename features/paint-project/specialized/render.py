@@ -14,16 +14,18 @@ ORIGIN = 'https://homeimprovement.tools'
 def cards(exclude=None):
     result = []
     for key, slug, name, description, *_ in TOOLS:
+        photo = f'/paint-calculator/project/photos/{key}.webp'
         if key == exclude:
-            continue
+            slug, name = 'paint-calculator', 'Paint Calculator'
+            description = 'Estimate paint quantity and coverage, or plan your entire painting project.'
+            photo = '/assets/category-covers/01-painting-walls.webp'
         result.append(f'''<article class="paint-tool-card">
-  <img src="/paint-calculator/project/photos/{key}.webp" alt="" width="512" height="280" loading="lazy" decoding="async">
+  <img src="{photo}" alt="" width="512" height="280" loading="lazy" decoding="async">
   <div><h3>{escape(name)}</h3><p>{escape(description)}</p>
     <a class="paint-tool-action" href="/{slug}/" aria-label="Open {escape(name)}">Open Calculator</a>
   </div>
 </article>''')
-    if exclude is None:
-        result.append("""<article class="paint-tool-card">
+    result.append("""<article class="paint-tool-card">
   <img src="/paint-calculator/project/photos/interior-wall.webp" alt="" width="512" height="280" loading="lazy" decoding="async">
   <div><h3>Interior Wall Paint Calculator</h3><p>Estimate paint for individual interior walls.</p>
     <span class="paint-tool-unavailable">Coming Soon</span>
