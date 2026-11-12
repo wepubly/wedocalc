@@ -11,8 +11,7 @@ async function state(){return {sourcePages:(await api('/pages/projects/wedocalc'
 try{
  const before=await state();assert.deepEqual(before.targetCron.schedules.map(s=>s.cron),['* * * * *']);
  const p=await api('/pages/projects/homeimprovement-tools');assert.ok(!p.source);assert.ok([
-  '1b22342cc769b42ec80c776cc8ec3f3371d150e7',
-  '3b9f4d5e3fac27d07adc03d336da4ee12ed48907',
+  '4e98324d6bc08100893e91fc7b4096cd88b792ec',
  ].includes(p.canonical_deployment.deployment_trigger.metadata.commit_hash),'Unexpected current deployment: '+p.canonical_deployment.deployment_trigger.metadata.commit_hash);
  const cfg=p.deployment_configs.production;assert.equal(cfg.d1_databases.DB.id,'4674c99c-cb26-47af-a557-19f097678ec6');assert.equal(cfg.r2_buckets.MEDIA.name,'homeimprovement-editorial-media');for(const k of ['HI_EDITORIAL_CRON','HI_EDITORIAL_WRITES'])assert.equal(cfg.env_vars[k].value,'enabled');
  report.previousPagesDeployment=p.canonical_deployment.id;report.before=before;

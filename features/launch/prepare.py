@@ -31,6 +31,16 @@ s=re.sub(r'<label>.*?</label>',name_select,s,flags=re.S)
 p.write_text(s)
 # Cloudflare Pages uses a root 404 file instead of SPA fallback for absent assets.
 (site/'404.html').write_text('''<!doctype html><html lang="en-US" data-theme="light"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow"><title>Page not found | HomeImprovement.tools</title><link rel="stylesheet" href="/css/tokens.css"><link rel="stylesheet" href="/assets/header-brand.css?v=2"><link rel="stylesheet" href="/assets/blog-footer.css?v=4"><style>main{max-width:850px;margin:6rem auto;padding:2rem;font-family:system-ui}main a{color:inherit}</style></head><body data-hi-shared-footer><div id="shared-header" data-variant="inner"></div><main><h1>Page not found</h1><p>This page is not available. You can return home or use our Paint Calculator.</p><p><a href="/">Home</a> · <a href="/paint-calculator/">Paint Calculator</a></p></main><div id="shared-footer"></div><script src="/assets/shared-header.js?v=brand-2" defer></script><script src="/assets/theme.js" defer></script><script src="/teste2/footer.js?v=2" defer></script></body></html>''')
+# Apply one light page surface to static pages and to the public editorial renderer.
+background_link = '<link rel="stylesheet" href="/assets/page-background.css">'
+shutil.copyfile(root/'features/launch/page-background.css', site/'assets/page-background.css')
+for page in site.rglob('*.html'):
+    html = page.read_text()
+    page.write_text(html.replace('</head>', background_link + '</head>', 1))
+editorial_renderer = out/'cms/worker/production-render.ts'
+html = editorial_renderer.read_text()
+assert '</head>' in html
+editorial_renderer.write_text(html.replace('</head>', background_link + '</head>', 1))
 shutil.copyfile(root/'features/launch/sitemap.mjs',out/'cms/worker/homeimprovement-sitemap.mjs')
 print('Launch preparation applied; robots and noindex unchanged')
 

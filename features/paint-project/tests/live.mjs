@@ -22,5 +22,22 @@ try{
  for(const id of ['pp-letter','pp-a4']){const wait=page.waitForEvent('download');await page.locator('#'+id).click();const download=await wait;await download.saveAs('test-output/'+id+'.pdf');assert.equal(readFileSync('test-output/'+id+'.pdf').subarray(0,5).toString(),'%PDF-');}report.checks.push('Letter and A4 PDFs');
  await page.screenshot({path:'test-output/live-planner-desktop.png',fullPage:true});await page.locator('#quickChoice').click();assert.equal(await fields.nth(0).inputValue(),'1000');
  await page.waitForSelector('[data-hi-cards="calculator"] a');const links=await page.locator('[data-hi-cards="calculator"] a').evaluateAll(es=>es.map(e=>e.href));assert.ok(links.length>0);for(const url of [...new Set(links)]){assert.ok(url.startsWith('https://homeimprovement.tools/'));const r=await page.request.get(url);assert.equal(r.status(),200);}report.guideLinks=links;report.checks.push('Live CMS guide links');
- await page.setViewportSize({width:390,height:844});assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));await page.screenshot({path:'test-output/live-quick-mobile.png',fullPage:true});await page.locator('#advancedChoice').click();assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));assert.deepEqual(errors,[]);report.checks.push('Mobile layout and JavaScript');report.success=true;
+ await page.setViewportSize({width:390,height:844});assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));await page.screenshot({path:'test-output/live-quick-mobile.png',fullPage:true});await page.locator('#advancedChoice').click();assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));assert.deepEqual(errors,[]);report.checks.push('Mobile layout and JavaScript');const colors=await browser.newPage();
+ const light='rgb(241, 247, 255)';
+ const homeResponse=await colors.goto('https://homeimprovement.tools/');
+ assert.equal(homeResponse.status(),200);
+ assert.equal(await colors.locator('body.teste2 > main').evaluate(el=>getComputedStyle(el).backgroundColor),light);
+ const paths=['/paint-calculator/','/paint-calculators/','/home-garden/','/blog/','/about/','/our-mission/','/contact/','/privacy-policy/','/terms-of-service/','/print/paint-calculator/','/__launch_check_missing_page__',...links];
+ for(const path of paths){
+  const url=new URL(path,'https://homeimprovement.tools');
+  const response=await colors.goto(url.href);
+  assert.equal(response.status(),path==='/__launch_check_missing_page__'?404:200,path);
+  assert.equal(await colors.locator('body').evaluate(el=>getComputedStyle(el).backgroundColor),light,path);
+ }
+ await colors.goto('https://homeimprovement.tools/paint-calculator/');
+ await colors.locator('.theme-toggle').click();
+ assert.equal(await colors.locator('html').getAttribute('data-theme'),'dark');
+ assert.notEqual(await colors.locator('body').evaluate(el=>getComputedStyle(el).backgroundColor),light);
+ report.checks.push('Shared light background on '+paths.length+' internal pages and dark mode toggle');
+ report.success=true;
 }finally{await browser.close();writeFileSync('test-output/live-report.json',JSON.stringify(report,null,2));console.log('LIVE_PAINT '+JSON.stringify(report));}

@@ -1,0 +1,10 @@
+:root {
+  --hi-light-page-background: #f1f7ff;
+}
+
+@media screen {
+  html:not([data-theme="dark"]) body.teste2 > main,
+  html:not([data-theme="dark"]) body:not(.teste2) {
+    background-color: var(--hi-light-page-background);
+  }
+}
