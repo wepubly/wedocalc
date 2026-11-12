@@ -1,7 +1,7 @@
 name: HomeImprovement approved Paint UI publication
 on:
   push:
-    branches: [work/homeimprovement-paint-steps-20261112]
+    branches: [work/homeimprovement-paint-steps-20261112, work/homeimprovement-specialized-paint-20261112]
     paths: [.github/workflows/homeimprovement-paint-publish.yml, features/paint-project/publish.mjs]
 permissions:
   contents: read
@@ -24,7 +24,7 @@ jobs:
       - name: Assemble approved Paint UI
         run: python features/paint-project/assemble.py /tmp/paint-approved
       - name: Test launch readiness and paint engine
-        run: SITE=/tmp/paint-approved/site node --test features/launch/tests.mjs features/paint-project/tests/engine.test.mjs
+        run: SITE=/tmp/paint-approved/site node --test features/launch/tests.mjs features/paint-project/tests/engine.test.mjs features/paint-project/specialized/engine.test.mjs
       - name: Build and typecheck
         working-directory: /tmp/paint-approved/cms
         run: |

@@ -11,7 +11,7 @@ async function state(){return {sourcePages:(await api('/pages/projects/wedocalc'
 try{
  const before=await state();assert.deepEqual(before.targetCron.schedules.map(s=>s.cron),['* * * * *']);
  const p=await api('/pages/projects/homeimprovement-tools');assert.ok(!p.source);assert.ok([
-  '9944c7b9cdca0aa175d7c2516e4bc20aa8034393',
+  'b0d624d33a9cadacbf23dffadcb428ce10a0e47a',
  ].includes(p.canonical_deployment.deployment_trigger.metadata.commit_hash),'Unexpected current deployment: '+p.canonical_deployment.deployment_trigger.metadata.commit_hash);
  const cfg=p.deployment_configs.production;assert.equal(cfg.d1_databases.DB.id,'4674c99c-cb26-47af-a557-19f097678ec6');assert.equal(cfg.r2_buckets.MEDIA.name,'homeimprovement-editorial-media');for(const k of ['HI_EDITORIAL_CRON','HI_EDITORIAL_WRITES'])assert.equal(cfg.env_vars[k].value,'enabled');
  report.previousPagesDeployment=p.canonical_deployment.id;report.before=before;
@@ -74,7 +74,7 @@ try{
  for(const label of ['Privacy Policy','Terms of Use'])assert.ok(institutionalFooter.includes(label));
  for(const path of ['/paint-calculator/','/admin','/api/editorial/articles','/api/editorial/schedules','/robots.txt']){
   const res=await fetch(origin+path);assert.equal(res.status,200,path);assert.match(res.headers.get('x-robots-tag')||'',/noindex/,path);const body=await res.text();
-  if(path==='/paint-calculator/'){for(const text of ['quickChoice','advancedChoice','How Paint Calculation Works','Explore More Paint Calculators','data-planner-step','Coming soon','Popular Paint Guides'])assert.ok(body.includes(text),text);assert.ok(!body.includes('CALCULATOR-TOP-01'));assert.ok(body.includes('https://homeimprovement.tools/paint-calculator/'));}
+  if(path==='/paint-calculator/'){for(const text of ['quickChoice','advancedChoice','How Paint Calculation Works','Explore More Paint Calculators','data-planner-step','Coming Soon','Popular Paint Guides'])assert.ok(body.includes(text),text);assert.ok(!body.includes('CALCULATOR-TOP-01'));assert.ok(body.includes('https://homeimprovement.tools/paint-calculator/'));}
   if(path==='/robots.txt')assert.match(body,/Disallow:\s*\//);
  }
  for(const file of ['math.mjs','materials.mjs','budget.mjs','export.mjs','commercial.mjs','planner.mjs','page-shell.mjs','planner.css','page-shell.css']){const res=await fetch(origin+'/paint-calculator/project/'+file);assert.equal(res.status,200,file);await res.body.cancel();}

@@ -44,5 +44,32 @@ try{
  assert.equal(await colors.locator('html').getAttribute('data-theme'),'dark');
  assert.notEqual(await colors.locator('body').evaluate(el=>getComputedStyle(el).backgroundColor),light);
  report.checks.push('Shared light background on '+paths.length+' internal pages and dark mode toggle');
+ const estimates = {
+  'paint-cost-calculator': ['price','50','$215.00'],
+  'exterior-paint-calculator': ['coverage','400','6.6 gal'],
+  'ceiling-paint-calculator': ['coverage','400','0.66 gal'],
+  'trim-paint-calculator': ['coverage','400','0.1833 gal'],
+  'room-paint-calculator': ['coverage','400','1.716 gal'],
+ };
+ await colors.locator('.theme-toggle').click();
+ const linksOnMain=colors.locator('.paint-tool-card a');
+ assert.equal(await linksOnMain.count(),5);
+ assert.equal(await colors.locator('[data-mode=cost]').isVisible(),false);
+ for(const [slug,[field,value,expected]] of Object.entries(estimates)){
+  const href='/'+slug+'/';
+  assert.equal(await colors.locator('.paint-tool-card a[href="'+href+'"]').count(),1,href);
+  const res=await page.goto('https://homeimprovement.tools'+href);
+  assert.equal(res.status(),200,href);
+  assert.match(res.headers()['x-robots-tag'],/noindex/,href);
+  assert.equal(await page.locator('.paint-tool-card').count(),6,href);
+  assert.equal(await page.locator('.paint-tool-card a[href="/paint-calculator/"]').count(),1,href);
+  assert.equal(await page.getByRole('button',{name:'Project Planner Advanced Coming Soon'}).isEnabled(),false,href);
+  await page.locator('#'+field).fill(value);
+  await page.getByRole('button',{name:'Calculate Estimate'}).click();
+  assert.equal(await page.locator('#specialized-result').innerText(),expected,href);
+  assert.ok(await page.locator('#specialized-print').isEnabled(),href);
+ }
+ assert.deepEqual(errors,[]);
+ report.checks.push('Five dedicated calculators, results, noindex, and cards linking to the main calculator');
  report.success=true;
 }finally{await browser.close();writeFileSync('test-output/live-report.json',JSON.stringify(report,null,2));console.log('LIVE_PAINT '+JSON.stringify(report));}
