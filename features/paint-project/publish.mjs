@@ -11,7 +11,7 @@ async function state(){return {sourcePages:(await api('/pages/projects/wedocalc'
 try{
  const before=await state();assert.deepEqual(before.targetCron.schedules.map(s=>s.cron),['* * * * *']);
  const p=await api('/pages/projects/homeimprovement-tools');assert.ok(!p.source);assert.ok([
-  '4b9dc22ccece75a0a1ce9097cf371374734d5fb7',
+  '152429b8077e20065694c7326b6751052e145b87',
  ].includes(p.canonical_deployment.deployment_trigger.metadata.commit_hash),'Unexpected current deployment: '+p.canonical_deployment.deployment_trigger.metadata.commit_hash);
  const cfg=p.deployment_configs.production;assert.equal(cfg.d1_databases.DB.id,'4674c99c-cb26-47af-a557-19f097678ec6');assert.equal(cfg.r2_buckets.MEDIA.name,'homeimprovement-editorial-media');for(const k of ['HI_EDITORIAL_CRON','HI_EDITORIAL_WRITES'])assert.equal(cfg.env_vars[k].value,'enabled');
  report.previousPagesDeployment=p.canonical_deployment.id;report.before=before;
@@ -32,6 +32,10 @@ try{
  }
  const home=await checkPublic(origin+'/');assert.equal(home.status,200);
  const html=await home.text();
+ const guideSection=html.match(/<section id="guides"[\s\S]*?<\/section>/)?.[0]||'';
+ assert.equal((guideSection.match(/<article class="guide card">/g)||[]).length,10,'Ten published home guides expected');
+ assert.equal(new Set([...guideSection.matchAll(/href="([^"]+)"/g)].map(m=>m[1])).size,10,'No duplicate home guide');
+ report.homeGuideCount=10;
  assert.doesNotMatch(html, /class="tools-showcase"/);
  assert.match(html, /id="categories"/);
  for(const path of ['/paint-calculators/','/paint-calculators','/home-garden/paint-calculators/']){

@@ -36,9 +36,10 @@ export default {
    const rows=await readCatalog(catalogue);
    response=new HTMLRewriter().on('[data-hi-cards]',{element(el){
     const kind=el.getAttribute('data-hi-cards');
-    const scope=kind==='home'?{kind:'home'}:kind==='category'?{kind:'category',categoryId:'home-garden',subcategoryId:'paint-calculators'}:{kind:'calculator',categoryId:'home-garden',subcategoryId:'paint-calculators',calculatorId:'paint-calculator'};
+    const ad=''; // No home ad is configured; select and render ten published guides.
+    const scope=kind==='home'?{kind:'home',ad}:kind==='category'?{kind:'category',categoryId:'home-garden',subcategoryId:'paint-calculators'}:{kind:'calculator',categoryId:'home-garden',subcategoryId:'paint-calculators',calculatorId:'paint-calculator'};
     const chosen=select(rows,scope);
-    const markup=kind==='home'?homeColumns(chosen,''):chosen.map((row:unknown)=>card(row,kind)).join('');
+    const markup=kind==='home'?homeColumns(chosen,ad):chosen.map((row:unknown)=>card(row,kind)).join('');
     el.setInnerContent(markup||'<p>No published guides yet.</p>',{html:true});
    }}).transform(response);
   }

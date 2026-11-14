@@ -1,7 +1,7 @@
-name: HomeImprovement approved Paint UI publication
+name: HomeImprovement approved ten home guides
 on:
   push:
-    branches: [work/homeimprovement-paint-steps-20261112, work/homeimprovement-specialized-paint-20261112]
+    branches: [work/home-guide-cards-20261114]
     paths: [.github/workflows/homeimprovement-paint-publish.yml, features/paint-project/publish.mjs]
 permissions:
   contents: read
@@ -10,7 +10,7 @@ concurrency:
   cancel-in-progress: false
 jobs:
   publish:
-    if: contains(github.event.head_commit.message, '[paint-project-publish-authorized]')
+    if: contains(github.event.head_commit.message, '[home-guide-cards-publish-authorized]')
     runs-on: ubuntu-24.04
     timeout-minutes: 12
     steps:
@@ -24,12 +24,14 @@ jobs:
       - name: Assemble approved Paint UI
         run: python features/paint-project/assemble.py /tmp/paint-approved
       - name: Test launch readiness and paint engine
-        run: SITE=/tmp/paint-approved/site node --test features/launch/tests.mjs features/paint-project/tests/engine.test.mjs features/paint-project/specialized/engine.test.mjs
+        run: SITE=/tmp/paint-approved/site node --test migration/homeimprovement/tests/cards.test.mjs features/launch/tests.mjs features/paint-project/tests/engine.test.mjs features/paint-project/specialized/engine.test.mjs
       - name: Build and typecheck
         working-directory: /tmp/paint-approved/cms
         run: |
           npm ci --ignore-scripts
           node build-local.mjs
+      - name: Verify home card runtime with isolated fixtures
+        run: node migration/homeimprovement/tests/home-cards-integration.mjs /tmp/paint-approved/cms
       - name: Guard production, publish Pages only, verify preservation
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}

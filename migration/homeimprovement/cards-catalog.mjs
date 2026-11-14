@@ -33,14 +33,20 @@ export function balanced(rows,limit,seed){
  const queues=[...categories.values()].map(calculators=>{const groups=[...calculators.values()],out=[];while(groups.some(g=>g.length))for(const g of groups)if(g.length)out.push(g.shift());return out;});
  const result=[];while(result.length<limit&&queues.some(q=>q.length))for(const q of queues){if(q.length)result.push(q.shift());if(result.length===limit)break;}return result;
 }
-export function select(rows,{kind,categoryId,subcategoryId,calculatorId},seed=rotationDay()){
+export function select(rows,{kind,categoryId,subcategoryId,calculatorId,ad=''},seed=rotationDay()){
  const matching=rows.filter(a=>(!categoryId||a.categoryId===categoryId)&&(!subcategoryId||a.subcategoryId===subcategoryId)&&(!calculatorId||a.calculatorId===calculatorId));
  // Catalogue order is the current editorial/publication order. Do not rotate calculator guides.
- return kind==='calculator'?matching.slice(0,4):balanced(matching,kind==='home'?9:5,seed);
+ return kind==='calculator'?matching.slice(0,4):balanced(matching,kind==='home'?(ad.trim()?9:10):5,seed);
 }
 export function card(a,kind){const img=a.image?`<img src="${escape(a.image)}" alt="${escape(a.alt)}" loading="lazy">`:'';
  if(kind==='calculator')return `<a class="related-item" href="${escape(a.href)}">${img}<span><b>${escape(a.title)}</b><small>${escape(a.description)}</small></span><i aria-hidden="true">›</i></a>`;
  if(kind==='category')return `<a class="paint-guide" style="color:inherit;text-decoration:none" href="${escape(a.href)}">${img}<div><h3>${escape(a.title)}</h3><p>${escape(a.description)}</p></div></a>`;
  return `<article class="guide card"><a style="display:flex;flex:1;flex-direction:column;color:inherit;text-decoration:none" href="${escape(a.href)}"><div class="guide-image">${img}<span data-kind="guide">${escape(a.category)}</span></div><div class="guide-copy"><h3>${escape(a.title)}</h3><p>${escape(a.description)}</p></div></a></article>`;
 }
-export function homeColumns(rows,ad){const cards=rows.map(a=>card(a,'home'));const slots=Array.from({length:10},(_,i)=>i===8?ad:cards[i<8?i:i-1]||'<div aria-hidden="true" data-empty-guide-slot style="visibility:hidden"></div>');return Array.from({length:5},(_,i)=>`<div class="guide-column">${slots[2*i]}${slots[2*i+1]}</div>`).join('');}
+export function homeColumns(rows,ad=''){
+ const hasAd=Boolean(ad.trim());
+ const slots=rows.slice(0,hasAd?9:10).map(a=>card(a,'home'));
+ // Reserve a position only for a real ad, otherwise use all ten for published guides.
+ if(hasAd)slots.splice(Math.min(8,slots.length),0,ad);
+ return Array.from({length:Math.ceil(slots.length/2)},(_,i)=>`<div class="guide-column">${slots.slice(2*i,2*i+2).join('')}</div>`).join('');
+}
