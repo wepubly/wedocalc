@@ -5,6 +5,7 @@ const result = document.querySelector('#specialized-result');
 const details = document.querySelector('#specialized-details');
 const error = document.querySelector('#specialized-error');
 const print = document.querySelector('#specialized-print');
+let report = null;
 const format = new Intl.NumberFormat('en-US', {maximumFractionDigits:4});
 const money = new Intl.NumberFormat('en-US', {style:'currency',currency:'USD'});
 
@@ -36,9 +37,13 @@ function render() {
       row.append(name,amount);
       return row;
     }));
+    report = {valid:true, title:document.querySelector('h1').textContent,
+      mode:'Quick Calculator', resultLabel:kind==='cost'?'Estimated project cost':'Estimated paint needed',
+      result:result.textContent, rows};
     error.textContent = '';
     print.disabled = false;
   } catch (cause) {
+    report = null;
     result.textContent = '—';
     details.replaceChildren();
     error.textContent = cause.message;
@@ -47,5 +52,15 @@ function render() {
 }
 form.addEventListener('input',render);
 form.addEventListener('submit',event=>{event.preventDefault();render();});
-print.addEventListener('click',()=>window.print());
+print.addEventListener('click',()=>{
+  if (!report) return;
+  try {
+    sessionStorage.setItem('metricpedia:print-report:v1',JSON.stringify({
+      version:1,createdAt:new Date().toISOString(),report,link:window.location.href
+    }));
+    window.location.assign('/print/paint-calculator/');
+  } catch {
+    error.textContent='Unable to prepare your report. Please check browser storage settings.';
+  }
+});
 render();

@@ -11,8 +11,9 @@ async function state(){return {sourcePages:(await api('/pages/projects/wedocalc'
 try{
  const before=await state();assert.deepEqual(before.targetCron.schedules.map(s=>s.cron),['* * * * *']);
  const p=await api('/pages/projects/homeimprovement-tools');assert.ok(!p.source);assert.ok([
-  '152429b8077e20065694c7326b6751052e145b87',
+  '9cc8c157332e7c611ecff820ff005dfe3683ac3f',
  ].includes(p.canonical_deployment.deployment_trigger.metadata.commit_hash),'Unexpected current deployment: '+p.canonical_deployment.deployment_trigger.metadata.commit_hash);
+ assert.equal(p.canonical_deployment.id,'f99bd901-2cbe-4c24-af83-2f85734c9d8a','Production changed; stop rather than overwrite concurrent work');
  const cfg=p.deployment_configs.production;assert.equal(cfg.d1_databases.DB.id,'4674c99c-cb26-47af-a557-19f097678ec6');assert.equal(cfg.r2_buckets.MEDIA.name,'homeimprovement-editorial-media');for(const k of ['HI_EDITORIAL_CRON','HI_EDITORIAL_WRITES'])assert.equal(cfg.env_vars[k].value,'enabled');
  report.previousPagesDeployment=p.canonical_deployment.id;report.before=before;
  writeFileSync('paint-project-publication.json',JSON.stringify(report,null,2));
@@ -97,5 +98,5 @@ try{
  const missing=await checkPublic(origin+'/__launch_check_missing_page__');assert.equal(missing.status,404);assert.match(await missing.text(),/Page not found/);assert.match(missing.headers.get('x-robots-tag')||'',/noindex/);
  for(const path of ['/','/home-garden/']){const res=await checkPublic(origin+path);const body=await res.text();assert.match(body,/rel="canonical"/);assert.doesNotMatch(body,/<title>[^<]*Visual Preview/);assert.match(res.headers.get('x-robots-tag')||'',/noindex/);}
  assert.equal((html.match(/href="\/home-garden\/"/g)||[]).length,1,'Only real category hub navigation remains');
- assert.deepEqual(await state(),before,'Production Worker/cron/source changed');const after=await api('/pages/projects/homeimprovement-tools');assert.deepEqual(after.deployment_configs.production,cfg,'Production bindings/settings changed');report.pagesDeployment=after.canonical_deployment.id;assert.notEqual(report.pagesDeployment,report.previousPagesDeployment);report.success=true;report.noindex=true;report.editorialUnchanged=true;
+ assert.deepEqual(await state(),before,'Production Worker/cron/source changed');const after=await api('/pages/projects/homeimprovement-tools');assert.deepEqual(after.deployment_configs.production,cfg,'Production bindings/settings changed');report.pagesDeployment=after.canonical_deployment.id;assert.equal(after.canonical_deployment.deployment_trigger.metadata.commit_hash,process.env.GITHUB_SHA,'Published commit mismatch');assert.notEqual(report.pagesDeployment,report.previousPagesDeployment);report.success=true;report.noindex=true;report.editorialUnchanged=true;
 }catch(e){report.error=e.stack||e.message;process.exitCode=1;}finally{writeFileSync('paint-project-publication.json',JSON.stringify(report,null,2));console.log('PAINT_PROJECT_PUBLICATION '+JSON.stringify(report));}

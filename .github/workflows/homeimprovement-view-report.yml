@@ -1,0 +1,61 @@
+name: HomeImprovement View Report authorized update
+on:
+  push:
+    branches: [work/view-report-button-20261115]
+    paths: [.github/workflows/homeimprovement-view-report.yml, features/paint-project/**]
+permissions:
+  contents: read
+concurrency:
+  group: homeimprovement-isolated-copy
+  cancel-in-progress: false
+jobs:
+  publish:
+    if: contains(github.event.head_commit.message, '[view-report-publish-authorized]')
+    runs-on: ubuntu-24.04
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Assemble approved Paint UI
+        run: python features/paint-project/assemble.py /tmp/paint-approved
+      - name: Test launch readiness and paint engine
+        run: SITE=/tmp/paint-approved/site node --test migration/homeimprovement/tests/cards.test.mjs features/launch/tests.mjs features/paint-project/tests/engine.test.mjs features/paint-project/specialized/engine.test.mjs
+      - name: Build and typecheck
+        working-directory: /tmp/paint-approved/cms
+        run: |
+          npm ci --ignore-scripts
+          node build-local.mjs
+      - name: Verify home card runtime with isolated fixtures
+        run: node migration/homeimprovement/tests/home-cards-integration.mjs /tmp/paint-approved/cms
+      - name: Browser report flow before any production write
+        env:
+          PLAYWRIGHT_MODULE: /tmp/paint-browser/node_modules/playwright/index.mjs
+        run: |
+          npm install --prefix /tmp/paint-browser --ignore-scripts playwright@1.58.2
+          /tmp/paint-browser/node_modules/.bin/playwright install --with-deps chromium
+          node features/paint-project/tests/report-button.mjs /tmp/paint-approved/demo
+      - name: Guard production, publish Pages only, verify preservation
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: b81896777d206a2239625d9cf2e8a40b
+          HI_PREPARED_CMS: /tmp/paint-approved/cms
+        run: node features/paint-project/publish.mjs
+      - name: Verify the published calculator in Chromium
+        env:
+          PLAYWRIGHT_MODULE: /tmp/paint-browser/node_modules/playwright/index.mjs
+        run: |
+          npm install --prefix /tmp/paint-browser --ignore-scripts playwright@1.58.2
+          /tmp/paint-browser/node_modules/.bin/playwright install --with-deps chromium
+          node features/paint-project/tests/live.mjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: paint-publication
+          path: |
+            paint-project-publication.json
+            test-output/

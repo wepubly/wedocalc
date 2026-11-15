@@ -121,7 +121,7 @@ def render(site, source):
         <div class="calc-answer"><strong id="specialized-result" aria-live="polite">—</strong></div>
         <div id="specialized-details" class="calc-result-breakdown"></div>
         <p id="specialized-error" class="specialized-error" role="status"></p>
-        <button id="specialized-print" class="paint-tool-action" type="button" disabled>Print Results</button>
+        <button id="specialized-print" class="hi-view-report" type="button" disabled>View Report</button>
       </section>
     </div>
     <section class="calc-panel specialized-explanation"><h2>How the estimate works</h2>

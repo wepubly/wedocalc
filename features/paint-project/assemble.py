@@ -42,7 +42,26 @@ s=s.replace('Estimate paint needed, coverage and cost, or plan measurements, mat
 s,n=re.subn(r'<button[^>]*data-calc-action[^>]*>.*?</button>',lambda _:INSTANT_ESTIMATE,s,flags=re.S)
 assert n==3
 p.write_text(s)
+# HomeImprovement-only results action. Keep the existing report transport/validation.
+sharing=out/'site/assets/results-sharing.js'
+a=sharing.read_text()
+start=a.index("  container.innerHTML = ")
+end=a.index("  const status =", start)
+a=a[:start]+"  container.innerHTML = '<button type=\"button\" class=\"hi-view-report\" data-mp-share=\"print\">View Report</button><p class=\"mp-share-status\" role=\"status\" aria-live=\"polite\"></p>';\n"+a[end:]
+a=a.replace('Enter valid values before sharing.', 'Enter valid values before viewing your report.')
+sharing.write_text(a)
+p=out/'site/paint-calculator/index.html'
+s=s.replace('aria-label="Save or share calculation results"','aria-label="Calculation report"')
+p.write_text(s)
 render(out/'site',s)
+# All calculator result buttons open the existing report preview before printing.
+preview=out/'site/print/paint-calculator/index.html'
+html=preview.read_text().replace('select Print', 'select View Report')
+old="typeof payload.link==='string' && payload.link.startsWith(location.origin+'/paint-calculator/')"
+new="typeof payload.link==='string' && (()=>{try{const u=new URL(payload.link);return u.origin===location.origin && ['/paint-calculator/','/paint-cost-calculator/','/exterior-paint-calculator/','/ceiling-paint-calculator/','/room-paint-calculator/'].includes(u.pathname);}catch{return false;}})()"
+assert old in html
+preview.write_text(html.replace(old,new))
+
 p=out/'site/paint-calculator/calculator.js';s=p.read_text();s=s.replace("report=null;\n  $('result-value')","report=null;window.HIPaintPlan=null;if(mode==='needed')window.HILastPaintPlan=null;window.dispatchEvent(new Event('hi:paint-plan'));\n  $('result-value')",1)
 s=s.replace('let result,resultLabel,details,explanation,extra=[],modeLabel;','let result,resultLabel,details,explanation,extra=[],modeLabel,planning=null;',1)
 s=s.replace('const gallons=(areaSqFt*coats/rate)*(1+waste/100);','planning={areaSqFt,coats,rate,waste};\n    const gallons=(areaSqFt*coats/rate)*(1+waste/100);',1)

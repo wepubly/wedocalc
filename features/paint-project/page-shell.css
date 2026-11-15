@@ -140,3 +140,9 @@ html body.calculator-page .calc-submit:hover,
 html[data-theme="dark"] .instant-estimate { background: #203c60; color: #f1f6ff; }
 html[data-theme="dark"] .instant-estimate-icon { background: #2d5180; color: #a8ceff; }
 
+
+/* Shared report action: approved yellow button in calculator results. */
+#mp-share { text-align:center; }
+.hi-view-report { background:#ffd22f; color:#111; border:0; border-radius:9px; padding:8px 13px; font-family:inherit; font-size:14px; font-weight:700; line-height:1.2; cursor:pointer; }
+.hi-view-report:hover { background:#f2c322; }
+.hi-view-report:focus-visible { outline:3px solid #1559cf; outline-offset:3px; }
