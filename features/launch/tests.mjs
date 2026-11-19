@@ -2,7 +2,26 @@ import test from 'node:test';import assert from 'node:assert/strict';import {rea
 const origin='https://homeimprovement.tools';
 test('Sitemap includes ready pages plus published painting articles only',()=>{const xml=sitemapFromPublished(`<urlset><url><loc>${origin}/blog/</loc></url><url><loc>${origin}/home-garden/paint-calculators/paint-calculator/test-guide/</loc><lastmod>2026-11-12</lastmod></url><url><loc>https://evil.invalid/home-garden/paint-calculators/paint-calculator/test-guide/</loc></url><url><loc>${origin}/admin</loc></url><url><loc>${origin}/privacy-policy/</loc></url></urlset>`);assert.equal((xml.match(/<url>/g)||[]).length,readyPaths.length+1);assert.ok(xml.includes('<lastmod>2026-11-12</lastmod>'));assert.ok(!xml.includes('evil.invalid'));assert.ok(!xml.includes('/admin'));assert.ok(!xml.includes('privacy-policy'));assert.ok(!xml.includes('terms-of-service'));});
 test('Fail closed if published sitemap unavailable',()=>assert.throws(()=>sitemapFromPublished('<html>fallback</html>')));
-if(process.env.SITE){const site=process.env.SITE;const text=p=>readFileSync(site+p,'utf8');test('No indexing switch changed',()=>{assert.equal(text('/robots.txt'),'User-agent: *\nDisallow: /\n');for(const p of ['/index.html','/home-garden/index.html','/paint-calculator/index.html'])assert.match(text(p),/name="robots" content="noindex/);});test('Real 404 asset; canonical metadata and no preview titles',()=>{assert.match(text('/404.html'),/<h1>Page not found/);for(const p of ['/index.html','/home-garden/index.html']){assert.match(text(p),/rel="canonical"/);assert.doesNotMatch(text(p),/<title>[^<]*Visual Preview/);}});test('Cards preserved with missing-tool destinations removed',()=>{assert.match(text('/index.html'),/Concrete slab size/);assert.match(text('/index.html'),/Flooring cost/);assert.equal((text('/index.html').match(/href="\/home-garden\/"/g)||[]).length,1);assert.match(text('/index.html'),/href="\/paint-calculator\/"/);assert.match(text('/paint-calculator/index.html'),/Paint Cost Calculator/);assert.doesNotMatch(text('/paint-calculator/index.html'),/<a[^>]+href="[^\"]*paint-calculators\/"[^>]*>\s*(?:<[^>]*>)*Paint Cost Calculator/);});}
+if(process.env.SITE){const site=process.env.SITE;const text=p=>readFileSync(site+p,'utf8');
+test('Public indexing enabled while CMS and previews remain private',()=>{
+ const robots=text('/robots.txt');
+ assert.ok(robots.startsWith('User-agent: *\n'));
+ assert.doesNotMatch(robots,/^Disallow: \/$/m);
+ assert.match(robots,/^Sitemap: https:\/\/homeimprovement\.tools\/sitemap\.xml$/m);
+ for(const p of ['/index.html','/home-garden/index.html','/paint-calculator/index.html','/paint-cost-calculator/index.html','/about/index.html']){
+  assert.match(text(p),/name="robots" content="index, follow, max-image-preview:large"/,p);
+  assert.doesNotMatch(text(p),/noindex/i,p);
+ }
+ for(const p of ['/404.html','/teste2/index.html','/print/paint-calculator/index.html'])assert.match(text(p),/name="robots" content="noindex/i,p);
+ const headers=text('/_headers');assert.doesNotMatch(headers,/^\/\*\s*\n\s*X-Robots-Tag: noindex/m);
+ assert.match(headers,/^\/admin\*/m);
+ const validator=readFileSync(site+'/../cms/worker/homeimprovement-validation.ts','utf8');
+ assert.match(validator,/headers\.delete\('X-Robots-Tag'\)/);
+ assert.match(validator,/privatePath\|\|response\.status>=400/);
+ assert.doesNotMatch(validator,/Site noindex/);
+});
+test('Real 404 asset; canonical metadata and no preview titles',()=>{assert.match(text('/404.html'),/<h1>Page not found/);for(const p of ['/index.html','/home-garden/index.html']){assert.match(text(p),/rel="canonical"/);assert.doesNotMatch(text(p),/<title>[^<]*Visual Preview/);}});
+test('Cards preserved with missing-tool destinations removed',()=>{assert.match(text('/index.html'),/Concrete slab size/);assert.match(text('/index.html'),/Flooring cost/);assert.equal((text('/index.html').match(/href="\/home-garden\/"/g)||[]).length,1);assert.match(text('/index.html'),/href="\/paint-calculator\/"/);assert.match(text('/paint-calculator/index.html'),/Paint Cost Calculator/);assert.doesNotMatch(text('/paint-calculator/index.html'),/<a[^>]+href="[^\"]*paint-calculators\/"[^>]*>\s*(?:<[^>]*>)*Paint Cost Calculator/);});}
 
 if(process.env.SITE)test('Retired hub is omitted and Painting & Walls opens the calculator',()=>{
  const site=process.env.SITE;
