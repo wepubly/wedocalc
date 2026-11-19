@@ -186,6 +186,6 @@ assert source.count('</head><body>')==1, 'Unexpected CMS page template; refuse G
 assert ga4_injection not in source, 'CMS renderer already has GA4 loader'
 # Preview pages share the CMS template but must not be tracked.
 source=source.replace('</head><body>',
-    '\${preview ? "" : ' + "'" + ga4_injection + "'" + '}</head><body>',1)
+    '${preview ? "" : ' + "'" + ga4_injection + "'" + '}</head><body>',1)
 renderer.write_text(source)
 print('Prepared GA4 measurement on',static_ga4_count,'public HTML pages and CMS articles; private previews excluded')
