@@ -143,3 +143,49 @@ replace_one("  headers.set('X-Robots-Tag','noindex, nofollow, noarchive');header
             "  headers.set('Cache-Control','no-store');")
 validator_path.write_text(validator)
 print(f'Public indexing release prepared: {public_meta_count} static meta tags updated, CMS/private guards retained')
+
+
+# GA4 Measurement installation for public HomeImprovement pages (2026-11-19).
+# Lazy-load only on canonical production origin; isolated tests and previews
+# do not call Google. The shared public CMS renderer includes article pages.
+ga4_id='G-ZK02VZNHE7'
+ga4_loader='''(function(){
+  'use strict';
+  if (location.hostname !== 'homeimprovement.tools') return;
+  if (/^\\/(?:admin|cms|api|teste2|print)(?:\\/|$)/.test(location.pathname)) return;
+  if (window.__hiGa4Initialized) return;
+  window.__hiGa4Initialized = true;
+  window.dataLayer = window.dataLayer || [];
+  window.gtag = window.gtag || function(){ window.dataLayer.push(arguments); };
+  window.gtag('js', new Date());
+  window.gtag('config', 'G-ZK02VZNHE7');
+  var tag = document.createElement('script');
+  tag.async = true;
+  tag.src = 'https://www.googletagmanager.com/gtag/js?id=G-ZK02VZNHE7';
+  document.head.appendChild(tag);
+})();
+'''
+assert ga4_loader.count(ga4_id) == 2
+(site/'assets/ga4.js').write_text(ga4_loader)
+ga4_injection='<script src="/assets/ga4.js" defer></script>'
+static_ga4_count=0
+for page in site.rglob('*.html'):
+    relative=page.relative_to(site).as_posix()
+    if relative in private_html or relative.startswith(('admin/','cms/','print/','teste2/')):
+        continue
+    html=page.read_text()
+    if '<meta name="robots" content="index, follow, max-image-preview:large">' not in html:
+        continue
+    assert ga4_injection not in html and html.count('</head>')==1, relative
+    page.write_text(html.replace('</head>',ga4_injection+'</head>',1))
+    static_ga4_count+=1
+assert static_ga4_count>=10, 'GA4 public HTML list smaller than expected'
+renderer=out/'cms/worker/production-render.ts'
+source=renderer.read_text()
+assert source.count('</head><body>')==1, 'Unexpected CMS page template; refuse GA4 mutation'
+assert ga4_injection not in source, 'CMS renderer already has GA4 loader'
+# Preview pages share the CMS template but must not be tracked.
+source=source.replace('</head><body>',
+    '\${preview ? "" : ' + "'" + ga4_injection + "'" + '}</head><body>',1)
+renderer.write_text(source)
+print('Prepared GA4 measurement on',static_ga4_count,'public HTML pages and CMS articles; private previews excluded')
