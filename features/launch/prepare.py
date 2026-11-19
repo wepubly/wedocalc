@@ -1,4 +1,4 @@
-"""Narrow launch-readiness changes; never enables indexing or changes CMS data."""
+"""Assemble launch assets and public indexing rules without changing CMS data."""
 from pathlib import Path
 import re,sys,shutil
 root=Path(__file__).resolve().parents[2]; out=Path(sys.argv[1]); site=out/'site'
@@ -50,7 +50,7 @@ html = editorial_renderer.read_text()
 assert '</head>' in html
 editorial_renderer.write_text(html.replace('</head>', background_link + '</head>', 1))
 shutil.copyfile(root/'features/launch/sitemap.mjs',out/'cms/worker/homeimprovement-sitemap.mjs')
-print('Launch preparation applied; robots and noindex unchanged')
+print('Launch base preparation applied; public indexing rules are applied after branding')
 
 worker=out/"cms/worker/homeimprovement-validation.ts"
 w=worker.read_text().replace("import pages from './pages';", "import pages from './pages';\n// @ts-ignore: pure helper covered by behavior tests.\nimport {sitemapFromPublished} from './homeimprovement-sitemap.mjs';")
@@ -87,3 +87,59 @@ for page in [*site.rglob('*.html'), out/'cms/worker/production-render.ts']:
     if 'data-hi-shared-footer' not in html and 'class="hi-blog"' not in html:
         html = re.sub(r'<body\b', '<body data-hi-shared-footer', html, count=1)
     page.write_text(html)
+
+# Approved public indexing release (2026-11-19). Keep CMS, previews and 404 private.
+# The Cloudflare environment remains "staging" because the editorial cron and
+# publication guard rely on that value; only the public robots directives change.
+private_html = {'404.html', 'teste2/index.html', 'print/paint-calculator/index.html'}
+public_meta_count = 0
+for page in site.rglob('*.html'):
+    if page.relative_to(site).as_posix() in private_html:
+        continue
+    html = page.read_text()
+    cleaned, changed = re.subn(r'<meta\s+name="robots"\s+content="noindex,\s*nofollow"\s*/?>',
+                               '<meta name="robots" content="index, follow, max-image-preview:large">',
+                               html, count=1, flags=re.I)
+    if changed:
+        page.write_text(cleaned)
+        public_meta_count += changed
+assert public_meta_count >= 10, 'Expected public pages with former noindex meta directives'
+
+headers_file = site/'_headers'
+headers_text = headers_file.read_text()
+global_block = '\n/*\n  X-Robots-Tag: noindex, nofollow, noarchive\n'
+assert headers_text.count(global_block) == 1, 'Unexpected global X-Robots-Tag policy'
+headers_file.write_text(headers_text.replace(global_block,
+    '\n/admin*\n  X-Robots-Tag: noindex, nofollow, noarchive\n'
+    '/cms*\n  X-Robots-Tag: noindex, nofollow, noarchive\n'
+    '/api/*\n  X-Robots-Tag: noindex, nofollow, noarchive\n'
+    '/print/*\n  X-Robots-Tag: noindex, nofollow, noarchive\n'
+    '/teste2/*\n  X-Robots-Tag: noindex, nofollow, noarchive\n'))
+(site/'robots.txt').write_text(
+    'User-agent: *\n'
+    'Disallow: /admin/\nDisallow: /cms/\nDisallow: /api/\n'
+    'Disallow: /print/\nDisallow: /teste2/\n'
+    'Sitemap: https://homeimprovement.tools/sitemap.xml\n')
+
+validator_path = out/'cms/worker/homeimprovement-validation.ts'
+validator = validator_path.read_text()
+def replace_one(previous, updated):
+    global validator
+    assert validator.count(previous) == 1, f'Indexing guard not found: {previous[:65]}'
+    validator = validator.replace(previous, updated, 1)
+
+replace_one("    'X-Robots-Tag':'noindex,nofollow,noarchive',\n    'Cache-Control':'no-store',",
+            "    'Cache-Control':'no-store',")  # Retired hub: 308 redirects may be followed.
+replace_one("if(url.pathname==='/robots.txt')return new Response('User-agent: *\\nDisallow: /\\n',{headers:{'Content-Type':'text/plain','X-Robots-Tag':'noindex,nofollow,noarchive'}});",
+            "if(url.pathname==='/robots.txt')return new Response('User-agent: *\\nDisallow: /admin/\\nDisallow: /cms/\\nDisallow: /api/\\nDisallow: /print/\\nDisallow: /teste2/\\nSitemap: https://homeimprovement.tools/sitemap.xml\\n',{headers:{'Content-Type':'text/plain; charset=utf-8'}});")
+replace_one("'Content-Type':'application/xml; charset=utf-8','X-Robots-Tag':'noindex,nofollow,noarchive','Cache-Control':'no-store'",
+            "'Content-Type':'application/xml; charset=utf-8','Cache-Control':'no-store'")
+assert validator.count('Site noindex.') == 2, 'Expected two CMS status notices'
+validator = validator.replace('Site noindex.', 'Páginas públicas liberadas à indexação; CMS privado.')
+replace_one("  headers.set('X-Robots-Tag','noindex, nofollow, noarchive');headers.set('Cache-Control','no-store');",
+            "  const privatePath=/^\\/(?:admin|cms|api|print|teste2)(?:\\/|$)/.test(url.pathname);\n"
+            "  if(privatePath||response.status>=400)headers.set('X-Robots-Tag','noindex, nofollow, noarchive');\n"
+            "  else headers.delete('X-Robots-Tag');\n"
+            "  headers.set('Cache-Control','no-store');")
+validator_path.write_text(validator)
+print(f'Public indexing release prepared: {public_meta_count} static meta tags updated, CMS/private guards retained')
