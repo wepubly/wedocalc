@@ -161,7 +161,7 @@ with sync_playwright() as p:
             page.locator('#quickChoice').click()
         assert page.locator('h1').count()==1
         assert page.locator('link[rel=canonical]').get_attribute('href')=='https://homeimprovement.tools/paint-calculator/'
-        expect(page.locator('meta[name=robots]')).to_have_attribute('content','noindex,nofollow')
+        expect(page.locator('meta[name=robots]')).to_have_attribute('content','index, follow, max-image-preview:large')
         expect(page.locator('header.metricpedia-shared-header')).to_be_visible()
         expect(page.locator('footer')).to_be_visible()
         assert page.locator('[data-hi-cards=calculator] a').count()==4
@@ -170,7 +170,7 @@ with sync_playwright() as p:
         assert not errors,errors
         results.append({'quick':quick,'room':base_breakdown})
     assert results[0]==results[1],results
-    report=json.dumps({'success':True,'baselineMatches':results[1],'widths':[1440,820,390,320],'checked':'Quick modes, metric, invalid input, print preview/PDF, all planner steps, inventory, budget, A4/Letter, report printing, keyboard, mode state, mobile, six cards, shared header/footer, FAQ, canonical and noindex'},indent=2)
+    report=json.dumps({'success':True,'baselineMatches':results[1],'widths':[1440,820,390,320],'checked':'Quick modes, metric, invalid input, print preview/PDF, all planner steps, inventory, budget, A4/Letter, report printing, keyboard, mode state, mobile, six cards, shared header/footer, FAQ, canonical and public indexing'},indent=2)
     (out/'browser-results.json').write_text(report)
     print(report)
     browser.close()
