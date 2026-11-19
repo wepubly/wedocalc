@@ -11,9 +11,9 @@ async function state(){return {sourcePages:(await api('/pages/projects/wedocalc'
 try{
  const before=await state();assert.deepEqual(before.targetCron.schedules.map(s=>s.cron),['* * * * *']);
  const p=await api('/pages/projects/homeimprovement-tools');assert.ok(!p.source);assert.ok([
-  '86c1c098b5b4da9835149f4fc31300836fa08d23',
+  'd8a81ec0891c2771696bf43e70c06a5b50088590',
  ].includes(p.canonical_deployment.deployment_trigger.metadata.commit_hash),'Unexpected current deployment: '+p.canonical_deployment.deployment_trigger.metadata.commit_hash);
- assert.equal(p.canonical_deployment.id,'2facd932-33b6-4bbd-a086-9f54346a9cc9','Production changed; stop rather than overwrite concurrent work');
+ assert.equal(p.canonical_deployment.id,'8b8d2ee6-259d-4540-aed5-d2fc15f51596','Production changed; stop rather than overwrite concurrent work');
  const cfg=p.deployment_configs.production;assert.equal(cfg.d1_databases.DB.id,'4674c99c-cb26-47af-a557-19f097678ec6');assert.equal(cfg.r2_buckets.MEDIA.name,'homeimprovement-editorial-media');for(const k of ['HI_EDITORIAL_CRON','HI_EDITORIAL_WRITES'])assert.equal(cfg.env_vars[k].value,'enabled');
  report.previousPagesDeployment=p.canonical_deployment.id;report.before=before;
  writeFileSync('paint-project-publication.json',JSON.stringify(report,null,2));
@@ -37,6 +37,22 @@ try{
  assert.equal((guideSection.match(/<article class="guide card">/g)||[]).length,10,'Ten published home guides expected');
  assert.equal(new Set([...guideSection.matchAll(/href="([^"]+)"/g)].map(m=>m[1])).size,10,'No duplicate home guide');
  report.homeGuideCount=10;
+
+ const ga4Tag='<script src="/assets/ga4.js" defer></script>';
+ assert.equal(html.split(ga4Tag).length-1,1,'GA4 loader should appear exactly once on homepage');
+ const ga4Asset=await checkPublic(origin+'/assets/ga4.js');
+ assert.equal(ga4Asset.status,200,'GA4 asset absent');
+ const ga4Source=await ga4Asset.text();
+ assert.ok(ga4Source.includes("gtag('config', 'G-ZK02VZNHE7')"),'Wrong GA4 property');
+ assert.ok(ga4Source.includes("location.hostname !== 'homeimprovement.tools'"),'Missing production-domain gate');
+ for(const path of ['/paint-calculator/','/paint-cost-calculator/','/home-garden/paint-calculators/paint-calculator/cost-to-paint-a-bathroom/']){
+  const page=await checkPublic(origin+path);
+  assert.equal(page.status,200,path);
+  assert.equal((await page.text()).split(ga4Tag).length-1,1,'GA4 loader missing/duplicated: '+path);
+ }
+ report.ga4Measurement='G-ZK02VZNHE7';
+ report.ga4StaticAndEditorial=true;
+
  assert.doesNotMatch(html, /class="tools-showcase"/);
  assert.match(html, /id="categories"/);
  for(const path of ['/paint-calculators/','/paint-calculators','/home-garden/paint-calculators/']){
