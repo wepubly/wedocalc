@@ -6,7 +6,7 @@ mkdirSync('test-output',{recursive:true});const browser=await chromium.launch({h
 const report={at:new Date().toISOString(),checks:[]};
 try{
  const page=await browser.newPage({viewport:{width:1440,height:1000},acceptDownloads:true});page.setDefaultTimeout(20000);const errors=[];page.on('pageerror',e=>errors.push(e.message));
- const response=await page.goto('https://homeimprovement.tools/paint-calculator/');assert.equal(response.status(),200);assert.match(response.headers()['x-robots-tag'],/noindex/);
+ const response=await page.goto('https://homeimprovement.tools/paint-calculator/');assert.equal(response.status(),200);assert.doesNotMatch(response.headers()['x-robots-tag']||'',/noindex/i);
  await page.waitForSelector('#quickChoice');assert.ok(await page.locator('#quickPanel').isVisible());assert.ok(!await page.locator('#advancedPanel').isVisible());
  const fields=page.locator('[data-panel="needed"] [data-fields="area"] input');await fields.nth(0).fill('1000');await fields.nth(1).fill('400');await fields.nth(2).fill('10');assert.equal(await page.locator('#result-value').textContent(),'5.5 gallons');report.checks.push('Quick calculation on live domain');
  await page.locator('#advancedChoice').click();assert.ok(await page.locator('#advancedPanel').isVisible());assert.match(await page.locator('#pp-breakdown').textContent(),/5.5 US gal/);
@@ -60,7 +60,7 @@ try{
   assert.equal(await colors.locator('.paint-tool-card a[href="'+href+'"]').count(),1,href);
   const res=await page.goto('https://homeimprovement.tools'+href);
   assert.equal(res.status(),200,href);
-  assert.match(res.headers()['x-robots-tag'],/noindex/,href);
+  assert.doesNotMatch(res.headers()['x-robots-tag']||'',/noindex/i,href);
   assert.equal(await page.locator('.paint-tool-card').count(),6,href);
   assert.equal(await page.locator('.paint-tool-card a[href="/paint-calculator/"]').count(),1,href);
   assert.equal(await page.getByRole('button',{name:'Project Planner Advanced Coming Soon'}).isEnabled(),false,href);
@@ -70,7 +70,7 @@ try{
   assert.ok(await page.locator('#specialized-print').isEnabled(),href);
  }
  assert.deepEqual(errors,[]);
- report.checks.push('Five dedicated calculators, results, noindex, and cards linking to the main calculator');
+ report.checks.push('Five dedicated calculators, results, indexable public pages, and cards linking to the main calculator');
  const companyLinks = ['/about/','/our-mission/','/contact/','/privacy-policy/','/terms-of-service/'];
  for(const path of ['/','/paint-calculator/','/room-paint-calculator/','/blog/','/about/']){
   await colors.goto('https://homeimprovement.tools'+path);
