@@ -1,0 +1,245 @@
+.cms {
+  --cms-bg: #f7f5ee;
+  --cms-text: #244b5a;
+  --cms-card: #fff;
+  --cms-border: #cbd9df;
+  background: var(--cms-bg);
+  color: var(--cms-text);
+  min-height: 100svh;
+  font:
+    16px/1.6 system-ui,
+    sans-serif;
+  padding: 0 20px 40px;
+}
+.cms.cms-dark {
+  --cms-bg: #0e1116;
+  --cms-text: #f2f4f7;
+  --cms-card: #1a1f2a;
+  --cms-border: #3a4357;
+  color-scheme: dark;
+}
+.cms.cms-dark button[aria-pressed="true"] {
+  background: #3d5cf5;
+  color: #fff;
+  border-color: #3d5cf5;
+}
+.cms-dark input,
+.cms-dark textarea,
+.cms-dark select {
+  border-color: #6b768c;
+}
+.cms-dark input::placeholder,
+.cms-dark textarea::placeholder {
+  color: #a9b1c1;
+}
+.cms * {
+  box-sizing: border-box;
+}
+.cms header {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  flex-wrap: wrap;
+  padding: 20px 0;
+  border-bottom: 1px solid var(--cms-border);
+}
+.cms header a {
+  font:
+    700 28px Georgia,
+    serif;
+}
+.cms a {
+  color: inherit;
+}
+.cms button,
+.cms input,
+.cms textarea,
+.cms select {
+  font: inherit;
+  color: inherit;
+  background: var(--cms-card);
+  border: 1px solid var(--cms-border);
+  border-radius: 8px;
+  padding: 10px;
+}
+.cms button {
+  cursor: pointer;
+}
+.cms button:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+.cms button[aria-pressed="true"] {
+  background: var(--cms-text);
+  color: var(--cms-bg);
+}
+.cms nav {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  padding: 20px 0;
+}
+.cms main {
+  max-width: 1200px;
+  margin: 20px auto;
+}
+.cms-login {
+  max-width: 420px !important;
+}
+.cms label {
+  display: block;
+  margin: 15px 0;
+}
+.cms label > input,
+.cms label > textarea,
+.cms label > select {
+  display: block;
+  width: 100%;
+  margin-top: 6px;
+}
+.cms fieldset {
+  border: 0;
+  padding: 0;
+  min-width: 0;
+}
+.cms h1,
+.cms h2 {
+  line-height: 1.25;
+}
+.cms-workspace {
+  display: grid;
+  grid-template-columns: 260px minmax(0, 1fr);
+  gap: 30px;
+}
+.cms-workspace section {
+  background: var(--cms-card);
+  padding: 25px;
+  border-radius: 16px;
+}
+.cms-row {
+  display: block;
+  width: 100%;
+  text-align: left;
+  margin-top: 12px;
+  overflow-wrap: anywhere;
+}
+.cms-row small {
+  display: block;
+}
+.cms-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+.cms .cms-checkbox {
+  display: inline-flex;
+  gap: 8px;
+  align-items: center;
+  margin: 8px;
+}
+.cms .cms-checkbox input {
+  width: auto;
+  margin: 0;
+}
+.cms-editor {
+  font-family: ui-monospace, monospace !important;
+  resize: vertical;
+}
+.cms-actions {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  flex-wrap: wrap;
+  margin: 20px 0;
+}
+.cms details {
+  margin: 20px 0;
+}
+.cms summary {
+  cursor: pointer;
+}
+.cms-cover {
+  max-width: 100%;
+  max-height: 240px;
+  object-fit: contain;
+}
+.cms-media {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 20px;
+}
+.cms-media figure {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+.cms-media img {
+  width: 100%;
+  height: 180px;
+  object-fit: contain;
+}
+.cms-error,
+.cms-notice {
+  padding: 14px;
+  border-radius: 8px;
+  background: #ffe3dd;
+  color: #6d1e12;
+}
+.cms-dark .cms-notice {
+  background: #0f2a1f;
+  color: #6ce9a6;
+}
+.cms-dark .cms-error {
+  background: #3a1020;
+  color: #fea3b4;
+}
+.cms-notice {
+  background: #dcecf2;
+  color: #244b5a;
+}
+.cms input:focus-visible,
+.cms button:focus-visible,
+.cms textarea:focus-visible {
+  outline: 2px solid #82b5cb;
+  outline-offset: 2px;
+}
+.cms-dark input:focus-visible,
+.cms-dark button:focus-visible,
+.cms-dark textarea:focus-visible,
+.cms-dark select:focus-visible {
+  outline: 2px solid #5b7cff;
+  outline-offset: 2px;
+}
+@media (max-width: 760px) {
+  .cms-workspace {
+    grid-template-columns: 1fr;
+  }
+  .cms-grid {
+    grid-template-columns: 1fr;
+  }
+  .cms {
+    padding: 0 12px 30px;
+  }
+  .cms-workspace section {
+    padding: 16px;
+  }
+}
+
+.cms-dark .ublong-brand svg {
+  filter: brightness(0) invert(1);
+}
+
+.cms-search-preview {padding:16px;border:1px solid var(--cms-border);border-radius:8px;margin:20px 0;overflow-wrap:anywhere}
+.cms-search-preview h3 {color:#244b5a;margin:4px 0}
+.cms-dark .cms-search-preview h3 {color:#7d97ff}
+.cms-quality {margin:20px 0}
+.cms-quality p {margin:6px 0}
+
+/* Keep the CMS compatible with the current portal's official PNG logo pair. */
+.cms-dark .ublong-brand {height:68px;overflow:hidden}
+.cms-dark .ublong-brand img.ublong-logo-light {display:none}
+.cms-dark .ublong-brand img.ublong-logo-dark {display:block;position:absolute;left:-10px;top:-60px;width:192px;height:192px;max-width:none;object-fit:fill}
+
+
+body{margin:0}.destination-preview{overflow-wrap:anywhere;padding:14px;background:var(--cms-card);border:1px solid var(--cms-border);border-radius:8px}.destination-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:16px}
+
+.cms .cms-feedback{position:fixed;bottom:20px;right:20px;z-index:1000;max-width:min(560px,calc(100vw - 40px));padding:16px 22px;border:2px solid currentColor;border-radius:10px;box-shadow:0 4px 20px #0003}.cms .cms-error.cms-feedback{bottom:110px}
