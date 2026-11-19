@@ -30,3 +30,20 @@ if(process.env.SITE)test('Retired hub is omitted and Painting & Walls opens the 
  assert.match(home,/<a[^>]+href="\/paint-calculator\/"[^>]*>[^<]*<img[^>]+alt="Painting &amp; Walls"/);
  assert.equal(readyPaths.includes('/paint-calculators/'),false);
 });
+
+
+if(process.env.SITE)test('GA4 ID is deployed exactly once per public page and excluded from CMS previews',()=>{
+ const site=process.env.SITE,html=p=>readFileSync(site+p,'utf8');
+ const loader=html('/assets/ga4.js');
+ assert.match(loader,/G-ZK02VZNHE7/);
+ assert.match(loader,/location\.hostname !== 'homeimprovement\.tools'/);
+ assert.match(loader,/__hiGa4Initialized/);
+ for(const path of ['/index.html','/paint-calculator/index.html','/paint-cost-calculator/index.html','/home-garden/index.html','/about/index.html']){
+  assert.equal((html(path).match(/src="\/assets\/ga4\.js"/g)||[]).length,1,path);
+ }
+ for(const path of ['/404.html','/print/paint-calculator/index.html','/teste2/index.html'])
+  assert.doesNotMatch(html(path),/src="\/assets\/ga4\.js"/,path);
+ const cms=readFileSync(site+'/../cms/worker/production-render.ts','utf8');
+ assert.ok(cms.includes('${preview ? "" : '),'Public-only CMS conditional missing');
+ assert.ok(cms.includes('<script src="/assets/ga4.js" defer></script>'));
+});
