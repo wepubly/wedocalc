@@ -23,14 +23,16 @@ try{
   await db.prepare('INSERT INTO article_versions VALUES(?,1,?,?)').bind(id,JSON.stringify(snapshot),'2026-11-03').run();
  }
  const home=await mf.dispatchFetch('https://homeimprovement.tools/');assert.equal(home.status,200);
- const html=await home.text();assert.match(home.headers.get('X-Robots-Tag'),/noindex/);
+ const html=await home.text();assert.doesNotMatch(home.headers.get('X-Robots-Tag')||'',/noindex/i);
  assert.equal((html.match(/<article class="guide card">/g)||[]).length,10);
  assert.equal((html.match(/class="guide-column"/g)||[]).length,5);
  assert.doesNotMatch(html,/data-empty-guide-slot/);
  for(const method of ['POST','PUT','PATCH','DELETE'])assert.equal((await mf.dispatchFetch('https://homeimprovement.tools/api/editorial/articles',{method,body:'{}'})).status,423);
- assert.equal(await (await mf.dispatchFetch('https://homeimprovement.tools/robots.txt')).text(),'User-agent: *\nDisallow: /\n');
+ const robots=await (await mf.dispatchFetch('https://homeimprovement.tools/robots.txt')).text();
+ assert.doesNotMatch(robots,/^Disallow:\s*\/$/m);
+ assert.match(robots,/^Sitemap: https:\/\/homeimprovement\.tools\/sitemap\.xml$/m);
  assert.equal((await db.prepare('SELECT COUNT(*) n FROM articles').first()).n,12);
  assert.equal((await db.prepare('SELECT COUNT(*) n FROM schedules').first()).n,0);
  assert.equal((await mf.dispatchFetch('https://homeimprovement.tools/not-found')).status,404);
- console.log('PASS home integration: ten cards from twelve fixture articles, noindex retained, editorial writes blocked, schedules unchanged.');
+ console.log('PASS home integration: ten cards from twelve fixture articles, public indexing enabled, editorial writes blocked, schedules unchanged.');
 }finally{await mf.dispose();}
