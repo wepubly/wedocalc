@@ -93,7 +93,9 @@ try{
   const body=await res.text();assert.match(body,/name="robots" content="index, follow, max-image-preview:large"/,path);
   if(path==='/paint-calculator/'){for(const text of ['quickChoice','advancedChoice','How Paint Calculation Works','Explore More Paint Calculators','data-planner-step','Coming Soon','Popular Paint Guides'])assert.ok(body.includes(text),text);assert.ok(!body.includes('CALCULATOR-TOP-01'));assert.ok(body.includes('https://homeimprovement.tools/paint-calculator/'));}
  }
- for(const path of ['/admin','/api/editorial/articles','/api/editorial/schedules']){
+ // /admin is gated by Cloudflare Access before the Pages Worker; anonymous CI
+ // receives a login challenge, whose headers are controlled by Access itself.
+ for(const path of ['/api/editorial/articles','/api/editorial/schedules']){
   const res=await checkPublic(origin+path);assert.equal(res.status,200,path);assert.match(res.headers.get('x-robots-tag')||'',/noindex/i,path);
  }
  const robots=await checkPublic(origin+'/robots.txt');assert.equal(robots.status,200);
