@@ -182,10 +182,10 @@ for page in site.rglob('*.html'):
 assert static_ga4_count>=10, 'GA4 public HTML list smaller than expected'
 renderer=out/'cms/worker/production-render.ts'
 source=renderer.read_text()
-assert source.count('</head><body>')==1, 'Unexpected CMS page template; refuse GA4 mutation'
+assert source.count('</head><body')==1, 'Unexpected CMS page template; refuse GA4 mutation'
 assert ga4_injection not in source, 'CMS renderer already has GA4 loader'
 # Preview pages share the CMS template but must not be tracked.
-source=source.replace('</head><body>',
-    '${preview ? "" : ' + "'" + ga4_injection + "'" + '}</head><body>',1)
+source=source.replace('</head><body',
+    '${preview ? "" : ' + "'" + ga4_injection + "'" + '}</head><body',1)
 renderer.write_text(source)
 print('Prepared GA4 measurement on',static_ga4_count,'public HTML pages and CMS articles; private previews excluded')
