@@ -1,8 +1,8 @@
-name: HomeImprovement public indexing authorized release
+name: HomeImprovement GA4 public measurement release
 on:
   push:
     branches: [work/view-report-button-20261115]
-    paths: [.github/workflows/homeimprovement-view-report.yml, features/paint-project/**]
+    paths: [.github/workflows/homeimprovement-view-report.yml, features/paint-project/**, features/launch/**]
 permissions:
   contents: read
 concurrency:
@@ -10,7 +10,7 @@ concurrency:
   cancel-in-progress: false
 jobs:
   publish:
-    if: contains(github.event.head_commit.message, '[public-indexing-authorized]')
+    if: contains(github.event.head_commit.message, '[hi-ga4-authorized]')
     runs-on: ubuntu-24.04
     timeout-minutes: 12
     steps:
