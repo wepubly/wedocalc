@@ -1,0 +1,24 @@
+name: HomeImprovement targeted robots.txt cache purge
+on:
+  push:
+    branches: [work/view-report-button-20261115]
+    paths: [.github/workflows/hi-robots-cache-purge.yml]
+permissions:
+  contents: read
+jobs:
+  purge-one:
+    if: contains(github.event.head_commit.message, '[hi-robots-purge-authorized]')
+    runs-on: ubuntu-24.04
+    timeout-minutes: 3
+    steps:
+      - name: Purge only cached robots.txt for homeimprovement.tools
+        env:
+          CF_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+        run: |
+          set -euo pipefail
+          test -n "$CF_API_TOKEN"
+          status=$(curl -sS -o purge-result.json -w '%{http_code}' -X POST             'https://api.cloudflare.com/client/v4/zones/073f0a447d0b8f87ca17fe20ceed2eb0/purge_cache'             -H "Authorization: Bearer $CF_API_TOKEN"             -H 'Content-Type: application/json'             --data '{"files":["https://homeimprovement.tools/robots.txt"]}')
+          echo "Purge HTTP $status"
+          jq -r 'if .success then "PURGE_OK robots.txt" else ("PURGE_ERROR " + (.errors | tostring)) end' purge-result.json
+          test "$status" = 200
+          jq -e '.success == true' purge-result.json >/dev/null
