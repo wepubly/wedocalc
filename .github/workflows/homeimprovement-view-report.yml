@@ -1,4 +1,4 @@
-name: HomeImprovement View Report authorized update
+name: HomeImprovement public indexing authorized release
 on:
   push:
     branches: [work/view-report-button-20261115]
@@ -10,7 +10,7 @@ concurrency:
   cancel-in-progress: false
 jobs:
   publish:
-    if: contains(github.event.head_commit.message, '[view-report-publish-authorized]')
+    if: contains(github.event.head_commit.message, '[public-indexing-authorized]')
     runs-on: ubuntu-24.04
     timeout-minutes: 12
     steps:
@@ -21,7 +21,7 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
-      - name: Assemble approved Paint UI
+      - name: Assemble existing site with public indexing rules
         run: python features/paint-project/assemble.py /tmp/paint-approved
       - name: Test launch readiness and paint engine
         run: SITE=/tmp/paint-approved/site node --test migration/homeimprovement/tests/cards.test.mjs features/launch/tests.mjs features/paint-project/tests/engine.test.mjs features/paint-project/specialized/engine.test.mjs
