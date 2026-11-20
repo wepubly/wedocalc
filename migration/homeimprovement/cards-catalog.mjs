@@ -8,8 +8,12 @@ export function normalize(row) {
  const parts=url.pathname.split('/').filter(Boolean);
  if(url.origin!==PUBLIC_ORIGIN || parts.length!==4 || !parts.every(p=>/^[a-z0-9-]+$/.test(p)) || !row.title?.trim())return null;
  const image=row.image ? new URL(row.image,PUBLIC_ORIGIN) : null;
- if(image && (image.origin!==PUBLIC_ORIGIN || !/^\/media\/[a-f0-9-]+$/.test(image.pathname)))return null;
- return {...row,href:url.href,image:image?.href||'',categoryId:parts[0],subcategoryId:parts[1],calculatorId:parts[2],category:(row.category||'').split(' · ')[0].trim()||parts[0],title:row.title.trim(),description:(row.description||'').trim()};
+ // The public blog may use Cloudflare's transformed thumbnail URL.
+ // Resolve it back to the canonical media path for shared home/calculator cards.
+ const thumbnailPrefix='/cdn-cgi/image/width=480,quality=75,format=auto';
+ const imagePath=image?.pathname.startsWith(thumbnailPrefix+'/media/') ? image.pathname.slice(thumbnailPrefix.length) : image?.pathname||'';
+ if(image && (image.origin!==PUBLIC_ORIGIN || !/^\/media\/[a-f0-9-]+$/.test(imagePath)))return null;
+ return {...row,href:url.href,image:image?PUBLIC_ORIGIN+imagePath:'',categoryId:parts[0],subcategoryId:parts[1],calculatorId:parts[2],category:(row.category||'').split(' · ')[0].trim()||parts[0],title:row.title.trim(),description:(row.description||'').trim()};
 }
 export async function readCatalog(response, Rewriter=HTMLRewriter) {
  if(!response.ok || !response.headers.get('content-type')?.includes('text/html'))throw Error('Public catalogue unavailable');
