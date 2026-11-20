@@ -301,3 +301,32 @@ for label,href,file in home_styles:
         '<style data-hi-home-css="'+label+'">'+sheet+'</style><link rel="stylesheet" href="'+href+'" media="print">',1)
 home.write_text(home_markup)
 print('Mobile final: optimized published article covers; responsive home categories:',categories_changed,'; home inline CSS:',len(home_styles))
+
+
+# Ceiling Paint Calculator: reduce render-blocking stylesheet requests without
+# touching its calculator engine, layout rules that contain URL references,
+# private CMS, or other specialist calculators.
+ceiling=site/'ceiling-paint-calculator/index.html'
+ceiling_html=ceiling.read_text()
+ceiling_styles=[
+ ('base','/css/styles.css',site/'css/styles.css'),
+ ('tokens','/css/tokens.css',site/'css/tokens.css'),
+ ('brand','/assets/header-brand.css?v=2',site/'assets/header-brand.css'),
+ ('footer','/assets/blog-footer.css?v=5',site/'assets/blog-footer.css'),
+ ('shell','/paint-calculator/project/page-shell.css',site/'paint-calculator/project/page-shell.css'),
+ ('special','/paint-calculator/project/specialized/style.css',site/'paint-calculator/project/specialized/style.css'),
+ ('background','/assets/page-background.css',site/'assets/page-background.css')
+]
+for label,href,file in ceiling_styles:
+    needle='<link rel="stylesheet" href="'+href+'">'
+    assert ceiling_html.count(needle)==1, 'Ceiling CSS link changed: '+href
+    sheet=file.read_text()
+    assert not any(unsafe in sheet for unsafe in ('</style>','@import','url(')), 'Unsafe inline CSS: '+href
+    ceiling_html=ceiling_html.replace(needle,
+        '<style data-hi-ceiling-css="'+label+'">'+sheet+'</style><link rel="stylesheet" href="'+href+'" media="print">',1)
+# Leave category.css and calculator.css external because they contain image URLs.
+assert '<link rel="stylesheet" href="/home-garden/category.css">' in ceiling_html
+assert '<link rel="stylesheet" href="/paint-calculator/calculator.css">' in ceiling_html
+assert '<script type="module" src="/paint-calculator/project/specialized/ui.mjs"></script>' in ceiling_html
+ceiling.write_text(ceiling_html)
+print('Ceiling Paint Calculator safely inlined',len(ceiling_styles),'small stylesheets')
