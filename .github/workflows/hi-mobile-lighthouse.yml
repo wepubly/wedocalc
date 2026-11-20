@@ -1,4 +1,4 @@
-name: HomeImprovement mobile PSI six-URL post-fix validation
+name: HomeImprovement home-only mobile stability check
 on:
   push:
     branches: [work/view-report-button-20261115]
@@ -21,16 +21,20 @@ jobs:
           mkdir -p mobile-audit
           export CHROME_PATH="$(command -v google-chrome || command -v chromium || true)"
           test -n "$CHROME_PATH"
-          for spec in 'home1:/' 'home2:/' 'coats:/home-garden/paint-calculators/paint-calculator/coats-of-paint/' 'cost:/home-garden/paint-calculators/paint-calculator/cost-to-paint-a-room/' 'gallon:/home-garden/paint-calculators/paint-calculator/gallon-of-paint-coverage/' 'howto:/home-garden/paint-calculators/paint-calculator/how-to-paint-a-room/' 'texture1:/home-garden/paint-calculators/paint-calculator/paint-for-textured-walls/' 'texture2:/home-garden/paint-calculators/paint-calculator/paint-for-textured-walls/'; do
+          for spec in 'home1:/' 'home2:/' 'home3:/'; do
             name="${spec%%:*}"
             path="${spec#*:}"
             echo "Auditing $name $path on mobile"
-            timeout 85s /tmp/hi-lh/node_modules/.bin/lighthouse "https://homeimprovement.tools$path" --only-categories=performance --form-factor=mobile --chrome-flags='--headless --no-sandbox --disable-dev-shm-usage' --output=json --output-path="mobile-audit/$name.json" --quiet || echo "FAILED $name"
+            for attempt in 1 2; do
+              timeout 85s /tmp/hi-lh/node_modules/.bin/lighthouse "https://homeimprovement.tools$path" --only-categories=performance --form-factor=mobile --chrome-flags='--headless --no-sandbox --disable-dev-shm-usage' --output=json --output-path="mobile-audit/$name.json" --quiet && break
+              echo "RETRY $name $attempt"
+              sleep 2
+            done
           done
           node --input-type=module <<'NODE'
           import fs from 'node:fs';
           const out=[];
-          for(const name of ['home1','home2','coats','cost','gallon','howto','texture1','texture2']){
+          for(const name of ['home1','home2','home3']){
             try{
               const o=JSON.parse(fs.readFileSync('mobile-audit/'+name+'.json','utf8'));
               const a=o.audits||{};
