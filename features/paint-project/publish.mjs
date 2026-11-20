@@ -11,9 +11,9 @@ async function state(){return {sourcePages:(await api('/pages/projects/wedocalc'
 try{
  const before=await state();assert.deepEqual(before.targetCron.schedules.map(s=>s.cron),['* * * * *']);
  const p=await api('/pages/projects/homeimprovement-tools');assert.ok(!p.source);assert.ok([
-  '033792fc7a55fb604ebd26ae13c1db1e069c24d2',
+  'a4f7fe936d1d2fd3d14b99861ea41d34ae5487d9',
  ].includes(p.canonical_deployment.deployment_trigger.metadata.commit_hash),'Unexpected current deployment: '+p.canonical_deployment.deployment_trigger.metadata.commit_hash);
- assert.equal(p.canonical_deployment.id,'757b232f-b06e-45f5-901a-6e4489387a0d','Production changed; stop rather than overwrite concurrent work');
+ assert.equal(p.canonical_deployment.id,'f62db9c4-665b-473e-85d1-e05c3380f17d','Production changed; stop rather than overwrite concurrent work');
  const cfg=p.deployment_configs.production;assert.equal(cfg.d1_databases.DB.id,'4674c99c-cb26-47af-a557-19f097678ec6');assert.equal(cfg.r2_buckets.MEDIA.name,'homeimprovement-editorial-media');for(const k of ['HI_EDITORIAL_CRON','HI_EDITORIAL_WRITES'])assert.equal(cfg.env_vars[k].value,'enabled');
  report.previousPagesDeployment=p.canonical_deployment.id;report.before=before;
  writeFileSync('paint-project-publication.json',JSON.stringify(report,null,2));
@@ -37,6 +37,24 @@ try{
  assert.equal((guideSection.match(/<article class="guide card">/g)||[]).length,10,'Ten published home guides expected');
  assert.equal(new Set([...guideSection.matchAll(/href="([^"]+)"/g)].map(m=>m[1])).size,10,'No duplicate home guide');
  report.homeGuideCount=10;
+
+ const categoryCovers=[...html.matchAll(/src="\/cdn-cgi\/image\/width=400,quality=70,format=auto\/assets\/category-covers\/[a-z0-9-]+\.webp"/g)];
+ assert.ok(categoryCovers.length>=10,'Responsive home category covers missing');
+ for(const label of ['base','tokens','ads','background','footer'])
+  assert.ok(html.includes('data-hi-home-css="'+label+'"'),'Home critical CSS missing: '+label);
+ assert.match(html, /<link rel="stylesheet" href="\/teste2\/page\.css\?v=16">/,'Main stylesheet must be preserved');
+ report.mobileCategoryCovers=categoryCovers.length;
+ report.homeCriticalCss=5;
+ const articlePath='/home-garden/paint-calculators/paint-calculator/paint-for-textured-walls/';
+ const articleResponse=await checkPublic(origin+articlePath);
+ assert.equal(articleResponse.status,200,'Editorial article missing');
+ const articleHtml=await articleResponse.text();
+ assert.match(articleHtml, /<img class="cover" src="\/cdn-cgi\/image\/width=960,quality=75,format=auto\/media\/[a-f0-9-]+"/,'Responsive hero missing');
+ assert.match(articleHtml, /srcset="\/cdn-cgi\/image\/width=480,quality=75,format=auto\/media\/[a-f0-9-]+ 480w/,'Article srcset missing');
+ assert.match(articleHtml, /property="og:image" content="https:\/\/homeimprovement\.tools\/media\//,'OG original image changed');
+ assert.match(articleHtml, /sizes="\(max-width: 700px\) calc\(100vw - 36px\), 960px"/,'Article sizing missing');
+ report.mobileArticleCover=true;
+
 
  const publishedBlog=await checkPublic(origin+'/blog/');
  assert.equal(publishedBlog.status,200,'Published blog unavailable');
