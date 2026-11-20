@@ -1,0 +1,52 @@
+name: HomeImprovement mobile Lighthouse spot audit (read-only)
+on:
+  push:
+    branches: [work/view-report-button-20261115]
+    paths: [.github/workflows/hi-mobile-lighthouse.yml]
+permissions:
+  contents: read
+jobs:
+  audit:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 9
+    steps:
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install standalone Lighthouse
+        run: npm install --prefix /tmp/hi-lh lighthouse@12.8.2 --ignore-scripts --no-audit --no-fund
+      - name: Measure 4 representative problem pages without changing anything
+        run: |
+          set -uo pipefail
+          mkdir -p mobile-audit
+          export CHROME_PATH="$(command -v google-chrome || command -v chromium || true)"
+          test -n "$CHROME_PATH"
+          for spec in 'blog:/blog/' 'room:/room-paint-calculator/' 'contact:/contact/' 'texture:/home-garden/paint-calculators/paint-calculator/paint-for-textured-walls/'; do
+            name="${spec%%:*}"
+            path="${spec#*:}"
+            echo "Auditing $name $path on mobile"
+            timeout 85s /tmp/hi-lh/node_modules/.bin/lighthouse "https://homeimprovement.tools$path" --only-categories=performance --form-factor=mobile --chrome-flags='--headless --no-sandbox --disable-dev-shm-usage' --output=json --output-path="mobile-audit/$name.json" --quiet || echo "FAILED $name"
+          done
+          node --input-type=module <<'NODE'
+          import fs from 'node:fs';
+          const out=[];
+          for(const name of ['blog','room','contact','texture']){
+            try{
+              const o=JSON.parse(fs.readFileSync('mobile-audit/'+name+'.json','utf8'));
+              const a=o.audits||{};
+              const metric=k=>({value:a[k]?.displayValue||'',ms:a[k]?.numericValue??null});
+              const opportunities=Object.values(a).filter(v=>v?.details?.overallSavingsMs>200).sort((a,b)=>b.details.overallSavingsMs-a.details.overallSavingsMs).slice(0,5).map(v=>({title:v.title,savingsMs:Math.round(v.details.overallSavingsMs)}));
+              const result={name,score:Math.round((o.categories?.performance?.score||0)*100),fcp:metric('first-contentful-paint'),lcp:metric('largest-contentful-paint'),tbt:metric('total-blocking-time'),cls:metric('cumulative-layout-shift'),opportunities};
+              console.log('HI_MOBILE_LIGHTHOUSE '+JSON.stringify(result));
+              out.push(result);
+            }catch(e){out.push({name,error:String(e).slice(0,180)})}
+          }
+          fs.writeFileSync('mobile-audit/summary.json',JSON.stringify(out,null,2));
+          fs.appendFileSync(process.env.GITHUB_STEP_SUMMARY, 'Mobile Lighthouse independent tests (single run per page; scores vary):\n\n'+out.map(x=>'- '+x.name+': '+(x.score??'error')+'/100').join('\n')+'\n');
+          NODE
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: hi-mobile-lighthouse-reports
+          path: mobile-audit/
+          if-no-files-found: warn
