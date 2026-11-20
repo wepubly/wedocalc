@@ -11,9 +11,9 @@ async function state(){return {sourcePages:(await api('/pages/projects/wedocalc'
 try{
  const before=await state();assert.deepEqual(before.targetCron.schedules.map(s=>s.cron),['* * * * *']);
  const p=await api('/pages/projects/homeimprovement-tools');assert.ok(!p.source);assert.ok([
-  'a7f27219bc836f4b3c6bd9ec239d7868c505240b',
+  '033792fc7a55fb604ebd26ae13c1db1e069c24d2',
  ].includes(p.canonical_deployment.deployment_trigger.metadata.commit_hash),'Unexpected current deployment: '+p.canonical_deployment.deployment_trigger.metadata.commit_hash);
- assert.equal(p.canonical_deployment.id,'4914e2f5-c322-4a72-9d8f-a020e3baeb59','Production changed; stop rather than overwrite concurrent work');
+ assert.equal(p.canonical_deployment.id,'757b232f-b06e-45f5-901a-6e4489387a0d','Production changed; stop rather than overwrite concurrent work');
  const cfg=p.deployment_configs.production;assert.equal(cfg.d1_databases.DB.id,'4674c99c-cb26-47af-a557-19f097678ec6');assert.equal(cfg.r2_buckets.MEDIA.name,'homeimprovement-editorial-media');for(const k of ['HI_EDITORIAL_CRON','HI_EDITORIAL_WRITES'])assert.equal(cfg.env_vars[k].value,'enabled');
  report.previousPagesDeployment=p.canonical_deployment.id;report.before=before;
  writeFileSync('paint-project-publication.json',JSON.stringify(report,null,2));
