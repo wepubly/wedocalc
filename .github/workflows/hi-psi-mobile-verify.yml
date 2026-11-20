@@ -19,6 +19,8 @@ jobs:
           node-version: '22'
       - name: Assemble isolated public site and editorial runtime
         run: python features/paint-project/assemble.py /tmp/hi-psi-mobile
+      - name: Validate guarded publisher syntax
+        run: node --check features/paint-project/publish.mjs
       - name: Assert mobile optimizations and original calculators
         run: SITE=/tmp/hi-psi-mobile/site node --test features/launch/tests.mjs migration/homeimprovement/tests/cards.test.mjs features/paint-project/tests/engine.test.mjs features/paint-project/specialized/engine.test.mjs
       - name: Build CMS and Worker; never deploy or touch data
@@ -31,3 +33,5 @@ jobs:
 # critical CSS second validation — blog/article inline styles; no deployment
 
 # Verify Cloudflare image resize URL in public blog cards, with existing CMS and calculators preserved.
+
+# Validate public image transformation URLs and publisher assertions. No deploy.
