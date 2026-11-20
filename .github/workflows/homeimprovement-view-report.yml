@@ -7,7 +7,7 @@ permissions:
   contents: read
 concurrency:
   group: homeimprovement-isolated-copy
-  cancel-in-progress: false
+  cancel-in-progress: true
 jobs:
   publish:
     if: contains(github.event.head_commit.message, '[hi-psi-mobile-authorized]')
@@ -37,7 +37,8 @@ jobs:
           PLAYWRIGHT_MODULE: /tmp/paint-browser/node_modules/playwright/index.mjs
         run: |
           npm install --prefix /tmp/paint-browser --ignore-scripts playwright@1.58.2
-          /tmp/paint-browser/node_modules/.bin/playwright install --with-deps chromium
+          export CHROMIUM_PATH="$(command -v google-chrome)"
+          test -x "$CHROMIUM_PATH"
           node features/paint-project/tests/report-button.mjs /tmp/paint-approved/demo
       - name: Guard production, publish Pages only, verify preservation
         env:
@@ -50,7 +51,8 @@ jobs:
           PLAYWRIGHT_MODULE: /tmp/paint-browser/node_modules/playwright/index.mjs
         run: |
           npm install --prefix /tmp/paint-browser --ignore-scripts playwright@1.58.2
-          /tmp/paint-browser/node_modules/.bin/playwright install --with-deps chromium
+          export CHROMIUM_PATH="$(command -v google-chrome)"
+          test -x "$CHROMIUM_PATH"
           node features/paint-project/tests/live.mjs
       - uses: actions/upload-artifact@v4
         if: always()
