@@ -43,3 +43,5 @@ jobs:
 # Retry: home main CSS retains relative URL resolution; inlines only five safe styles.
 
 # Ceiling Paint Calculator: 7 inline CSS fragments, 2 URL-based stylesheets retained, no production write.
+
+# Retry ceiling CSS validation, checking the public GA4 loader rather than the measurement literal.
