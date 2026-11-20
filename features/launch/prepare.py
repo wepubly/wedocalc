@@ -247,3 +247,57 @@ for label,href,file in styles_to_inline:
     template=template.replace(needle,inline+print_only,1)
 renderer.write_text(template)
 print('Inline blog/article CSS:',len(styles_to_inline),'stylesheets; original print links retained')
+
+
+# Final pre-indexation mobile LCP fix: optimized article hero covers and
+# home category covers, plus removal of avoidable CSS request waterfalls.
+# Change rendered output only. CMS snapshots, canonical/OpenGraph image
+# sources, media objects, calculator code, D1 and R2 are not modified.
+renderer=out/'cms/worker/production-render.ts'
+article_source=renderer.read_text()
+original_image_var="  const image=s.coverId?(preview?'/api/editorial/media/':'/media/')+s.coverId:'';"
+assert article_source.count(original_image_var)==1, 'Unexpected article cover source; refuse optimization'
+extra_image_vars="""  // Keep the original image for JSON-LD/OG; only rendered cover uses Cloudflare.
+  const coverUrl=image&&!preview?'/cdn-cgi/image/width=960,quality=75,format=auto'+image:image;
+  const coverSrcset=image&&!preview
+    ? ' srcset="' + [480,960,1280].map(w=>'/cdn-cgi/image/width='+w+',quality=75,format=auto'+image+' '+w+'w').join(', ') + '" sizes="(max-width: 700px) calc(100vw - 36px), 960px"'
+    : '';"""
+article_source=article_source.replace(original_image_var,original_image_var+'\n'+extra_image_vars,1)
+original_cover='''<img class="cover" src="${image}" alt="${escape(s.coverAlt)}"${dimensions} fetchpriority="high" decoding="async">'''
+optimized_cover='''<img class="cover" src="${coverUrl}"${coverSrcset} alt="${escape(s.coverAlt)}"${dimensions} fetchpriority="high" decoding="async">'''
+assert article_source.count(original_cover)==1, 'Unexpected article img markup; refuse optimization'
+article_source=article_source.replace(original_cover,optimized_cover,1)
+renderer.write_text(article_source)
+
+home=site/'index.html'
+home_markup=home.read_text()
+category_pattern=r'(<img\b[^>]*?)src="(/assets/category-covers/[a-z0-9-]+\.webp)"'
+def responsive_category_image(match):
+    lead,original=match.group(1,2)
+    prefix='/cdn-cgi/image/'
+    src=prefix+'width=400,quality=70,format=auto'+original
+    variants=', '.join(prefix+'width='+str(w)+',quality=70,format=auto'+original+' '+str(w)+'w' for w in (200,400,640))
+    return lead+'src="'+src+'" srcset="'+variants+'" sizes="(max-width: 720px) 45vw, (max-width: 1100px) 28vw, 240px"'
+home_markup,categories_changed=re.subn(category_pattern,responsive_category_image,home_markup)
+assert categories_changed>=10, 'Home category cover count changed; refuse deployment'
+
+# Inline existing six stylesheets in their exact cascade order on the home.
+# CSS here has no @import or external URL references; keep print stylesheets
+# as non-render-blocking fallbacks. Do not change CSS on any other page.
+home_styles=[
+ ('base','/css/styles.css',site/'css/styles.css'),
+ ('tokens','/css/tokens.css',site/'css/tokens.css'),
+ ('ads','/css/ad-slots.css',site/'css/ad-slots.css'),
+ ('home','/teste2/page.css?v=16',site/'teste2/page.css'),
+ ('background','/assets/page-background.css',site/'assets/page-background.css'),
+ ('footer','/assets/blog-footer.css?v=5',site/'assets/blog-footer.css'),
+]
+for label,href,file in home_styles:
+    needle='<link rel="stylesheet" href="'+href+'">'
+    assert home_markup.count(needle)==1, 'Home stylesheet changed: '+href
+    sheet=file.read_text()
+    assert '</style>' not in sheet and '@import' not in sheet and 'url(' not in sheet, 'Unsafe inline stylesheet: '+href
+    home_markup=home_markup.replace(needle,
+        '<style data-hi-home-css="'+label+'">'+sheet+'</style><link rel="stylesheet" href="'+href+'" media="print">',1)
+home.write_text(home_markup)
+print('Mobile final: optimized published article covers; responsive home categories:',categories_changed,'; home inline CSS:',len(home_styles))
