@@ -82,3 +82,31 @@ if(process.env.SITE)test('Blog/article CSS inlined in original order without ren
   assert.ok(!source.includes('href="'+href+'">'),'Unexpected render-blocking link '+href);
  }
 });
+
+
+if(process.env.SITE)test('Public article LCP images use Cloudflare responsive covers with canonical SEO image preserved',()=>{
+ const src=readFileSync(process.env.SITE+'/../cms/worker/production-render.ts','utf8');
+ assert.ok(src.includes("'/cdn-cgi/image/width=960,quality=75,format=auto'+image"));
+ assert.ok(src.includes('[480,960,1280].map(w=>'));
+ assert.ok(src.includes('image&&!preview'));
+ assert.ok(src.includes('src="${coverUrl}"${coverSrcset}'));
+ assert.ok(src.includes('image:origin+image'),'Structured data must retain canonical original image URL');
+ assert.ok(src.includes('href="/admin"')===false || !src.includes('/cdn-cgi/image/width=960,quality=75,format=auto/api/editorial/media/'));
+});
+if(process.env.SITE)test('Home category responsive images and inlined CSS preserve layout and SEO',()=>{
+ const html=readFileSync(process.env.SITE+'/index.html','utf8');
+ const imgs=[...html.matchAll(/src="(\/cdn-cgi\/image\/width=400,quality=70,format=auto\/assets\/category-covers\/[a-z0-9-]+\.webp)"[^>]*srcset="([^"]+)"[^>]*sizes="([^"]+)"/g)];
+ assert.ok(imgs.length>=10,'Expected optimized public category images');
+ for(const m of imgs){
+  assert.match(m[2],/width=200,quality=70,format=auto/);
+  assert.match(m[2],/width=640,quality=70,format=auto/);
+  assert.match(m[3],/45vw/);
+ }
+ for(const label of ['base','tokens','ads','home','background','footer'])
+  assert.equal(html.split('data-hi-home-css="'+label+'"').length-1,1,'Missing critical CSS '+label);
+ assert.equal((html.match(/media="print"/g)||[]).length,6);
+ assert.match(html,/<link rel="canonical" href="https:\/\/homeimprovement\.tools\/"/);
+ assert.match(html,/<meta name="robots" content="index, follow, max-image-preview:large"/);
+ assert.match(html,/src="\/assets\/ga4\.js"/);
+ assert.match(html,/id="guides"/);
+});
