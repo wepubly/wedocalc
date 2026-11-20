@@ -111,3 +111,19 @@ if(process.env.SITE)test('Home category responsive images and inlined CSS preser
  assert.match(html,/src="\/assets\/ga4\.js"/);
  assert.match(html,/id="guides"/);
 });
+
+
+if(process.env.SITE)test('Ceiling Paint Calculator inlines safe CSS without changing its engine and keeps image-URL stylesheets',()=>{
+ const html=readFileSync(process.env.SITE+'/ceiling-paint-calculator/index.html','utf8');
+ for(const name of ['base','tokens','brand','footer','shell','special','background'])
+  assert.equal(html.split('data-hi-ceiling-css="'+name+'"').length-1,1,'Missing inlined ceiling CSS: '+name);
+ assert.equal((html.match(/media="print"/g)||[]).length,7);
+ assert.match(html,/<link rel="stylesheet" href="\/home-garden\/category\.css">/);
+ assert.match(html,/<link rel="stylesheet" href="\/paint-calculator\/calculator\.css">/);
+ assert.match(html,/<script type="module" src="\/paint-calculator\/project\/specialized\/ui\.mjs"><\/script>/);
+ assert.match(html,/<link rel="canonical" href="https:\/\/homeimprovement\.tools\/ceiling-paint-calculator\/">/);
+ assert.match(html,/G-ZK02VZNHE7/);
+ assert.match(html,/id="specialized-form"/);
+ const other=readFileSync(process.env.SITE+'/room-paint-calculator/index.html','utf8');
+ assert.doesNotMatch(other,/data-hi-ceiling-css/);
+});
