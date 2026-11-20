@@ -47,3 +47,20 @@ if(process.env.SITE)test('GA4 ID is deployed exactly once per public page and ex
  assert.ok(cms.includes('${preview ? "" : '),'Public-only CMS conditional missing');
  assert.ok(cms.includes('<script src="/assets/ga4.js" defer></script>'));
 });
+
+
+if(process.env.SITE)test('Mobile blog cards prioritize first cover and lazy-load all below, without indexing regression',()=>{
+ const root=process.env.SITE+'/../cms/worker/';
+ const production=readFileSync(root+'production.ts','utf8');
+ const validator=readFileSync(root+'homeimprovement-validation.ts','utf8');
+ assert.match(production,/list\.map\(\(r,i\)=>/);
+ assert.ok(production.includes('width="480" height="270"'));
+ assert.ok(production.includes('loading="${i===0?\'eager\':\'lazy\'}"'));
+ assert.ok(production.includes('fetchpriority="${i===0?\'high\':\'low\'}"'));
+ assert.match(validator,/isPublicHost=url\.hostname===\'homeimprovement\.tools\'/);
+ assert.match(validator,/publishedMedia=/);
+ assert.match(validator,/max-age=86400/);
+ assert.match(validator,/else headers\.set\('Cache-Control','no-store'\)/);
+ assert.match(validator,/privatePath\|\|response\.status>=400/);
+ assert.match(readFileSync(process.env.SITE+'/robots.txt','utf8'),/Sitemap: https:\/\/homeimprovement\.tools\/sitemap\.xml/);
+});
