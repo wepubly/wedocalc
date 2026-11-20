@@ -1,4 +1,4 @@
-name: HomeImprovement home-only mobile stability check
+name: HomeImprovement home and ceiling mobile diagnosis
 on:
   push:
     branches: [work/view-report-button-20261115]
@@ -21,7 +21,7 @@ jobs:
           mkdir -p mobile-audit
           export CHROME_PATH="$(command -v google-chrome || command -v chromium || true)"
           test -n "$CHROME_PATH"
-          for spec in 'home1:/' 'home2:/' 'home3:/'; do
+          for spec in 'home1:/' 'ceiling1:/ceiling-paint-calculator/' 'home2:/' 'ceiling2:/ceiling-paint-calculator/' 'home3:/' 'ceiling3:/ceiling-paint-calculator/'; do
             name="${spec%%:*}"
             path="${spec#*:}"
             echo "Auditing $name $path on mobile"
@@ -34,7 +34,7 @@ jobs:
           node --input-type=module <<'NODE'
           import fs from 'node:fs';
           const out=[];
-          for(const name of ['home1','home2','home3']){
+          for(const name of ['home1','ceiling1','home2','ceiling2','home3','ceiling3']){
             try{
               const o=JSON.parse(fs.readFileSync('mobile-audit/'+name+'.json','utf8'));
               const a=o.audits||{};
@@ -49,7 +49,7 @@ jobs:
             }catch(e){out.push({name,error:String(e).slice(0,180)})}
           }
           fs.writeFileSync('mobile-audit/summary.json',JSON.stringify(out,null,2));
-          fs.appendFileSync(process.env.GITHUB_STEP_SUMMARY, 'HomeImprovement six low PSI URLs investigation (independent Lighthouse; scores vary):\n\n'+out.map(x=>'- '+x.name+': '+(x.score??'error')+'/100').join('\n')+'\n');
+          fs.appendFileSync(process.env.GITHUB_STEP_SUMMARY, 'HomeImprovement homepage and Ceiling Paint Calculator root-cause investigation (independent Lighthouse; scores vary):\n\n'+out.map(x=>'- '+x.name+': '+(x.score??'error')+'/100').join('\n')+'\n');
           NODE
       - uses: actions/upload-artifact@v4
         if: always()
