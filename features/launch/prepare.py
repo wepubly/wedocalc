@@ -200,7 +200,7 @@ old_loop='list.map(r=>`<a class="blog-card"'
 assert blog_code.count(old_loop)==1, 'Blog card loop changed; stop'
 blog_code=blog_code.replace(old_loop,'list.map((r,i)=>`<a class="blog-card"',1)
 old_cover='''<img src="/media/${r.data.coverId}" alt="${escape(r.data.coverAlt)}">'''
-new_cover='''<img src="/media/${r.data.coverId}" alt="${escape(r.data.coverAlt)}" width="480" height="270" loading="${i===0?'eager':'lazy'}" fetchpriority="${i===0?'high':'low'}" decoding="async">'''
+new_cover='''<img src="/cdn-cgi/image/width=480,quality=75,format=auto/media/${r.data.coverId}" alt="${escape(r.data.coverAlt)}" width="480" height="270" loading="${i===0?'eager':'lazy'}" fetchpriority="${i===0?'high':'low'}" decoding="async">'''
 assert blog_code.count(old_cover)==1, 'Blog image markup changed; stop'
 blog.write_text(blog_code.replace(old_cover,new_cover,1))
 
