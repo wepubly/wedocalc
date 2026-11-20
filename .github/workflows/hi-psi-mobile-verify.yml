@@ -1,0 +1,29 @@
+name: HomeImprovement mobile PSI safe validation (no deploy)
+on:
+  push:
+    branches: [work/view-report-button-20261115]
+    paths: [.github/workflows/hi-psi-mobile-verify.yml]
+permissions:
+  contents: read
+jobs:
+  validation:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Assemble isolated public site and editorial runtime
+        run: python features/paint-project/assemble.py /tmp/hi-psi-mobile
+      - name: Assert mobile optimizations and original calculators
+        run: SITE=/tmp/hi-psi-mobile/site node --test features/launch/tests.mjs migration/homeimprovement/tests/cards.test.mjs features/paint-project/tests/engine.test.mjs features/paint-project/specialized/engine.test.mjs
+      - name: Build CMS and Worker; never deploy or touch data
+        working-directory: /tmp/hi-psi-mobile/cms
+        run: |
+          npm ci --ignore-scripts
+          node build-local.mjs
+      - name: Verify worker behavior and original published guide cards
+        run: node migration/homeimprovement/tests/home-cards-integration.mjs /tmp/hi-psi-mobile/cms
