@@ -35,3 +35,5 @@ jobs:
 # Verify Cloudflare image resize URL in public blog cards, with existing CMS and calculators preserved.
 
 # Validate public image transformation URLs and publisher assertions. No deploy.
+
+# Regression: home and calculator editorial cards must accept transformed blog thumbnails.
