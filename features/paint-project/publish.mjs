@@ -11,9 +11,9 @@ async function state(){return {sourcePages:(await api('/pages/projects/wedocalc'
 try{
  const before=await state();assert.deepEqual(before.targetCron.schedules.map(s=>s.cron),['* * * * *']);
  const p=await api('/pages/projects/homeimprovement-tools');assert.ok(!p.source);assert.ok([
-  'a4f7fe936d1d2fd3d14b99861ea41d34ae5487d9',
+  '1b213d171874019ce8dba34ec81e5d3f76485e01',
  ].includes(p.canonical_deployment.deployment_trigger.metadata.commit_hash),'Unexpected current deployment: '+p.canonical_deployment.deployment_trigger.metadata.commit_hash);
- assert.equal(p.canonical_deployment.id,'f62db9c4-665b-473e-85d1-e05c3380f17d','Production changed; stop rather than overwrite concurrent work');
+ assert.equal(p.canonical_deployment.id,'e1be54eb-ac13-4b1e-9e8f-68b51d0ebf11','Production changed; stop rather than overwrite concurrent work');
  const cfg=p.deployment_configs.production;assert.equal(cfg.d1_databases.DB.id,'4674c99c-cb26-47af-a557-19f097678ec6');assert.equal(cfg.r2_buckets.MEDIA.name,'homeimprovement-editorial-media');for(const k of ['HI_EDITORIAL_CRON','HI_EDITORIAL_WRITES'])assert.equal(cfg.env_vars[k].value,'enabled');
  report.previousPagesDeployment=p.canonical_deployment.id;report.before=before;
  writeFileSync('paint-project-publication.json',JSON.stringify(report,null,2));
@@ -31,12 +31,29 @@ try{
    await new Promise(resolve=>setTimeout(resolve,2000));
   }
  }
- const home=await checkPublic(origin+'/');assert.equal(home.status,200);
- const html=await home.text();
+ let html='';
+ for(let attempt=0;attempt<6;attempt++){
+  const home=await checkPublic(origin+'/');
+  assert.equal(home.status,200);
+  html=await home.text();
+  if(html.includes('data-hi-home-css="base"') && html.includes('<article class="guide card">'))break;
+  if(attempt<5)await new Promise(resolve=>setTimeout(resolve,1500));
+ }
  const guideSection=html.match(/<section id="guides"[\s\S]*?<\/section>/)?.[0]||'';
  assert.equal((guideSection.match(/<article class="guide card">/g)||[]).length,10,'Ten published home guides expected');
  assert.equal(new Set([...guideSection.matchAll(/href="([^"]+)"/g)].map(m=>m[1])).size,10,'No duplicate home guide');
  report.homeGuideCount=10;
+
+ const ceilingResponse=await checkPublic(origin+'/ceiling-paint-calculator/');
+ assert.equal(ceilingResponse.status,200,'Ceiling Paint Calculator not reachable');
+ const ceilingHtml=await ceilingResponse.text();
+ for(const label of ['base','tokens','brand','footer','shell','special','background'])
+  assert.ok(ceilingHtml.includes('data-hi-ceiling-css="'+label+'"'),'Ceiling inline CSS missing: '+label);
+ assert.match(ceilingHtml,/<link rel="stylesheet" href="\/paint-calculator\/calculator\.css">/,'Ceiling essential calculator CSS missing');
+ assert.match(ceilingHtml,/<script type="module" src="\/paint-calculator\/project\/specialized\/ui\.mjs"><\/script>/,'Ceiling calculation engine missing');
+ assert.match(ceilingHtml,/src="\/assets\/ga4\.js"/,'GA4 loader missing from ceiling');
+ report.ceilingCriticalStyles=7;
+
 
  const categoryCovers=[...html.matchAll(/src="\/cdn-cgi\/image\/width=400,quality=70,format=auto\/assets\/category-covers\/[a-z0-9-]+\.webp"/g)];
  assert.ok(categoryCovers.length>=10,'Responsive home category covers missing');
