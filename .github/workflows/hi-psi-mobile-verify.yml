@@ -29,3 +29,5 @@ jobs:
       - name: Verify worker behavior and original published guide cards
         run: node migration/homeimprovement/tests/home-cards-integration.mjs /tmp/hi-psi-mobile/cms
 # critical CSS second validation — blog/article inline styles; no deployment
+
+# Verify Cloudflare image resize URL in public blog cards, with existing CMS and calculators preserved.
