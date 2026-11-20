@@ -1,4 +1,4 @@
-name: HomeImprovement mobile PageSpeed improvements
+name: HomeImprovement blog CSS optimization
 on:
   push:
     branches: [work/view-report-button-20261115]
