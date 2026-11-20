@@ -64,3 +64,19 @@ if(process.env.SITE)test('Mobile blog cards prioritize first cover and lazy-load
  assert.match(validator,/privatePath\|\|response\.status>=400/);
  assert.match(readFileSync(process.env.SITE+'/robots.txt','utf8'),/Sitemap: https:\/\/homeimprovement\.tools\/sitemap\.xml/);
 });
+
+
+if(process.env.SITE)test('Blog/article CSS inlined in original order without render-blocking screen stylesheets',()=>{
+ const root=process.env.SITE+'/../cms/worker/';
+ const source=readFileSync(root+'production-render.ts','utf8');
+ for(const [label,href] of [
+  ['tokens','/css/tokens.css'],
+  ['brand','/assets/header-brand.css?v=2'],
+  ['footer','/assets/blog-footer.css?v=5'],
+  ['page','/assets/page-background.css']
+ ]){
+  assert.equal(source.split('data-hi-critical-css="'+label+'"').length-1,1,label);
+  assert.ok(source.includes('href="'+href+'" media="print"'),'Expected print-only link '+href);
+  assert.ok(!source.includes('href="'+href+'">'),'Unexpected render-blocking link '+href);
+ }
+});
