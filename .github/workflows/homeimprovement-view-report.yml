@@ -1,4 +1,4 @@
-name: HomeImprovement image transformations blog thumbnails
+name: HomeImprovement restore blog home cards
 on:
   push:
     branches: [work/view-report-button-20261115]
