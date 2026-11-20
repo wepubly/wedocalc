@@ -223,3 +223,27 @@ cache_policy=(
 )
 validator_path.write_text(validator.replace(cache_line,cache_policy,1))
 print('Mobile repairs: published blog covers lazy after first; asset cache restricted to public resources')
+
+
+# Reduce four small render-blocking CSS fetches on the public blog/article
+# template. Inlining mirrors the same files and preserves cascade order.
+# Print-only links retain original stylesheets for print media and diagnostics;
+# they no longer block the first mobile paint.
+renderer=out/'cms/worker/production-render.ts'
+template=renderer.read_text()
+styles_to_inline=[
+ ('tokens','/css/tokens.css',site/'css/tokens.css'),
+ ('brand','/assets/header-brand.css?v=2',site/'assets/header-brand.css'),
+ ('footer','/assets/blog-footer.css?v=5',site/'assets/blog-footer.css'),
+ ('page','/assets/page-background.css',site/'assets/page-background.css')
+]
+for label,href,file in styles_to_inline:
+    needle='<link rel="stylesheet" href="'+href+'">'
+    assert template.count(needle)==1, 'Blog stylesheet location changed: '+href
+    css=file.read_text()
+    assert '</style>' not in css and '${' not in css and '`' not in css
+    inline='<style data-hi-critical-css="'+label+'">'+css+'</style>'
+    print_only='<link rel="stylesheet" href="'+href+'" media="print">'
+    template=template.replace(needle,inline+print_only,1)
+renderer.write_text(template)
+print('Inline blog/article CSS:',len(styles_to_inline),'stylesheets; original print links retained')
