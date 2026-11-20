@@ -2,7 +2,7 @@
 import assert from 'node:assert/strict';
 import {mkdirSync,writeFileSync,readFileSync} from 'node:fs';
 const {chromium}=await import(process.env.PLAYWRIGHT_MODULE);
-mkdirSync('test-output',{recursive:true});const browser=await chromium.launch({headless:true,args:['--no-sandbox']});
+mkdirSync('test-output',{recursive:true});const browser=await chromium.launch({headless:true,executablePath:process.env.CHROMIUM_PATH||undefined,args:['--no-sandbox']});
 const report={at:new Date().toISOString(),checks:[]};
 try{
  const page=await browser.newPage({viewport:{width:1440,height:1000},acceptDownloads:true});page.setDefaultTimeout(20000);const errors=[];page.on('pageerror',e=>errors.push(e.message));
