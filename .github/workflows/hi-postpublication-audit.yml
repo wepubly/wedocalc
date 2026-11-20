@@ -5,6 +5,7 @@ on:
     paths:
       - .github/workflows/hi-postpublication-audit.yml
       - features/launch/postpublication_audit.py
+      - features/launch/postpublication_browser.mjs
   workflow_dispatch:
 permissions:
   contents: read
@@ -23,6 +24,14 @@ jobs:
         run: python -m pip install --user beautifulsoup4==4.12.3
       - name: Audit every public editorial URL from sitemap (NO CMS write)
         run: python features/launch/postpublication_audit.py
+      - name: Render all article pages in Chromium mobile (read only)
+        env:
+          PLAYWRIGHT_MODULE: /tmp/hi-audit-browser/node_modules/playwright/index.mjs
+        run: |
+          npm install --prefix /tmp/hi-audit-browser --ignore-scripts --no-audit --no-fund playwright@1.58.2
+          export CHROMIUM_PATH="$(command -v google-chrome || command -v chromium)"
+          test -x "$CHROMIUM_PATH"
+          node features/launch/postpublication_browser.mjs
       - name: Upload article-by-article reports
         uses: actions/upload-artifact@v4
         if: always()
