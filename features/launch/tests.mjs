@@ -122,7 +122,7 @@ if(process.env.SITE)test('Ceiling Paint Calculator inlines safe CSS without chan
  assert.match(html,/<link rel="stylesheet" href="\/paint-calculator\/calculator\.css">/);
  assert.match(html,/<script type="module" src="\/paint-calculator\/project\/specialized\/ui\.mjs"><\/script>/);
  assert.match(html,/<link rel="canonical" href="https:\/\/homeimprovement\.tools\/ceiling-paint-calculator\/">/);
- assert.match(html,/G-ZK02VZNHE7/);
+ assert.match(html,/<script src="\/assets\/ga4\.js" defer><\/script>/);
  assert.match(html,/id="specialized-form"/);
  const other=readFileSync(process.env.SITE+'/room-paint-calculator/index.html','utf8');
  assert.doesNotMatch(other,/data-hi-ceiling-css/);
