@@ -1,4 +1,4 @@
-name: HomeImprovement home and ceiling mobile diagnosis
+name: HomeImprovement home and ceiling after critical CSS fix
 on:
   push:
     branches: [work/view-report-button-20261115]
@@ -59,3 +59,5 @@ jobs:
           if-no-files-found: warn
 
 # GO post-deploy audit: 2026-11-20 responsive images and critical CSS, 8 runs / 6 distinct URLs.
+
+# Production check after successful Ceiling Paint Calculator inline CSS deploy. Three repeats each; no writes.
