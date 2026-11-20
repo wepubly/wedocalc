@@ -1,4 +1,4 @@
-name: HomeImprovement six low PSI URLs root-cause audit
+name: HomeImprovement mobile PSI six-URL post-fix validation
 on:
   push:
     branches: [work/view-report-button-20261115]
@@ -53,3 +53,5 @@ jobs:
           name: hi-mobile-lighthouse-reports
           path: mobile-audit/
           if-no-files-found: warn
+
+# GO post-deploy audit: 2026-11-20 responsive images and critical CSS, 8 runs / 6 distinct URLs.
