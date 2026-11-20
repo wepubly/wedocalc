@@ -37,3 +37,5 @@ jobs:
 # Validate public image transformation URLs and publisher assertions. No deploy.
 
 # Regression: home and calculator editorial cards must accept transformed blog thumbnails.
+
+# GO authorization 2026-11-20: verify article LCP and home responsive images + critical CSS; never deploy in this workflow.
