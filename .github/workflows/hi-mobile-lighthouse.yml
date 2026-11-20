@@ -1,4 +1,4 @@
-name: HomeImprovement Cloudflare thumbnails Lighthouse recheck
+name: HomeImprovement six low PSI URLs root-cause audit
 on:
   push:
     branches: [work/view-report-button-20261115]
@@ -15,13 +15,13 @@ jobs:
           node-version: '22'
       - name: Install standalone Lighthouse
         run: npm install --prefix /tmp/hi-lh lighthouse@12.8.2 --ignore-scripts --no-audit --no-fund
-      - name: Measure 4 representative problem pages without changing anything
+      - name: Diagnose current six low-performing URLs (read only)
         run: |
           set -uo pipefail
           mkdir -p mobile-audit
           export CHROME_PATH="$(command -v google-chrome || command -v chromium || true)"
           test -n "$CHROME_PATH"
-          for spec in 'blog1:/blog/' 'blog2:/blog/' 'blog3:/blog/' 'home:/'; do
+          for spec in 'home1:/' 'home2:/' 'coats:/home-garden/paint-calculators/paint-calculator/coats-of-paint/' 'cost:/home-garden/paint-calculators/paint-calculator/cost-to-paint-a-room/' 'gallon:/home-garden/paint-calculators/paint-calculator/gallon-of-paint-coverage/' 'howto:/home-garden/paint-calculators/paint-calculator/how-to-paint-a-room/' 'texture1:/home-garden/paint-calculators/paint-calculator/paint-for-textured-walls/' 'texture2:/home-garden/paint-calculators/paint-calculator/paint-for-textured-walls/'; do
             name="${spec%%:*}"
             path="${spec#*:}"
             echo "Auditing $name $path on mobile"
@@ -30,19 +30,22 @@ jobs:
           node --input-type=module <<'NODE'
           import fs from 'node:fs';
           const out=[];
-          for(const name of ['blog1','blog2','blog3','home']){
+          for(const name of ['home1','home2','coats','cost','gallon','howto','texture1','texture2']){
             try{
               const o=JSON.parse(fs.readFileSync('mobile-audit/'+name+'.json','utf8'));
               const a=o.audits||{};
               const metric=k=>({value:a[k]?.displayValue||'',ms:a[k]?.numericValue??null});
               const opportunities=Object.values(a).filter(v=>v?.details?.overallSavingsMs>200).sort((a,b)=>b.details.overallSavingsMs-a.details.overallSavingsMs).slice(0,5).map(v=>({title:v.title,savingsMs:Math.round(v.details.overallSavingsMs)}));
-              const result={name,score:Math.round((o.categories?.performance?.score||0)*100),fcp:metric('first-contentful-paint'),lcp:metric('largest-contentful-paint'),tbt:metric('total-blocking-time'),cls:metric('cumulative-layout-shift'),opportunities};
+              const lcpElement=(a['largest-contentful-paint-element']?.details?.items||[]).map(v=>({node:v.node?.snippet||v.node?.selector,url:v.url})).slice(0,2);
+              const details=(id)=>({score:a[id]?.score,display:a[id]?.displayValue,items:(a[id]?.details?.items||[]).slice(0,6).map(v=>({url:v.url,bytes:v.totalBytes||v.transferSize||v.wastedBytes,wastedMs:v.wastedMs,group:v.group, node:v.node?.snippet||v.node?.selector}))});
+              const resourceSummary=(a['network-requests']?.details?.items||[]).sort((a,b)=>(b.transferSize||0)-(a.transferSize||0)).slice(0,7).map(v=>({url:v.url,transferBytes:v.transferSize,resourceSize:v.resourceSize,status:v.statusCode,mimeType:v.mimeType}));
+              const result={name,url:o.finalDisplayedUrl||o.finalUrl,score:Math.round((o.categories?.performance?.score||0)*100),fcp:metric('first-contentful-paint'),lcp:metric('largest-contentful-paint'),tbt:metric('total-blocking-time'),cls:metric('cumulative-layout-shift'),speedIndex:metric('speed-index'),ttfb:metric('server-response-time'),lcpElement,opportunities,images:details('uses-optimized-images'),modernImages:details('modern-image-formats'),sizedImages:details('uses-responsive-images'),unusedJs:details('unused-javascript'),renderBlocking:details('render-blocking-resources'),requestSummary:resourceSummary,insights:['image-delivery-insight','lcp-breakdown-insight','lcp-discovery-insight','render-blocking-insight'].map(k=>({id:k,title:a[k]?.title,display:a[k]?.displayValue,score:a[k]?.score,items:(a[k]?.details?.items||[]).slice(0,4).map(v=>({url:v.url,wastedBytes:v.wastedBytes,wastedMs:v.wastedMs}))}))};
               console.log('HI_MOBILE_LIGHTHOUSE '+JSON.stringify(result));
               out.push(result);
             }catch(e){out.push({name,error:String(e).slice(0,180)})}
           }
           fs.writeFileSync('mobile-audit/summary.json',JSON.stringify(out,null,2));
-          fs.appendFileSync(process.env.GITHUB_STEP_SUMMARY, 'Mobile Lighthouse independent tests (single run per page; scores vary):\n\n'+out.map(x=>'- '+x.name+': '+(x.score??'error')+'/100').join('\n')+'\n');
+          fs.appendFileSync(process.env.GITHUB_STEP_SUMMARY, 'HomeImprovement six low PSI URLs investigation (independent Lighthouse; scores vary):\n\n'+out.map(x=>'- '+x.name+': '+(x.score??'error')+'/100').join('\n')+'\n');
           NODE
       - uses: actions/upload-artifact@v4
         if: always()
