@@ -11,9 +11,9 @@ async function state(){return {sourcePages:(await api('/pages/projects/wedocalc'
 try{
  const before=await state();assert.deepEqual(before.targetCron.schedules.map(s=>s.cron),['* * * * *']);
  const p=await api('/pages/projects/homeimprovement-tools');assert.ok(!p.source);assert.ok([
-  '1dbdcd5db8390500e30a948a217af27fb84a2946',
+  'd89e6fe49b154f18585467373fb91ccdf1e73757',
  ].includes(p.canonical_deployment.deployment_trigger.metadata.commit_hash),'Unexpected current deployment: '+p.canonical_deployment.deployment_trigger.metadata.commit_hash);
- assert.equal(p.canonical_deployment.id,'c1739aaf-8b0b-467e-8d8a-97f0c81ce454','Production changed; stop rather than overwrite concurrent work');
+ assert.equal(p.canonical_deployment.id,'f83b1cfb-9d8a-45cc-9321-d4dba4854a4a','Production changed; stop rather than overwrite concurrent work');
  const cfg=p.deployment_configs.production;assert.equal(cfg.d1_databases.DB.id,'4674c99c-cb26-47af-a557-19f097678ec6');assert.equal(cfg.r2_buckets.MEDIA.name,'homeimprovement-editorial-media');for(const k of ['HI_EDITORIAL_CRON','HI_EDITORIAL_WRITES'])assert.equal(cfg.env_vars[k].value,'enabled');
  report.previousPagesDeployment=p.canonical_deployment.id;report.before=before;
  writeFileSync('paint-project-publication.json',JSON.stringify(report,null,2));
@@ -41,6 +41,11 @@ try{
  const publishedBlog=await checkPublic(origin+'/blog/');
  assert.equal(publishedBlog.status,200,'Published blog unavailable');
  const blogHtml=await publishedBlog.text();
+ for(const label of ['tokens','brand','footer','page']){
+  assert.ok(blogHtml.includes('data-hi-critical-css="'+label+'"'),'Blog CSS not inlined: '+label);
+ }
+ report.blogCriticalCssInlined=4;
+
  const cardCovers=[...blogHtml.matchAll(/<img\b[^>]*src="\/media\/[a-f0-9-]+"[^>]*>/g)].map(m=>m[0]);
  assert.ok(cardCovers.length>=10,'Expected public blog media cards');
  assert.match(cardCovers[0],/loading="eager"/,'First cover should be prioritized');
