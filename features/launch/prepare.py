@@ -189,3 +189,37 @@ source=source.replace('</head><body',
     '${preview ? "" : ' + "'" + ga4_injection + "'" + '}</head><body',1)
 renderer.write_text(source)
 print('Prepared GA4 measurement on',static_ga4_count,'public HTML pages and CMS articles; private previews excluded')
+
+
+# Mobile performance repairs, isolated to public assets and published blog cards.
+# Blog listing previously eagerly loaded every media cover, including images
+# far below the fold. First visible card remains high-priority; rest are lazy.
+blog=out/'cms/worker/production.ts'
+blog_code=blog.read_text()
+old_loop='list.map(r=>`<a class="blog-card"'
+assert blog_code.count(old_loop)==1, 'Blog card loop changed; stop'
+blog_code=blog_code.replace(old_loop,'list.map((r,i)=>`<a class="blog-card"',1)
+old_cover='''<img src="/media/${r.data.coverId}" alt="${escape(r.data.coverAlt)}">'''
+new_cover='''<img src="/media/${r.data.coverId}" alt="${escape(r.data.coverAlt)}" width="480" height="270" loading="${i===0?'eager':'lazy'}" fetchpriority="${i===0?'high':'low'}" decoding="async">'''
+assert blog_code.count(old_cover)==1, 'Blog image markup changed; stop'
+blog.write_text(blog_code.replace(old_cover,new_cover,1))
+
+# Previously all responses had no-store, including static assets.
+# Keep private, HTML and APIs no-store; permit short browser cache for
+# publicly served assets. This does not affect D1, R2 data or cron.
+validator=validator_path.read_text()
+cache_line="  headers.set('Cache-Control','no-store');"
+assert validator.count(cache_line)==1, 'Final response cache guard changed; stop'
+cache_policy=(
+ "  const isPublicHost=url.hostname==='homeimprovement.tools';\n"
+ "  const staticAsset=isPublicHost&&/^\\/(?:assets\\/|css\\/|teste2\\/assets\\/|paint-calculator\\/project\\/)/.test(url.pathname);\n"
+ "  const publishedMedia=isPublicHost&&/^\\/media\\/[a-f0-9-]+$/.test(url.pathname);\n"
+ "  const contentType=headers.get('Content-Type')||'';\n"
+ "  if(!privatePath&&response.status===200&&staticAsset){\n"
+ "    headers.set('Cache-Control',/^image\\//.test(contentType)?'public, max-age=86400':'public, max-age=3600');\n"
+ "  }else if(!privatePath&&response.status===200&&publishedMedia&&/^image\\//.test(contentType)){\n"
+ "    headers.set('Cache-Control','public, max-age=3600');\n"
+ "  }else headers.set('Cache-Control','no-store');"
+)
+validator_path.write_text(validator.replace(cache_line,cache_policy,1))
+print('Mobile repairs: published blog covers lazy after first; asset cache restricted to public resources')
