@@ -281,14 +281,14 @@ def responsive_category_image(match):
 home_markup,categories_changed=re.subn(category_pattern,responsive_category_image,home_markup)
 assert categories_changed>=10, 'Home category cover count changed; refuse deployment'
 
-# Inline existing six stylesheets in their exact cascade order on the home.
+# Inline five small safe stylesheets in cascade order; retain the main page stylesheet.
 # CSS here has no @import or external URL references; keep print stylesheets
 # as non-render-blocking fallbacks. Do not change CSS on any other page.
 home_styles=[
  ('base','/css/styles.css',site/'css/styles.css'),
  ('tokens','/css/tokens.css',site/'css/tokens.css'),
  ('ads','/css/ad-slots.css',site/'css/ad-slots.css'),
- ('home','/teste2/page.css?v=16',site/'teste2/page.css'),
+ # The main page.css contains relative image URLs; leave it linked to keep them resolved.
  ('background','/assets/page-background.css',site/'assets/page-background.css'),
  ('footer','/assets/blog-footer.css?v=5',site/'assets/blog-footer.css'),
 ]
