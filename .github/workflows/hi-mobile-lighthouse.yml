@@ -1,4 +1,4 @@
-name: HomeImprovement mobile blog CSS Lighthouse recheck (read-only)
+name: HomeImprovement Cloudflare thumbnails Lighthouse recheck
 on:
   push:
     branches: [work/view-report-button-20261115]
@@ -21,7 +21,7 @@ jobs:
           mkdir -p mobile-audit
           export CHROME_PATH="$(command -v google-chrome || command -v chromium || true)"
           test -n "$CHROME_PATH"
-          for spec in 'blog1:/blog/' 'blog2:/blog/' 'blog3:/blog/'; do
+          for spec in 'blog1:/blog/' 'blog2:/blog/' 'blog3:/blog/' 'home:/'; do
             name="${spec%%:*}"
             path="${spec#*:}"
             echo "Auditing $name $path on mobile"
@@ -30,7 +30,7 @@ jobs:
           node --input-type=module <<'NODE'
           import fs from 'node:fs';
           const out=[];
-          for(const name of ['blog1','blog2','blog3']){
+          for(const name of ['blog1','blog2','blog3','home']){
             try{
               const o=JSON.parse(fs.readFileSync('mobile-audit/'+name+'.json','utf8'));
               const a=o.audits||{};
