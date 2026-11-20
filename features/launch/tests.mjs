@@ -102,9 +102,10 @@ if(process.env.SITE)test('Home category responsive images and inlined CSS preser
   assert.match(m[2],/width=640,quality=70,format=auto/);
   assert.match(m[3],/45vw/);
  }
- for(const label of ['base','tokens','ads','home','background','footer'])
+ for(const label of ['base','tokens','ads','background','footer'])
   assert.equal(html.split('data-hi-home-css="'+label+'"').length-1,1,'Missing critical CSS '+label);
- assert.equal((html.match(/media="print"/g)||[]).length,6);
+ assert.equal((html.match(/media="print"/g)||[]).length,5);
+ assert.match(html,/<link rel="stylesheet" href="\/teste2\/page\.css\?v=16">/);
  assert.match(html,/<link rel="canonical" href="https:\/\/homeimprovement\.tools\/"/);
  assert.match(html,/<meta name="robots" content="index, follow, max-image-preview:large"/);
  assert.match(html,/src="\/assets\/ga4\.js"/);
