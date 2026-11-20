@@ -55,6 +55,8 @@ if(process.env.SITE)test('Mobile blog cards prioritize first cover and lazy-load
  const validator=readFileSync(root+'homeimprovement-validation.ts','utf8');
  assert.match(production,/list\.map\(\(r,i\)=>/);
  assert.ok(production.includes('width="480" height="270"'));
+ assert.ok(production.includes('/cdn-cgi/image/width=480,quality=75,format=auto/media/${r.data.coverId}'),'Blog thumbnails must use image transformations');
+ assert.equal(production.split('/cdn-cgi/image/width=480,quality=75,format=auto/media/${r.data.coverId}').length-1,1,'Only blog cards should use the transformed image URL');
  assert.ok(production.includes('loading="${i===0?\'eager\':\'lazy\'}"'));
  assert.ok(production.includes('fetchpriority="${i===0?\'high\':\'low\'}"'));
  assert.match(validator,/isPublicHost=url\.hostname===\'homeimprovement\.tools\'/);
