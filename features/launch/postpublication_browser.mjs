@@ -1,6 +1,6 @@
 // Read-only Chromium mobile render check for each Home Improvement article.
 import {readFileSync, writeFileSync, mkdirSync} from 'node:fs';
-import {chromium} from await import(process.env.PLAYWRIGHT_MODULE || 'playwright');
+const {chromium}=await import(process.env.PLAYWRIGHT_MODULE || 'playwright');
 const input=JSON.parse(readFileSync('hi-audit-output/audit-report.json','utf8'));
 mkdirSync('hi-audit-output',{recursive:true});
 const browser=await chromium.launch({headless:true,executablePath:process.env.CHROMIUM_PATH||undefined,args:['--no-sandbox','--disable-dev-shm-usage']});
