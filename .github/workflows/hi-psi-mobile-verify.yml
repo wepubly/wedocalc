@@ -39,3 +39,5 @@ jobs:
 # Regression: home and calculator editorial cards must accept transformed blog thumbnails.
 
 # GO authorization 2026-11-20: verify article LCP and home responsive images + critical CSS; never deploy in this workflow.
+
+# Retry: home main CSS retains relative URL resolution; inlines only five safe styles.
