@@ -1,4 +1,4 @@
-name: HomeImprovement final mobile PageSpeed LCP release
+name: HomeImprovement Ceiling Paint Calculator CSS performance fix
 on:
   push:
     branches: [work/view-report-button-20261115]
