@@ -11,9 +11,9 @@ async function state(){return {sourcePages:(await api('/pages/projects/wedocalc'
 try{
  const before=await state();assert.deepEqual(before.targetCron.schedules.map(s=>s.cron),['* * * * *']);
  const p=await api('/pages/projects/homeimprovement-tools');assert.ok(!p.source);assert.ok([
-  'd89e6fe49b154f18585467373fb91ccdf1e73757',
+  'a7f27219bc836f4b3c6bd9ec239d7868c505240b',
  ].includes(p.canonical_deployment.deployment_trigger.metadata.commit_hash),'Unexpected current deployment: '+p.canonical_deployment.deployment_trigger.metadata.commit_hash);
- assert.equal(p.canonical_deployment.id,'f83b1cfb-9d8a-45cc-9321-d4dba4854a4a','Production changed; stop rather than overwrite concurrent work');
+ assert.equal(p.canonical_deployment.id,'4914e2f5-c322-4a72-9d8f-a020e3baeb59','Production changed; stop rather than overwrite concurrent work');
  const cfg=p.deployment_configs.production;assert.equal(cfg.d1_databases.DB.id,'4674c99c-cb26-47af-a557-19f097678ec6');assert.equal(cfg.r2_buckets.MEDIA.name,'homeimprovement-editorial-media');for(const k of ['HI_EDITORIAL_CRON','HI_EDITORIAL_WRITES'])assert.equal(cfg.env_vars[k].value,'enabled');
  report.previousPagesDeployment=p.canonical_deployment.id;report.before=before;
  writeFileSync('paint-project-publication.json',JSON.stringify(report,null,2));
@@ -46,7 +46,9 @@ try{
  }
  report.blogCriticalCssInlined=4;
 
- const cardCovers=[...blogHtml.matchAll(/<img\b[^>]*src="\/media\/[a-f0-9-]+"[^>]*>/g)].map(m=>m[0]);
+ const cardRows=[...blogHtml.matchAll(/<img\b[^>]*src="(\/cdn-cgi\/image\/width=480,quality=75,format=auto\/media\/[a-f0-9-]+)"[^>]*>/g)];
+ const cardCovers=cardRows.map(m=>m[0]);
+ const firstCoverUrl=cardRows[0]?.[1];
  assert.ok(cardCovers.length>=10,'Expected public blog media cards');
  assert.match(cardCovers[0],/loading="eager"/,'First cover should be prioritized');
  assert.match(cardCovers[0],/fetchpriority="high"/);
@@ -56,6 +58,18 @@ try{
  }
  report.blogCovers=cardCovers.length;
  report.blogLazyCovers=cardCovers.length-1;
+
+ const thumbResponse=await checkPublic(origin+firstCoverUrl);
+ assert.equal(thumbResponse.status,200,'Optimized first cover unavailable');
+ assert.match(thumbResponse.headers.get('content-type')||'',/^image\//,'Optimized first cover not an image');
+ const thumbBytes=(await thumbResponse.arrayBuffer()).byteLength;
+ const originalMediaUrl=firstCoverUrl.replace('/cdn-cgi/image/width=480,quality=75,format=auto','');
+ const originalResponse=await checkPublic(origin+originalMediaUrl);
+ assert.equal(originalResponse.status,200,'Original media absent');
+ const originalBytes=(await originalResponse.arrayBuffer()).byteLength;
+ report.transformedThumb={path:firstCoverUrl,bytes:thumbBytes,originalBytes,ratio:Math.round(100*thumbBytes/originalBytes)};
+ report.blogThumbnailsOptimized=true;
+
  for(const asset of ['/assets/header-logo-light.webp','/assets/ga4.js','/paint-calculator/project/photos/cost.webp']){
   const res=await checkPublic(origin+asset);
   assert.equal(res.status,200,'Public asset missing '+asset);
