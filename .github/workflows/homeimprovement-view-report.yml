@@ -1,4 +1,4 @@
-name: HomeImprovement restore blog home cards
+name: HomeImprovement final mobile PageSpeed LCP release
 on:
   push:
     branches: [work/view-report-button-20261115]
