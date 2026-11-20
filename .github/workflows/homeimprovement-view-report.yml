@@ -1,4 +1,4 @@
-name: HomeImprovement blog CSS optimization
+name: HomeImprovement image transformations blog thumbnails
 on:
   push:
     branches: [work/view-report-button-20261115]
