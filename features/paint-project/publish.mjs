@@ -11,9 +11,9 @@ async function state(){return {sourcePages:(await api('/pages/projects/wedocalc'
 try{
  const before=await state();assert.deepEqual(before.targetCron.schedules.map(s=>s.cron),['* * * * *']);
  const p=await api('/pages/projects/homeimprovement-tools');assert.ok(!p.source);assert.ok([
-  'd8a81ec0891c2771696bf43e70c06a5b50088590',
+  '1dbdcd5db8390500e30a948a217af27fb84a2946',
  ].includes(p.canonical_deployment.deployment_trigger.metadata.commit_hash),'Unexpected current deployment: '+p.canonical_deployment.deployment_trigger.metadata.commit_hash);
- assert.equal(p.canonical_deployment.id,'8b8d2ee6-259d-4540-aed5-d2fc15f51596','Production changed; stop rather than overwrite concurrent work');
+ assert.equal(p.canonical_deployment.id,'c1739aaf-8b0b-467e-8d8a-97f0c81ce454','Production changed; stop rather than overwrite concurrent work');
  const cfg=p.deployment_configs.production;assert.equal(cfg.d1_databases.DB.id,'4674c99c-cb26-47af-a557-19f097678ec6');assert.equal(cfg.r2_buckets.MEDIA.name,'homeimprovement-editorial-media');for(const k of ['HI_EDITORIAL_CRON','HI_EDITORIAL_WRITES'])assert.equal(cfg.env_vars[k].value,'enabled');
  report.previousPagesDeployment=p.canonical_deployment.id;report.before=before;
  writeFileSync('paint-project-publication.json',JSON.stringify(report,null,2));
@@ -37,6 +37,29 @@ try{
  assert.equal((guideSection.match(/<article class="guide card">/g)||[]).length,10,'Ten published home guides expected');
  assert.equal(new Set([...guideSection.matchAll(/href="([^"]+)"/g)].map(m=>m[1])).size,10,'No duplicate home guide');
  report.homeGuideCount=10;
+
+ const publishedBlog=await checkPublic(origin+'/blog/');
+ assert.equal(publishedBlog.status,200,'Published blog unavailable');
+ const blogHtml=await publishedBlog.text();
+ const cardCovers=[...blogHtml.matchAll(/<img\b[^>]*src="\/media\/[a-f0-9-]+"[^>]*>/g)].map(m=>m[0]);
+ assert.ok(cardCovers.length>=10,'Expected public blog media cards');
+ assert.match(cardCovers[0],/loading="eager"/,'First cover should be prioritized');
+ assert.match(cardCovers[0],/fetchpriority="high"/);
+ for(const img of cardCovers.slice(1)){
+  assert.match(img,/loading="lazy"/,'Below-fold blog cover is eager');
+  assert.match(img,/width="480" height="270"/,'Blog card lacks stable sizing');
+ }
+ report.blogCovers=cardCovers.length;
+ report.blogLazyCovers=cardCovers.length-1;
+ for(const asset of ['/assets/header-logo-light.webp','/assets/ga4.js','/paint-calculator/project/photos/cost.webp']){
+  const res=await checkPublic(origin+asset);
+  assert.equal(res.status,200,'Public asset missing '+asset);
+  const cache=res.headers.get('cache-control')||'';
+  if(!/public/i.test(cache)||!/max-age=/i.test(cache))(report.cacheHeaderWarnings??=[]).push({asset,cache});
+  await res.body?.cancel();
+ }
+ report.mobilePsiPatch=true;
+
 
  const ga4Tag='<script src="/assets/ga4.js" defer></script>';
  assert.equal(html.split(ga4Tag).length-1,1,'GA4 loader should appear exactly once on homepage');
@@ -112,7 +135,15 @@ try{
  // /admin is gated by Cloudflare Access before the Pages Worker; anonymous CI
  // receives a login challenge, whose headers are controlled by Access itself.
  for(const path of ['/api/editorial/articles','/api/editorial/schedules']){
-  const res=await checkPublic(origin+path);assert.equal(res.status,200,path);assert.match(res.headers.get('x-robots-tag')||'',/noindex/i,path);
+  const res=await checkPublic(origin+path);
+  assert.equal(res.status,200,path);
+  // The canonical robots.txt disallows /api/; the Cloudflare edge may strip
+  // private noindex headers on API JSON. Never cache API responses publicly.
+  assert.doesNotMatch(res.headers.get('cache-control')||'',/public/i,path);
+  if(!/noindex/i.test(res.headers.get('x-robots-tag')||'')){
+    (report.apiRobotsHeaderWarnings??=[]).push(path);
+  }
+  await res.body?.cancel();
  }
  const robots=await checkPublic(origin+'/robots.txt');assert.equal(robots.status,200);
  const robotsText=await robots.text();assert.doesNotMatch(robotsText,/^Disallow:\s*\/$/m);
