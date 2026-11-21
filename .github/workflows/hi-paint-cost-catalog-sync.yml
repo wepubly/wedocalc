@@ -1,0 +1,66 @@
+name: Home Improvement Paint Cost one-row catalog sync
+on:
+  push:
+    branches: [work/hi-route-registry-20261120]
+    paths: [".github/workflows/hi-paint-cost-catalog-sync.yml"]
+permissions: {}
+concurrency:
+  group: home-improvement-route-registry
+  cancel-in-progress: false
+jobs:
+  catalog:
+    if: github.event.head_commit.message == '[hi-paint-cost-catalog-sync-verified] Register the exact live Paint Cost Calculator'
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - name: Verify preimage and register only the exact live Paint Cost Calculator
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+        run: |
+          node --input-type=module <<'NODE'
+          import assert from 'node:assert/strict';
+          const token = process.env.CLOUDFLARE_API_TOKEN;
+          assert.ok(token, 'Established repository credential unavailable');
+          const account = 'b81896777d206a2239625d9cf2e8a40b';
+          const db = '4674c99c-cb26-47af-a557-19f097678ec6';
+          async function request(path, body) {
+            const response = await fetch('https://api.cloudflare.com/client/v4/accounts/' + account + path, {
+              method: body ? 'POST' : 'GET', signal: AbortSignal.timeout(12000),
+              headers: {Authorization: 'Bearer ' + token, 'Content-Type': 'application/json'}, body: body ? JSON.stringify(body) : undefined
+            });
+            assert.ok(response.ok, 'Cloudflare operation HTTP ' + response.status);
+            const data = await response.json(); assert.equal(data.success, true);
+            return data.result;
+          }
+          const worker = await request('/workers/scripts/homeimprovement-editorial/settings');
+          const binds = worker.bindings.filter(x => x.type === 'd1' && x.name === 'DB');
+          assert.ok(binds.length === 1 && (binds[0].id ?? binds[0].database_id) === db, 'Worker production binding changed');
+          const pages = await request('/pages/projects/homeimprovement-tools');
+          assert.equal(pages?.deployment_configs?.production?.d1_databases?.DB?.id, db, 'Pages production binding changed');
+          assert.equal((await request('/d1/database/' + db)).name, 'homeimprovement-editorial-db');
+          const publicUrl = 'https://homeimprovement.tools/paint-cost-calculator/';
+          const live = await fetch(publicUrl, {redirect: 'manual', signal: AbortSignal.timeout(12000)});
+          assert.equal(live.status, 200);
+          assert.match(await live.text(), /<title[^>]*>[^<]*Paint Cost Calculator/i);
+          const query = "SELECT id,kind,name,path,parent_id,state FROM routes WHERE id IN ('paint-calculators','paint-cost-calculator') OR RTRIM(path,'/')='/paint-cost-calculator' ORDER BY id";
+          const routeApi = '/d1/database/' + db + '/query';
+          const read = async () => {
+            const result = await request(routeApi, {sql: query});
+            assert.equal(result[0]?.success, true);
+            return result[0].results;
+          };
+          // Observed in successful read-only run 44894708455.
+          const parent = {id:'paint-calculators',kind:'subcategory',name:'Paint Calculators',path:'/paint-calculators/',parent_id:'home-garden',state:'live'};
+          const exact = {id:'paint-cost-calculator',kind:'calculator',name:'Paint Cost Calculator',path:'/paint-cost-calculator/',parent_id:'paint-calculators',state:'live'};
+          const before = await read();
+          assert.deepEqual(before, [parent], 'Preimage differs from approved read-only run; no write');
+          console.log('Production preimage verified:', JSON.stringify(before));
+          const sql = "INSERT INTO routes(id,kind,name,path,parent_id,state) SELECT ?,?,?,?,?,? WHERE EXISTS (SELECT 1 FROM routes WHERE id=? AND kind=? AND name=? AND path=? AND parent_id=? AND state=?) AND NOT EXISTS (SELECT 1 FROM routes WHERE id=? OR RTRIM(path,'/')=?)";
+          const result = await request(routeApi, {sql, params:[...Object.values(exact), ...Object.values(parent), exact.id, '/paint-cost-calculator']});
+          assert.equal(result[0]?.success, true, 'Write outcome unconfirmed; inspect before any retry');
+          assert.equal(result[0]?.meta?.changes, 1, 'Unexpected affected row count; inspect before any retry');
+          const after = await read();
+          assert.deepEqual(after, [parent,exact], 'After state differs; inspect before any correction');
+          console.log('Verified one catalog row added:', JSON.stringify(exact));
+          console.log('Rollback is not automatic: if authorized and no current article or scheduled revision depends on the path, remove exactly the inserted six-field fingerprint through a dedicated reviewed operation; retain parent.');
+          NODE
